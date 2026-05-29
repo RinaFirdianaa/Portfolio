@@ -1,0 +1,178 @@
+/* ============================================================
+   GLOBAL STYLES
+   Base resets, CSS custom properties, and typography defaults.
+   ============================================================ */
+
+
+  /* Colors */
+:root {
+  /* Grey / White */
+  --white: #ffffff;
+  --white-soft: #d1d1d6;
+
+  /* Blue */
+  --blue-20: #d5e8ff;
+  --blue-40: #aed1fb;
+  --blue-60: #75a5df;
+  --blue-80: #5785bc;
+  --blue-100: #2e517b;
+
+  /* Purple */
+  --purple-10: #ecddff;
+  --purple-20: #d5bcf5;
+  --purple-40: #a87fdb;
+  --purple-60: #656fbe;
+
+  /* Pink */
+  --pink-10: #feedf5;
+  --pink-20: #fdc3d9;
+  --pink-40: #fca5c5;
+  --pink-60: #d77196;
+  --pink-80: #9b4a68;
+  --pink-100: #6c364a;
+
+  /* Yellow */
+  --yellow-10: #fff6e5;
+  --yellow-40: #ffca70;
+  --yellow-80: #a98039;
+
+
+   /* Font families */
+  --font-title: 'Libre Bodoni', serif;
+  --font-body: 'Alegreya Sans', sans-serif;
+  --font-game: 'Red Hat Mono', monospace;
+
+  /* Headings */
+  --font-h1: 800 clamp(40px, 5vw, 44px)/1 var(--font-title);
+  --font-h2: 800 clamp(28px, 4vw, 36px)/1.1 var(--font-title);
+  --font-h3: 400 clamp(22px, 3vw, 24px)/1.2 var(--font-title);
+  --font-h4: 400 clamp(18px, 2vw, 20px)/1.2 var(--font-title);
+
+  /* Navigation */
+  --font-nav: 600 16px/1.2 var(--font-title);
+
+  /* Paragraph styles */
+  --font-p0: 400 clamp(20px, 4vw, 20px)/1.2 var(--font-body);
+  --font-p1: 400 clamp(16px, 2vw, 18px)/1.4 var(--font-body);
+  --font-p: 400 16px/1.5 var(--font-body);
+
+  --font-gamebig: clamp(20px, 4vw, 20px)/1.2 var(--font-game);
+  --font-gamemedium: clamp(16px, 2vw, 18px)/1.4 var(--font-game);
+  --font-gamesmall: 8px var(--font-game);
+
+
+  /* Spacing */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  40px;
+  --space-2xl: 60px;
+  --space-3xl: 80px;
+  --space-4xl: 100px;
+
+  /* Layout */
+  --max-width:    960px;
+  --section-px:   40px;
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    16px;
+  --radius-pill:  999px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(200, 100, 180, 0.08);
+  --shadow-hover: 0 8px 32px rgba(200, 100, 180, 0.14);
+
+  /* Transitions */
+  --transition-fast:   0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow:   0.4s ease;
+}
+
+/* --- Reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* --- Utility Classes --- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--section-px);
+}
+
+.section {
+  padding-block: var(--space-2xl);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* --- Keyframe Animations --- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+/* --- Responsive Breakpoints --- */
+@media (max-width: 768px) {
+  :root {
+    --section-px: 20px;
+    --text-hero:  2rem;
+    --text-3xl:   1.6rem;
+    --space-2xl:  40px;
+  }
+}

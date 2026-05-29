@@ -1,0 +1,195 @@
+/* ============================================================
+   Hero.module.css
+   ============================================================ */
+
+.hero {
+  height: 618px;
+  position: relative;
+  min-height: 420px;
+  display: flex;
+   background: linear-gradient(
+    180deg,
+    #5061b1 0%,
+    #9c7ae5 100%
+  );
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+/* --- Inner layout --- */
+.inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-2xl) clamp(var(--space-2xl), 6vw, var(--space-4xl));
+}
+
+/* --- Text block --- */
+.textBlock {
+  flex: 1;
+  animation: fadeUp 0.85s ease both;
+}
+
+.heading {
+  font: var(--font-h1);
+  color: #ffffff;
+  line-height: 1.12;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 18px rgba(110, 50, 150, 0.22);
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 160, 230, 0.6)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(200, 171, 255, 0.9)); }
+}
+
+.headingName {
+  background: linear-gradient(90deg, #ffffff, #ffd0f3, #ffa9ea, #d1b8ff, #ffffff);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradientShift 2s linear infinite, glowPulse 3s ease-in-out infinite;
+}
+
+.body {
+  font: var(--font-p0);
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 80%;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  animation: fadeUp 0.85s ease 0.15s both;
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 24px;
+  animation: fadeUp 0.85s ease 0.25s both;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  padding: 9px 22px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-normal), transform var(--transition-fast);
+  animation: fadeUp 0.85s ease 0.35s both;
+}
+
+.ctaButton:hover {
+  background: rgba(255, 255, 255, 0.34);
+  transform: translateY(-1px);
+}
+
+/* --- Illustration block --- */
+.illustrationBlock {
+  padding: 0;
+  flex: 0 0 auto;
+  overflow: visible;
+  animation: fadeUp 0.85s ease 0.2s both;
+}
+
+/* --- Planet wrapper --- */
+.planetWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  perspective: 800px;
+  cursor: pointer;
+  animation: floatY 6s ease-in-out infinite;
+}
+
+/* --- Orbit text SVG ---
+   110% makes it just slightly larger than the planet image  */
+.orbitText {
+  position: absolute;
+  width: 110%;
+  height: 110%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes orbitSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg);   }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.orbitTextSpin {
+  animation: orbitSpin 3s linear infinite;
+}
+
+.orbitLabel {
+  font: var(--font-gamesmall);
+  fill: rgba(255, 255, 255, 0.85);
+  letter-spacing: 3px;
+}
+
+/* --- Hero image --- */
+.heroImage {
+  display: block;
+  width: clamp(220px, 25vw, 380px);
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Rings --- */
+.rings {
+  position: absolute;
+  width: 130%;
+  max-width: none;
+  height: auto;
+  top: 54%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .body {
+    max-width: 100%;
+  }
+
+  .heroImage {
+    width: clamp(180px, 55vw, 280px);
+  }
+
+  .rings {
+    width: 400px;
+  }
+}

@@ -1,0 +1,205 @@
+/* ============================================================
+   About.module.css
+   ============================================================ */
+
+.about {}
+
+.grid {
+  /* border:1px solid red; */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* --- Bio --- */
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-accent);
+  margin-bottom: 22px;
+}
+
+.avatarRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font-body);
+}
+
+.bioIntro {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  padding-top: 4px;
+}
+
+.bioPara {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+/* --- Education card --- */
+.cardTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cardHint {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+}
+
+.ptsBadge {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+}
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-accent);
+}
+
+.scoreChip {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: #f5f5f5;
+  border-radius: var(--radius-pill);
+  padding: 2px 12px;
+}
+
+/* --- Education list --- */
+.eduList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.eduItem {
+  padding-block: 14px;
+}
+
+.hasDivider {
+  border-bottom: 1px solid var(--color-bg-soft);
+}
+
+.eduRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.eduInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.eduSchool {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.eduCourse {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.eduPeriod {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.markRow {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+}
+
+.checkDone {
+  color: #4caf50;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.markBtn {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-pill);
+  padding: 3px 14px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.markBtn:hover {
+  background: #f5f0f5;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}

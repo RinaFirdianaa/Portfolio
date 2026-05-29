@@ -1,0 +1,52 @@
+/* ============================================================
+   CloudBackground.module.css
+   ============================================================ */
+
+.background {
+  position: absolute;  /* contained to hero section */
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sky {
+  position: absolute;
+}
+
+.cloudLayer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 120%;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  background-size: auto 100%;   /* ← change this, let width be natural */
+  mix-blend-mode: screen;
+}
+
+@keyframes cloudScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.cloud4 {
+  background-image: url('/images/Cloud4.PNG');
+  animation: cloudScroll 50s linear infinite;
+}
+
+.cloud3 {
+  background-image: url('/images/Cloud3.PNG');
+
+  animation: cloudScroll 40s linear infinite;
+}
+
+.cloud2 {
+  background-image: url('/images/Cloud2.PNG');
+  animation: cloudScroll 30s linear infinite;
+}
+
+.cloud1 {
+  background-image: url('/images/Cloud1.PNG');
+  animation: cloudScroll 20s linear infinite;
+}

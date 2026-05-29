@@ -1,0 +1,216 @@
+/* ============================================================
+   Projects.module.css
+   ============================================================ */
+
+.projects {
+  padding-block: var(--space-2xl) 0;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.tab {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--color-text-secondary);
+}
+
+.tabActive {
+  color: var(--color-accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 0;
+}
+
+.ptsBadge {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+}
+
+/* --- Banner --- */
+.banner {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: #1a0a2e;
+}
+
+.bannerImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerFallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a0a2e 0%, #2d1060 45%, #1a1a2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.65) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+  padding: 32px var(--section-px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.bannerTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: #ffffff;
+  margin-bottom: 8px;
+  text-shadow: 0 0 24px #ff6bac, 0 0 48px rgba(255, 50, 120, 0.4);
+}
+
+.bannerDesc {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 360px;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.readMoreBtn {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  padding: 7px 22px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  width: fit-content;
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+
+.readMoreBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Thumbnail strip --- */
+.thumbnailStrip {
+  background: #111111;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.thumbnailStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbnail {
+  min-width: 140px;
+  height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-right: 1px solid #2a2a2a;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+  padding: 0;
+}
+
+.thumbnail:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.thumbnailActive {
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.thumbImg {
+  width: 64px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.thumbFallback {
+  width: 64px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbPlaceholder {
+  font-family: var(--font-body);
+  font-size: 0.52rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.thumbLabel {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* --- Empty state --- */
+.emptyState {
+  padding-block: 48px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
