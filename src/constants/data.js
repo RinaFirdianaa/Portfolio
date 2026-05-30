@@ -102,8 +102,16 @@ export const PROJECTS = [
     category: 'Game',
     description:
       'An interactive game UI project featuring vibrant neon aesthetics and intuitive in-game menus designed for maximum player immersion.',
+    type: 'Game UI',
+    role: 'UI/UX Designer',
+    tools: ['Figma', 'Unity'],
+    status: 'Prototype',
+    links: [
+      { label: 'Case Study', href: '#' },
+      { label: 'Prototype', href: '#' },
+    ],
     // Replace with your actual image path: '/images/projects/boba-time.jpg'
-    image: null,
+    image: '/images/placeholder.png',
     thumbnails: [null, null, null, null],
   },
   {
@@ -112,7 +120,14 @@ export const PROJECTS = [
     category: 'Game',
     description:
       'A fantasy-themed mobile game interface that blends whimsical visual design with accessible UX patterns.',
-    image: null,
+    type: 'Game UI',
+    role: 'UI/UX Designer',
+    tools: ['Figma', 'Photoshop', 'Unity'],
+    status: 'In progress',
+    links: [
+      { label: 'Case Study', href: '#' },
+    ],
+    image: '/images/placeholder.png',
     thumbnails: [null, null],
   },
 ]
