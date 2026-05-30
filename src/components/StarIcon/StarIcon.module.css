@@ -1,0 +1,30 @@
+/* ============================================================
+   StarIcon.module.css
+   ============================================================ */
+
+.star {
+  display: inline-block;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: glowPulse 2s ease-in-out infinite;  /* always on */
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 3px var(--yellow-20))
+      drop-shadow(0 0 6px var(--yellow-20));
+    transform: scale(0.9);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 8px var(--yellow-20))
+      drop-shadow(0 0 16px var(--yellow-20))
+      drop-shadow(0 0 24px var(--pink-20));
+    transform: scale(1.2);
+  }
+}
+
+.glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}

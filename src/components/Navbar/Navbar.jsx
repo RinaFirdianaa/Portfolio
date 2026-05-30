@@ -108,21 +108,27 @@ export default function Navbar() {
   }
 
   // Entrance animation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const homeRight = getItemRightPx('home')
-      setFillPx(homeRight)
-    }, 400)
-    const sparkleTimer = setTimeout(() => {
-      visitedRef.current.add('home')
-      shootSparkles('home')
-      setVisitedSections(prev => new Set([...prev, 'home']))
-      setGlowingSection('home')
-      setTimeout(() => setGlowingSection(null), 800)
-    }, 1400)
-    const doneTimer = setTimeout(() => setHasEntered(true), 1700)
-    return () => { clearTimeout(timer); clearTimeout(sparkleTimer); clearTimeout(doneTimer) }
-  }, [])
+useEffect(() => {
+  const timer = setTimeout(() => {
+    // Find which section is currently active based on scroll position
+    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
+    const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean)
+    const scrollY = window.scrollY
+
+    let activeIdx = 0
+    for (let i = sections.length - 1; i >= 0; i--) {
+      if (scrollY >= sections[i].offsetTop - window.innerHeight * 0.4) {
+        activeIdx = i
+        break
+      }
+    }
+
+    const activeId = sectionIds[activeIdx]
+    setFillPx(getItemRightPx(activeId))
+  }, 400)
+
+  // ... rest of timers
+}, [])
 
   // Scroll fill + section detection
   useEffect(() => {

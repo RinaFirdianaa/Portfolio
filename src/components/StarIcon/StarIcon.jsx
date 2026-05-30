@@ -3,12 +3,14 @@
  * Reusable ✦ star with optional glow and color.
  *
  * Props:
- *   size    — font size (default: '1em')
- *   color   — CSS color or var() (default: var(--yellow-40))
- *   glow    — boolean, adds a yellow glow (default: false)
+ *   size      — font size (default: '1em')
+ *   color     — CSS color or var() (default: var(--yellow-40))
+ *   glow      — boolean, adds a pulsing yellow glow (default: false)
  *   className — extra class names
- *   style   — inline styles
+ *   style     — inline styles
  */
+
+import styles from './StarIcon.module.css'
 
 export default function StarIcon({
   size      = '1em',
@@ -21,16 +23,10 @@ export default function StarIcon({
   return (
     <span
       aria-hidden="true"
-      className={className}
+      className={`${styles.star} ${glow ? styles.glow : ''} ${className}`}
       style={{
-        display:    'inline-block',
-        fontSize:   size,
+        fontSize: size,
         color,
-        filter: glow
-          ? `drop-shadow(0 0 4px ${color}) drop-shadow(0 0 10px ${color})`
-          : 'none',
-        lineHeight: 1,
-        flexShrink: 0,
         ...style,
       }}
       {...props}
