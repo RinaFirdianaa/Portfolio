@@ -32,6 +32,7 @@
 .textBlock {
   flex: 1;
   animation: fadeUp 0.85s ease both;
+  transform: translateZ(0);
 }
 
 .heading {
@@ -59,7 +60,7 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: gradientShift 2s linear infinite, glowPulse 3s ease-in-out infinite;
+  animation: gradientShift 6s linear infinite;
 }
 
 .body {
@@ -120,6 +121,7 @@
   perspective: 800px;
   cursor: pointer;
   animation: floatY 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* --- Orbit text SVG ---
@@ -159,6 +161,8 @@
   object-fit: contain;
   position: relative;
   z-index: 1;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* --- Rings --- */
@@ -179,11 +183,22 @@
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(8px);
   color: var(--pink-10);
   border-radius: var(--radius-md);
   padding: 4px 24px;
   font: var(--font-p2);                 /* monospace like in screenshot */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textBlock,
+  .body,
+  .tagline,
+  .illustrationBlock,
+  .planetWrapper,
+  .headingName,
+  .orbitTextSpin {
+    animation: none;
+  }
 }
 /* --- Responsive --- */
 @media (max-width: 768px) {

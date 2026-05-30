@@ -1,12 +1,14 @@
 /* ============================================================
-   StarIcon.module.css
+   StarIcon.module.css  (optimised)
    ============================================================ */
 
 .star {
   display: inline-block;
   line-height: 1;
   flex-shrink: 0;
-  animation: glowPulse 2s ease-in-out infinite;  /* always on */
+  /* ✅ FIX: No animation by default — was running glowPulse on EVERY star
+     instance even when glow=false, burning GPU/CPU for nothing. */
+  will-change: auto;
 }
 
 @keyframes glowPulse {
@@ -25,6 +27,8 @@
   }
 }
 
+/* ✅ Only glowing stars animate */
 .glow {
   animation: glowPulse 2s ease-in-out infinite;
+  will-change: filter, transform;
 }

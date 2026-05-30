@@ -1,11 +1,16 @@
 /**
- * Navbar
- * Sticky top navigation with score badge and purple sub-nav links.
- * Uses global SparkleContext to fire sparkles toward the score badge.
- * Score is read from global ScoreContext and incremented by sections + Hero.
+ * Navbar.jsx  (optimised v2)
+ *
+ * Key change: the fill bar is driven by writing a CSS custom property
+ * DIRECTLY to the DOM inside the rAF callback — no React state, no re-renders
+ * on scroll whatsoever. React only re-renders for section/glow/score changes,
+ * which are rare events, not per-frame.
+ *
+ * Also: nav item geometry (offsetLeft/offsetWidth) is cached once after mount
+ * and only invalidated on resize, eliminating repeated layout reads.
  */
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useScrolled } from '@/hooks/useScrolled'
 import { NAV_LINKS } from '@/constants/data'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
@@ -17,53 +22,214 @@ const SCORE_PER_SECTION = 10
 const SPARKLE_TRAVEL_MS = 850
 
 export default function Navbar() {
-  const scrolled         = useScrolled()
-  const { fireSparkles } = useSparkles()
+  const scrolled            = useScrolled()
+  const { fireSparkles }    = useSparkles()
   const { score, addScore } = useScore()
 
   const [activeSection, setActiveSection]     = useState('home')
-  const [fillPx, setFillPx]                   = useState(0)
-  const [hasEntered, setHasEntered]           = useState(false)
   const [glowingSection, setGlowingSection]   = useState(null)
   const [visitedSections, setVisitedSections] = useState(new Set())
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
 
+  // ─── Refs ─────────────────────────────────────────────────────────────────
   const navListRef  = useRef(null)
   const scoreRef    = useRef(null)
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
   const visitedRef  = useRef(new Set())
 
-  const total = NAV_LINKS.length
+  // Stable refs so scroll/observer callbacks never go stale
+  const fireSparklesRef = useRef(fireSparkles)
+  const addScoreRef     = useRef(addScore)
+  useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
+  useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
 
-  const activeIndex     = NAV_LINKS.findIndex((l) => l.href.replace('#', '') === activeSection)
-  const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex
-  const isComplete      = safeActiveIndex === total - 1
+  // ─── Cached geometry ──────────────────────────────────────────────────────
+  // rightEdge[i] = px from left of navList to right edge of nav item i
+  // listWidth    = total width of navList
+  // These are read from the DOM once and cached; re-read only on resize.
+  const geoCacheRef = useRef(null)
 
-  const getItemCentrePx = (sectionId) => {
-    const item = navItemRefs.current[sectionId]
-    if (!item) return 0
-    return item.offsetLeft + item.offsetWidth / 2
-  }
+  const buildGeoCache = useCallback(() => {
+    if (!navListRef.current) return
+    const listWidth = navListRef.current.offsetWidth
+    const rightEdge = NAV_LINKS.map(({ href }) => {
+      const id   = href.replace('#', '')
+      const item = navItemRefs.current[id]
+      return item ? item.offsetLeft + item.offsetWidth : 0
+    })
+    const centre = NAV_LINKS.map(({ href }) => {
+      const id   = href.replace('#', '')
+      const item = navItemRefs.current[id]
+      return item ? item.offsetLeft + item.offsetWidth / 2 : 0
+    })
+    geoCacheRef.current = { listWidth, rightEdge, centre }
+  }, [])
 
-  const getItemRightPx = (sectionId) => {
-    const item = navItemRefs.current[sectionId]
-    if (!item) return 0
-    return item.offsetLeft + item.offsetWidth
-  }
+  // Build cache after first paint and on resize
+  useEffect(() => {
+    // Small delay so refs are guaranteed populated after first render
+    const t = setTimeout(buildGeoCache, 50)
+    window.addEventListener('resize', buildGeoCache, { passive: true })
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('resize', buildGeoCache)
+    }
+  }, [buildGeoCache])
 
-  const getLinkFilled = (index) => {
-    const sectionId  = NAV_LINKS[index].href.replace('#', '')
-    const itemCentre = getItemCentrePx(sectionId)
-    return fillPx >= itemCentre
-  }
+  // ─── Section offsets cache ────────────────────────────────────────────────
+  // section top positions; rebuilt on resize / content changes
+  const sectionOffsetsRef = useRef([])
 
-  const fillPercent = navListRef.current
-    ? `${(fillPx / navListRef.current.offsetWidth) * 100}%`
-    : '0%'
+  const buildSectionOffsets = useCallback(() => {
+    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
+    sectionOffsetsRef.current = sectionIds.map((id) => {
+      const el = document.getElementById(id)
+      return el ? el.offsetTop : 0
+    })
+  }, [])
 
-  // Animate displayScore counting up whenever score changes
+  useEffect(() => {
+    const t = setTimeout(buildSectionOffsets, 50)
+    window.addEventListener('resize', buildSectionOffsets, { passive: true })
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('resize', buildSectionOffsets)
+    }
+  }, [buildSectionOffsets])
+
+  // ─── Fill bar: written directly to DOM, zero React renders on scroll ──────
+  const applyFill = useCallback((fillPx) => {
+    const geo = geoCacheRef.current
+    if (!navListRef.current || !geo) return
+    const pct = (fillPx / geo.listWidth) * 100
+    navListRef.current.style.setProperty('--nav-fill', `${pct}%`)
+
+    // Also update .filled class on each link without React re-render
+    NAV_LINKS.forEach(({ href }, i) => {
+      const id = href.replace('#', '')
+      const el = navItemRefs.current[id]?.querySelector('a')
+      if (!el) return
+      if (fillPx >= geo.centre[i]) {
+        el.classList.add(styles.filled)
+      } else {
+        el.classList.remove(styles.filled)
+      }
+    })
+  }, [])
+
+  // ─── Scroll handler ───────────────────────────────────────────────────────
+  useEffect(() => {
+    let rafScheduled = false
+
+    const onScroll = () => {
+      if (rafScheduled) return
+      rafScheduled = true
+
+      requestAnimationFrame(() => {
+        rafScheduled = false
+        const geo      = geoCacheRef.current
+        const offsets  = sectionOffsetsRef.current
+        if (!geo || offsets.length === 0) return
+
+        const scrollY    = window.scrollY
+        const vh         = window.innerHeight
+        const docHeight  = document.documentElement.scrollHeight
+
+        // Clamp to end when scrolled to bottom
+        if (vh + scrollY >= docHeight - 10) {
+          applyFill(geo.listWidth)
+          return
+        }
+
+        const threshold = vh * 0.4
+        for (let i = offsets.length - 1; i >= 0; i--) {
+          const top = offsets[i] - threshold
+          if (scrollY >= top) {
+            const nextTop   = i + 1 < offsets.length ? offsets[i + 1] - threshold : docHeight
+            const segPct    = Math.min((scrollY - top) / (nextTop - top), 1)
+            const curRight  = geo.rightEdge[i]
+            const nextRight = i + 1 < geo.rightEdge.length ? geo.rightEdge[i + 1] : geo.listWidth
+            const fill      = curRight + segPct * (nextRight - curRight)
+            applyFill(Math.max(fill, geo.rightEdge[0]))
+            return
+          }
+        }
+
+        applyFill(geo.rightEdge[0])
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [applyFill])
+
+  // ─── Entrance: apply initial fill without scroll event ───────────────────
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const offsets  = sectionOffsetsRef.current
+      const geo      = geoCacheRef.current
+      if (!geo || offsets.length === 0) return
+
+      const scrollY    = window.scrollY
+      const threshold  = window.innerHeight * 0.4
+      let activeIdx    = 0
+      for (let i = offsets.length - 1; i >= 0; i--) {
+        if (scrollY >= offsets[i] - threshold) { activeIdx = i; break }
+      }
+      applyFill(geo.rightEdge[activeIdx])
+    }, 100)
+    return () => clearTimeout(t)
+  }, [applyFill])
+
+  // ─── IntersectionObserver: section + sparkles (rare, React state ok) ──────
+  const shootSparkles = useCallback((sectionId) => {
+    const navEl   = navItemRefs.current[sectionId]
+    const scoreEl = scoreRef.current
+    if (!navEl || !scoreEl) return
+    const from = navEl.getBoundingClientRect()
+    const to   = scoreEl.getBoundingClientRect()
+    fireSparklesRef.current(
+      from.left + from.width  / 2,
+      from.top  + from.height / 2,
+      to.left   + to.width    / 2,
+      to.top    + to.height   / 2,
+      12
+    )
+    setTimeout(() => addScoreRef.current(SCORE_PER_SECTION), SPARKLE_TRAVEL_MS)
+  }, [])
+
+  useEffect(() => {
+    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
+    const sections   = sectionIds.map((id) => document.getElementById(id)).filter(Boolean)
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const id = entry.target.id
+          setActiveSection(id)
+          if (id !== prevSection.current && !visitedRef.current.has(id)) {
+            prevSection.current = id
+            visitedRef.current.add(id)
+            setVisitedSections(prev => new Set([...prev, id]))
+            shootSparkles(id)
+            setGlowingSection(id)
+            setTimeout(() => setGlowingSection(null), 800)
+          } else {
+            prevSection.current = id
+          }
+        })
+      },
+      { root: null, rootMargin: '-40% 0px -50% 0px', threshold: 0 }
+    )
+
+    sections.forEach((s) => observer.observe(s))
+    return () => sections.forEach((s) => observer.unobserve(s))
+  }, [shootSparkles])
+
+  // ─── Score counter animation ──────────────────────────────────────────────
   useEffect(() => {
     if (displayScore === score) return
     setScoreGlowing(true)
@@ -72,134 +238,22 @@ export default function Navbar() {
     const duration  = 800
     const startTime = performance.now()
     const easeOut   = (t) => 1 - Math.pow(1 - t, 3)
-
     let raf
     const tick = (now) => {
-      const elapsed = now - startTime
-      const t       = Math.min(elapsed / duration, 1)
+      const t = Math.min((now - startTime) / duration, 1)
       setDisplayScore(Math.round(start + (end - start) * easeOut(t)))
-      if (t < 1) {
-        raf = requestAnimationFrame(tick)
-      } else {
-        setTimeout(() => setScoreGlowing(false), 400)
-      }
+      if (t < 1) { raf = requestAnimationFrame(tick) }
+      else        { setTimeout(() => setScoreGlowing(false), 400) }
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [score])
 
-  const shootSparkles = (sectionId) => {
-    const navEl   = navItemRefs.current[sectionId]
-    const scoreEl = scoreRef.current
-    if (!navEl || !scoreEl) return
-
-    const from = navEl.getBoundingClientRect()
-    const to   = scoreEl.getBoundingClientRect()
-
-    fireSparkles(
-      from.left + from.width  / 2,
-      from.top  + from.height / 2,
-      to.left   + to.width    / 2,
-      to.top    + to.height   / 2,
-      12
-    )
-
-    setTimeout(() => addScore(SCORE_PER_SECTION), SPARKLE_TRAVEL_MS)
-  }
-
-  // Entrance animation
-useEffect(() => {
-  const timer = setTimeout(() => {
-    // Find which section is currently active based on scroll position
-    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
-    const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean)
-    const scrollY = window.scrollY
-
-    let activeIdx = 0
-    for (let i = sections.length - 1; i >= 0; i--) {
-      if (scrollY >= sections[i].offsetTop - window.innerHeight * 0.4) {
-        activeIdx = i
-        break
-      }
-    }
-
-    const activeId = sectionIds[activeIdx]
-    setFillPx(getItemRightPx(activeId))
-  }, 400)
-
-  // ... rest of timers
-}, [])
-
-  // Scroll fill + section detection
-  useEffect(() => {
-    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
-
-    const computeFill = () => {
-      if (!navListRef.current) return
-      const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean)
-      if (sections.length === 0) return
-
-      const scrollY = window.scrollY
-
-      const atBottom = window.innerHeight + scrollY >= document.documentElement.scrollHeight - 10
-      if (atBottom) {
-        setFillPx(navListRef.current.offsetWidth)
-        return
-      }
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const top = sections[i].offsetTop - window.innerHeight * 0.4
-        if (scrollY >= top) {
-          const nextTop = sections[i + 1]
-            ? sections[i + 1].offsetTop - window.innerHeight * 0.4
-            : document.documentElement.scrollHeight
-
-          const segPct       = Math.min((scrollY - top) / (nextTop - top), 1)
-          const currentRight = getItemRightPx(sectionIds[i])
-          const nextRight    = i + 1 < sectionIds.length
-            ? getItemRightPx(sectionIds[i + 1])
-            : navListRef.current.offsetWidth
-
-          const newFillPx = currentRight + segPct * (nextRight - currentRight)
-          setFillPx(Math.max(newFillPx, getItemRightPx('home')))
-          return
-        }
-      }
-
-      setFillPx(getItemRightPx('home'))
-    }
-
-    window.addEventListener('scroll', computeFill, { passive: true })
-
-    const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id
-            setActiveSection(id)
-            if (id !== prevSection.current && !visitedRef.current.has(id)) {
-              prevSection.current = id
-              visitedRef.current.add(id)
-              setVisitedSections(prev => new Set([...prev, id]))
-              shootSparkles(id)
-              setGlowingSection(id)
-              setTimeout(() => setGlowingSection(null), 800)
-            } else {
-              prevSection.current = id
-            }
-          }
-        })
-      },
-      { root: null, rootMargin: '-40% 0px -50% 0px', threshold: 0 }
-    )
-
-    sections.forEach((s) => observer.observe(s))
-    return () => {
-      window.removeEventListener('scroll', computeFill)
-      sections.forEach((s) => observer.unobserve(s))
-    }
-  }, [])
+  // ─── Derived render values (React state only, not scroll-driven) ──────────
+  const total           = NAV_LINKS.length
+  const activeIndex     = NAV_LINKS.findIndex((l) => l.href.replace('#', '') === activeSection)
+  const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex
+  const isComplete      = safeActiveIndex === total - 1
 
   const handleNavClick = (e, href) => {
     e.preventDefault()
@@ -227,15 +281,17 @@ useEffect(() => {
       </div>
 
       <nav className={styles.nav} aria-label="Main navigation">
+        {/*
+          --nav-fill is now set directly via navListRef.style, not React state.
+          The initial value here is just a fallback for first paint.
+        */}
         <ul
           ref={navListRef}
-          className={`${styles.navList} ${isComplete ? styles.complete : ''} ${hasEntered ? styles.scrolling : ''}`}
-          style={{ '--nav-fill': fillPercent }}
+          className={`${styles.navList} ${isComplete ? styles.complete : ''} ${styles.scrolling}`}
         >
-          {NAV_LINKS.map(({ label, href }, index) => {
+          {NAV_LINKS.map(({ label, href }) => {
             const sectionId = href.replace('#', '')
             const isActive  = activeSection === sectionId
-            const isFilled  = getLinkFilled(index)
             const isGlowing = glowingSection === sectionId
 
             return (
@@ -244,10 +300,16 @@ useEffect(() => {
                 ref={(el) => { navItemRefs.current[sectionId] = el }}
                 className={styles.navItem}
               >
+                {/*
+                  NOTE: .filled class is toggled directly via classList in
+                  applyFill() above — React doesn't re-render for it.
+                  isActive and isGlowing still come from React state (they're
+                  rare events, not scroll-driven).
+                */}
                 <a
                   href={href}
                   onClick={(e) => handleNavClick(e, href)}
-                  className={`${styles.navLink} ${isFilled ? styles.filled : ''} ${isActive ? styles.active : ''} ${isGlowing ? styles.glowing : ''}`}
+                  className={`${styles.navLink} ${isActive ? styles.active : ''} ${isGlowing ? styles.glowing : ''}`}
                 >
                   {label}
                   <StarIcon

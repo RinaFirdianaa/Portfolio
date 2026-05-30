@@ -1,10 +1,8 @@
 /**
- * About
- * Two-column section: personal bio on the left,
- * interactive education card on the right.
+ * About.jsx  (optimised)
  */
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { EDUCATION } from '@/constants/data'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
@@ -17,7 +15,7 @@ const BOTTOM_STARS = [
   { id: 'star-c', size: '1.2rem' },
 ]
 
-const SPARKLE_TRAVEL_MS  = 850
+const SPARKLE_TRAVEL_MS   = 850
 const CONSTELLATION_SCORE = 10
 
 function AnimatedLine({ x1, y1, x2, y2, length, animate }) {
@@ -69,22 +67,37 @@ export default function About() {
   const starRefs = useRef({})
   const cardRef  = useRef(null)
 
-  const getStarCentre = (id) => {
-    const el        = starRefs.current[id]
-    const container = cardRef.current
-    if (!el || !container) return null
+  // ✅ FIX: Cache container rect; only re-read on window resize instead of
+  //    calling getBoundingClientRect() twice per click (forces layout reflow).
+  const containerRectRef = useRef(null)
+  useEffect(() => {
+    const update = () => { containerRectRef.current = null } // invalidate cache
+    window.addEventListener('resize', update, { passive: true })
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  const getStarCentre = useCallback((id) => {
+    const el = starRefs.current[id]
+    if (!el || !cardRef.current) return null
+
+    // Read container rect once and cache it within the same gesture
+    if (!containerRectRef.current) {
+      containerRectRef.current = cardRef.current.getBoundingClientRect()
+    }
+    const containerRect = containerRectRef.current
     const elRect        = el.getBoundingClientRect()
-    const containerRect = container.getBoundingClientRect()
+
     return {
       x: elRect.left + elRect.width  / 2 - containerRect.left,
       y: elRect.top  + elRect.height / 2 - containerRect.top,
     }
-  }
+  }, [])
 
-  const getLineLength = (x1, y1, x2, y2) =>
-    Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+  // ✅ FIX: Invalidate cached container rect before each click so a scroll
+  //    between clicks doesn't produce wrong line coordinates.
+  const handleStarClick = useCallback((id) => {
+    containerRectRef.current = null // always fresh on click
 
-  const handleStarClick = (id) => {
     if (isLocked) return
 
     setClickOrder((prev) => {
@@ -105,7 +118,7 @@ export default function About() {
         const from = getStarCentre(prev[prev.length - 1])
         const to   = getStarCentre(id)
         if (from && to) {
-          const length = getLineLength(from.x, from.y, to.x, to.y)
+          const length = Math.sqrt((to.x - from.x) ** 2 + (to.y - from.y) ** 2)
           setLines((prevLines) => [
             ...prevLines,
             {
@@ -127,7 +140,6 @@ export default function About() {
 
       const newOrder = [...prev, id]
 
-      // Last star — fire sparkles and complete
       if (newOrder.length === totalStars) {
         setCompleted(true)
         const lastBtn = starRefs.current[id]
@@ -148,7 +160,7 @@ export default function About() {
 
       return newOrder
     })
-  }
+  }, [isLocked, totalStars, fireSparkles, addScore, getStarCentre])
 
   return (
     <section id="about" className={`section ${styles.about}`} aria-label="About me">

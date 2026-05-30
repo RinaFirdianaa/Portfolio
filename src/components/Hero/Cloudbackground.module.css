@@ -1,12 +1,15 @@
 /* ============================================================
-   CloudBackground.module.css
+   CloudBackground.module.css  (optimised)
    ============================================================ */
 
 .background {
-  position: absolute;  /* contained to hero section */
+  position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  /* ✅ FIX: Contain paint so cloud repaints don't affect rest of page */
+  contain: layout paint size;
+  isolation: isolate;
 }
 
 .sky {
@@ -21,13 +24,18 @@
   height: 120%;
   background-repeat: repeat-x;
   background-position: bottom left;
-  background-size: auto 100%;   /* ← change this, let width be natural */
+  background-size: auto 100%;
   mix-blend-mode: screen;
+  /* ✅ FIX: Promote each cloud to its own compositor layer so the browser
+     can animate transform on the GPU without repainting anything else. */
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 @keyframes cloudScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 .cloud4 {
@@ -37,7 +45,6 @@
 
 .cloud3 {
   background-image: url('/images/Cloud3.PNG');
-
   animation: cloudScroll 40s linear infinite;
 }
 
@@ -49,4 +56,17 @@
 .cloud1 {
   background-image: url('/images/Cloud1.PNG');
   animation: cloudScroll 20s linear infinite;
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  .cloudLayer {
+    animation: none;
+    width: 100%;
+    background-repeat: no-repeat;
+  }
+
+  .cloud3,
+  .cloud4 {
+    display: none;
+  }
 }

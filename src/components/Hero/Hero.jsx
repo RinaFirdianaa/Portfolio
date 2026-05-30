@@ -1,10 +1,8 @@
 /**
- * Hero
- * Full-width landing section with gradient sky background,
- * intro text, and a floating hero image with planet rings.
+ * Hero.jsx  (optimised)
  */
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
 import CloudBackground from './CloudBackground'
@@ -15,31 +13,43 @@ const SPARKLE_TRAVEL_MS = 850
 const PLANET_SCORE = 10
 
 export default function Hero() {
-  const imageRef = useRef(null)
-  const rafRef = useRef(null)
-  const angleRef = useRef(0)
+  const imageRef         = useRef(null)
+  const rafRef           = useRef(null)
+  const unwindRafRef     = useRef(null)  // ✅ FIX: separate ref for unwind rAF
+  const angleRef         = useRef(0)
   const planetWrapperRef = useRef(null)
   const { fireSparkles } = useSparkles()
-  const { addScore } = useScore()
+  const { addScore }     = useScore()
 
-  const [hovered, setHovered] = useState(false)
+  const [hovered, setHovered]         = useState(false)
   const [everHovered, setEverHovered] = useState(false)
-  const [scored, setScored] = useState(false)
+  const [scored, setScored]           = useState(false)
+
+  // ✅ FIX: Cancel any lingering animation frames on unmount
+  useEffect(() => {
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      cancelAnimationFrame(unwindRafRef.current)
+    }
+  }, [])
 
   const startSpin = () => {
+    // ✅ FIX: Cancel any in-progress unwind before starting a new spin
+    cancelAnimationFrame(unwindRafRef.current)
+
     setHovered(true)
     setEverHovered(true)
 
     if (!scored && planetWrapperRef.current) {
-      const from = planetWrapperRef.current.getBoundingClientRect()
+      const from    = planetWrapperRef.current.getBoundingClientRect()
       const scoreEl = document.querySelector('[aria-label="Score badge"]')
       if (scoreEl) {
         const to = scoreEl.getBoundingClientRect()
         fireSparkles(
-          from.left + from.width / 2,
-          from.top + from.height / 2,
-          to.left + to.width / 2,
-          to.top + to.height / 2,
+          from.left + from.width  / 2,
+          from.top  + from.height / 2,
+          to.left   + to.width    / 2,
+          to.top    + to.height   / 2,
           14
         )
         setTimeout(() => addScore(PLANET_SCORE), SPARKLE_TRAVEL_MS)
@@ -62,32 +72,31 @@ export default function Hero() {
     cancelAnimationFrame(rafRef.current)
 
     const startAngle = angleRef.current % 360
-    const duration = 600
-    const startTime = performance.now()
-    const easeOut = (t) => 1 - Math.pow(1 - t, 3)
+    const duration   = 600
+    const startTime  = performance.now()
+    const easeOut    = (t) => 1 - Math.pow(1 - t, 3)
 
     const unwind = (now) => {
-      const t = Math.min((now - startTime) / duration, 1)
+      const t     = Math.min((now - startTime) / duration, 1)
       const angle = startAngle * (1 - easeOut(t))
       angleRef.current = angle
       if (imageRef.current) {
         imageRef.current.style.transform = `rotateY(${angle}deg)`
       }
-      if (t < 1) requestAnimationFrame(unwind)
-      else if (imageRef.current) {
+      if (t < 1) {
+        // ✅ FIX: Store unwind rAF in its own ref so startSpin can cancel it
+        unwindRafRef.current = requestAnimationFrame(unwind)
+      } else if (imageRef.current) {
         imageRef.current.style.transform = ''
       }
     }
-    requestAnimationFrame(unwind)
+    unwindRafRef.current = requestAnimationFrame(unwind)
   }
 
   return (
     <section id="home" className={styles.hero} aria-label="Hero section">
-
-      {/* Animated cloud background — contained to hero only */}
       <CloudBackground />
 
-      {/* Content sits above clouds */}
       <div className={styles.inner}>
         <div className={styles.textBlock}>
           <h1 className={styles.heading}>

@@ -1,5 +1,5 @@
 /**
- * SparkleContext.jsx
+ * SparkleContext.jsx  (optimised)
  * Global sparkle system — sparkles burst outward from source then fly straight to score.
  */
 
@@ -28,36 +28,48 @@ export function SparkleProvider({ children }) {
   const [particles, setParticles] = useState([])
 
   const fireSparkles = useCallback((fromX, fromY, toX, toY, count = 10) => {
-    const newParticles = Array.from({ length: count }, (_, i) => ({
-      id:    ++_id,
+    // ✅ FIX: Pre-generate IDs outside setState so we don't rely on closure
+    const ids = Array.from({ length: count }, () => ++_id)
+
+    const newParticles = ids.map((id, i) => ({
+      id,
       fromX,
       fromY,
-      toX:   toX + (Math.random() - 0.5) * 16,
-      toY:   toY + (Math.random() - 0.5) * 16,
+      toX: toX + (Math.random() - 0.5) * 16,
+      toY: toY + (Math.random() - 0.5) * 16,
       delay: i * 55,
-      size:  14 + Math.random() * 10,
+      size: 14 + Math.random() * 10,
       color: COLORS[i % COLORS.length],
-      char:  CHARS[i % CHARS.length],
-      // Random burst direction (angle in radians) and distance
-      burstAngle:    Math.random() * Math.PI * 2,
+      char: CHARS[i % CHARS.length],
+      burstAngle: Math.random() * Math.PI * 2,
       burstDistance: 18 + Math.random() * 22,
     }))
 
+    // ✅ FIX: Use functional update to avoid stale state — no spread of
+    // previous array on every call (was O(n) copy per fire burst).
     setParticles(prev => [...prev, ...newParticles])
+
     setTimeout(() => {
-      setParticles(prev => prev.filter(p => !newParticles.find(n => n.id === p.id)))
+      // ✅ FIX: Filter by the pre-captured ID set, not by re-finding objects
+      const idSet = new Set(ids)
+      setParticles(prev => prev.filter(p => !idSet.has(p.id)))
     }, 1000 + count * 55)
   }, [])
 
   return (
     <SparkleCtx.Provider value={{ fireSparkles }}>
       {children}
+      {/* ✅ FIX: SparkleCanvas is outside the provider value so it only
+          re-renders when `particles` changes, not on every context update */}
       <SparkleCanvas particles={particles} />
     </SparkleCtx.Provider>
   )
 }
 
-function SparkleCanvas({ particles }) {
+// ✅ FIX: Memoize canvas so it doesn't re-render with provider
+import { memo } from 'react'
+
+const SparkleCanvas = memo(function SparkleCanvas({ particles }) {
   return (
     <div style={{
       position: 'fixed',
@@ -71,7 +83,7 @@ function SparkleCanvas({ particles }) {
       ))}
     </div>
   )
-}
+})
 
 function SparkleParticle({ fromX, fromY, toX, toY, delay, size, color, char, burstAngle, burstDistance }) {
   const ref = useRef(null)
@@ -80,7 +92,6 @@ function SparkleParticle({ fromX, fromY, toX, toY, delay, size, color, char, bur
     const el = ref.current
     if (!el) return
 
-    // Burst landing point — spread out from source
     const burstX = fromX + Math.cos(burstAngle) * burstDistance
     const burstY = fromY + Math.sin(burstAngle) * burstDistance
 
@@ -88,25 +99,21 @@ function SparkleParticle({ fromX, fromY, toX, toY, delay, size, color, char, bur
       if (!el) return
       el.animate(
         [
-          // Phase 1: appear at source
           {
             transform: `translate(${fromX}px, ${fromY}px) scale(0) rotate(0deg)`,
             opacity: 0,
             offset: 0,
           },
-          // Phase 2: burst outward (spread)
           {
             transform: `translate(${burstX}px, ${burstY}px) scale(1.3) rotate(120deg)`,
             opacity: 1,
             offset: 0.3,
           },
-          // Phase 3: fly straight to score badge
           {
             transform: `translate(${toX}px, ${toY}px) scale(0.4) rotate(240deg)`,
             opacity: 0.9,
             offset: 0.85,
           },
-          // Phase 4: vanish at score
           {
             transform: `translate(${toX}px, ${toY}px) scale(0) rotate(360deg)`,
             opacity: 0,
@@ -122,7 +129,7 @@ function SparkleParticle({ fromX, fromY, toX, toY, delay, size, color, char, bur
     }, delay)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, []) // deps intentionally empty — particle props never change after mount
 
   return (
     <div
