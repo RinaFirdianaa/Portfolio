@@ -95,11 +95,38 @@ export const SKILLS = [
   },
 ]
 
+/*
+  HOW TO ADD A PROJECT
+
+  Copy one object below and edit these fields:
+  - id: short unique name, lowercase with dashes
+  - title: card title
+  - category: must be 'Design', 'Game', or 'Others'
+  - summary: short text shown under the selected title
+  - description: longer text used in the popup
+  - image: main card/popup image from public/images
+  - pages: popup pages for showing your work step by step
+
+  Add as many popup pages as you need:
+  pages: [
+    {
+      title: 'Research',
+      summary: 'What this page shows.',
+      image: '/images/placeholder.png',
+    },
+    {
+      title: 'Final UI',
+      summary: 'What changed in the final design.',
+      image: '/images/placeholder.png',
+    },
+  ]
+*/
 export const PROJECTS = [
   {
     id: 'boba-time',
     title: 'Boba Time',
     category: 'Game',
+    summary: 'A neon game UI project focused on playful menu flow and player immersion.',
     description:
       'An interactive game UI project featuring vibrant neon aesthetics and intuitive in-game menus designed for maximum player immersion.',
     type: 'Game UI',
@@ -112,12 +139,29 @@ export const PROJECTS = [
     ],
     // Replace with your actual image path: '/images/projects/boba-time.jpg'
     image: '/images/placeholder.png',
-    thumbnails: [null, null, null, null],
+    pages: [
+      {
+        title: 'Overview',
+        summary: 'Main visual direction and project mood.',
+        image: '/images/placeholder.png',
+      },
+      {
+        title: 'Menu Flow',
+        summary: 'Screens and interactions for moving through the game menu.',
+        image: '/images/placeholder.png',
+      },
+      {
+        title: 'Final Look',
+        summary: 'Polished UI direction and presentation screen.',
+        image: '/images/placeholder.png',
+      },
+    ],
   },
   {
     id: 'wonderland',
     title: 'Wonderland',
     category: 'Game',
+    summary: 'A fantasy mobile game interface with whimsical visuals and accessible UX.',
     description:
       'A fantasy-themed mobile game interface that blends whimsical visual design with accessible UX patterns.',
     type: 'Game UI',
@@ -128,7 +172,18 @@ export const PROJECTS = [
       { label: 'Case Study', href: '#' },
     ],
     image: '/images/placeholder.png',
-    thumbnails: [null, null],
+    pages: [
+      {
+        title: 'Concept',
+        summary: 'Early direction for the Wonderland visual style.',
+        image: '/images/placeholder.png',
+      },
+      {
+        title: 'Interface',
+        summary: 'Game interface layout and player-facing controls.',
+        image: '/images/placeholder.png',
+      },
+    ],
   },
 ]
 
