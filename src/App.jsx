@@ -5,7 +5,6 @@ import Hero from '@/components/Hero/Hero'
 import About from '@/components/About/About'
 import Skills from '@/components/Skills/Skills'
 import Projects from '@/components/Projects/Projects'
-import Experience from '@/components/Experience/Experience'
 import Footer from '@/components/Footer/Footer'
 
 export default function App() {
@@ -29,10 +28,6 @@ export default function App() {
 
           <section id="projects">
             <Projects />
-          </section>
-
-          <section id="work">
-            <Experience />
           </section>
         </main>
 

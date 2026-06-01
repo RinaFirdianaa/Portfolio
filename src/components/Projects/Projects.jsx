@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react'
 import { PROJECTS, PROJECT_CATEGORIES } from '@/constants/data'
+import { useScore } from '@/components/Score/Scorecontext'
+import { useSparkles } from '@/components/Sparkle/SparkleContext'
+import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Projects.module.css'
 
 const VISIBLE_CARD_COUNT = 7
@@ -9,6 +12,9 @@ const PLACEHOLDER_IMAGE = '/images/placeholder.png'
 const DRAG_STEP_PX = 48
 const PLACEHOLDER_CARD_COUNT = 3
 const CLICK_SPIN_STEP_MS = 95
+const PROJECT_STAR_SCORE = 5
+const SPARKLE_TRAVEL_MS = 850
+const CARD_SETTLE_MS = 520
 
 const CATEGORY_THEMES = {
   Game: {
@@ -29,6 +35,8 @@ const CATEGORY_THEMES = {
 }
 
 export default function Projects() {
+  const { fireSparkles } = useSparkles()
+  const { addScore } = useScore()
   const baseWheelItems = PROJECT_CATEGORIES.flatMap((category) => {
     const categoryProjects = PROJECTS.filter((project) => project.category === category)
 
@@ -66,9 +74,12 @@ export default function Projects() {
   const [isInfoOpen, setIsInfoOpen] = useState(false)
   const [activeInfoPage, setActiveInfoPage] = useState(0)
   const [dragStartX, setDragStartX] = useState(null)
+  const [collectedStarIds, setCollectedStarIds] = useState(() => new Set())
   const lastDragTimeRef = useRef(0)
   const pendingSelectCardIdRef = useRef(null)
   const clickSpinTimerRef = useRef(null)
+  const sparkleRefs = useRef({})
+  const collectedStarIdsRef = useRef(new Set())
   const activeItem = wheelItems[activeItemIndex]
   const activeCategory = activeItem.category
   const activeTheme = CATEGORY_THEMES[activeCategory] ?? CATEGORY_THEMES.Game
@@ -89,6 +100,12 @@ export default function Projects() {
     }))
     .filter((item) => Math.abs(item.offset) <= RENDER_OFFSET)
     .sort((a, b) => a.offset - b.offset)
+  const [sparkleCardIds] = useState(() => new Set(
+    [...wheelItems]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map((project) => project.wheelId),
+  ))
   const selectedProject =
     visibleCards.find((project) => project.virtualId === selectedCardId) ?? activeItem
   const selectedPages = selectedProject.pages?.length
@@ -101,6 +118,41 @@ export default function Projects() {
         },
       ]
   const currentInfoPage = selectedPages[activeInfoPage] ?? selectedPages[0]
+
+  const triggerProjectSparkles = (cardId, sparkleEl) => {
+    if (collectedStarIdsRef.current.has(cardId)) {
+      return
+    }
+
+    collectedStarIdsRef.current.add(cardId)
+
+    window.setTimeout(() => {
+      const scoreEl = document.querySelector('[aria-label="Score badge"]')
+
+      if (!sparkleEl || !scoreEl) {
+        collectedStarIdsRef.current.delete(cardId)
+        setCollectedStarIds((current) => {
+          const next = new Set(current)
+          next.delete(cardId)
+          return next
+        })
+        return
+      }
+
+      const from = sparkleEl.getBoundingClientRect()
+      const to = scoreEl.getBoundingClientRect()
+
+      fireSparkles(
+        from.left + from.width / 2,
+        from.top + from.height / 2,
+        to.left + to.width / 2,
+        to.top + to.height / 2,
+        12,
+      )
+      setCollectedStarIds((current) => new Set(current).add(cardId))
+      window.setTimeout(() => addScore(PROJECT_STAR_SCORE), SPARKLE_TRAVEL_MS)
+    }, CARD_SETTLE_MS)
+  }
 
   const moveWheel = (direction) => {
     window.clearTimeout(clickSpinTimerRef.current)
@@ -148,6 +200,52 @@ export default function Projects() {
     spinStep()
   }
 
+  const jumpToCategory = (category) => {
+    window.clearTimeout(clickSpinTimerRef.current)
+
+    const categoryIndexes = wheelItems
+      .map((item, index) => (item.category === category ? index : -1))
+      .filter((index) => index >= 0)
+
+    if (!categoryIndexes.length) {
+      return
+    }
+
+    const targetOffset = categoryIndexes
+      .map((index) => {
+        const forward = (index - activeItemIndex + wheelItems.length) % wheelItems.length
+        const backward = forward - wheelItems.length
+
+        return Math.abs(forward) <= Math.abs(backward) ? forward : backward
+      })
+      .sort((a, b) => Math.abs(a) - Math.abs(b))[0]
+
+    setSelectedCardId(null)
+    setIsInfoOpen(false)
+    setActiveInfoPage(0)
+
+    if (targetOffset === 0) {
+      return
+    }
+
+    const direction = targetOffset > 0 ? 1 : -1
+    const stepCount = Math.abs(targetOffset)
+    let completedSteps = 0
+
+    const spinStep = () => {
+      completedSteps += 1
+      setActiveItemIndex((currentIndex) => (
+        (currentIndex + direction + wheelItems.length) % wheelItems.length
+      ))
+
+      if (completedSteps < stepCount) {
+        clickSpinTimerRef.current = window.setTimeout(spinStep, CLICK_SPIN_STEP_MS)
+      }
+    }
+
+    spinStep()
+  }
+
   const handleDragStart = (event) => {
     event.currentTarget.setPointerCapture(event.pointerId)
     const card = event.target.closest('[data-card-id]')
@@ -189,28 +287,23 @@ export default function Projects() {
     <section id="projects" className={styles.projects} aria-label="Projects">
       <div className={styles.header}>
         <h2 className={styles.sectionTitle}>Projects</h2>
-        <span className={styles.ptsBadge} aria-hidden="true">0 pts</span>
       </div>
 
       <div className={styles.stage}>
-        <div className={styles.categoryPicker} aria-label="Project categories">
-          <button
-            className={styles.arrowButton}
-            type="button"
-            onClick={() => moveWheel(-1)}
-            aria-label="Previous project card"
-          >
-            &lt;
-          </button>
-          <h3 className={styles.categoryTitle}>{activeCategory}</h3>
-          <button
-            className={styles.arrowButton}
-            type="button"
-            onClick={() => moveWheel(1)}
-            aria-label="Next project card"
-          >
-            &gt;
-          </button>
+        <div className={styles.categoryPicker} aria-label="Project sections">
+          {PROJECT_CATEGORIES.map((category) => (
+            <button
+              key={category}
+              className={`${styles.categoryButton} ${
+                activeCategory === category ? styles.categoryButtonActive : ''
+              }`}
+              type="button"
+              onClick={() => jumpToCategory(category)}
+              aria-pressed={activeCategory === category}
+            >
+              {category}
+            </button>
+          ))}
         </div>
 
         <div
@@ -230,6 +323,9 @@ export default function Projects() {
             const isActive = selectedCardId === project.virtualId
             const angle = offset * 4.5
             const y = depth * depth * 8
+            const hasSparkle =
+              sparkleCardIds.has(project.virtualId) &&
+              !collectedStarIds.has(project.virtualId)
 
             return (
               <button
@@ -262,6 +358,28 @@ export default function Projects() {
                 aria-label={`Select ${project.category}: ${project.title}`}
                 aria-pressed={isActive}
               >
+                {hasSparkle ? (
+                  <span
+                    className={styles.cardSparkle}
+                    ref={(node) => {
+                      if (node) {
+                        sparkleRefs.current[project.virtualId] = node
+
+                        if (offset === 0) {
+                          triggerProjectSparkles(project.virtualId, node)
+                        }
+                      } else {
+                        delete sparkleRefs.current[project.virtualId]
+                      }
+                    }}
+                  >
+                    <StarIcon
+                      size="40px"
+                      color="var(--yellow-40)"
+                      glow
+                    />
+                  </span>
+                ) : null}
                 <span className={styles.cardCornerTop} aria-hidden="true" />
                 <span className={styles.cardCornerBottom} aria-hidden="true" />
 
@@ -282,7 +400,25 @@ export default function Projects() {
 
         <div className={styles.detailIntro} aria-live="polite">
           <span className={styles.detailCategory}>{selectedProject.category}</span>
-          <h4 className={styles.detailTitle}>{selectedProject.title}</h4>
+          <div className={styles.detailTitleRow}>
+            <button
+              className={styles.detailArrow}
+              type="button"
+              onClick={() => moveWheel(-1)}
+              aria-label="Previous project"
+            >
+              &lt;
+            </button>
+            <h4 className={styles.detailTitle}>{selectedProject.title}</h4>
+            <button
+              className={styles.detailArrow}
+              type="button"
+              onClick={() => moveWheel(1)}
+              aria-label="Next project"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
 
         <aside className={styles.projectDetails} aria-label="Selected project details">
@@ -312,9 +448,9 @@ export default function Projects() {
           {selectedProject.links?.length ? (
             <div className={styles.detailLinks}>
               {selectedProject.links.map((link) => (
-                <a key={link.label} href={link.href}>
+                <span key={link.label}>
                   {link.label}
-                </a>
+                </span>
               ))}
             </div>
           ) : null}

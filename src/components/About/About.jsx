@@ -224,7 +224,11 @@ export default function About() {
                     style={{ cursor: isLocked ? 'default' : 'pointer' }}
                     aria-label={`Mark ${edu.school} as complete`}
                   >
-                    <StarIcon size="1.2rem" glow={isDone} />
+                    <StarIcon
+                      size="1.2rem"
+                      glow={isDone}
+                      color={isDone ? 'var(--yellow-40)' : 'color-mix(in srgb, var(--yellow-20) 62%, var(--purple-20))'}
+                    />
                   </button>
 
                   <div className={styles.eduInfo}>
@@ -250,7 +254,11 @@ export default function About() {
                   style={{ cursor: isLocked ? 'default' : 'pointer' }}
                   aria-label={`Star ${id}`}
                 >
-                  <StarIcon size={size} glow={isDone} />
+                  <StarIcon
+                    size={size}
+                    glow={isDone}
+                    color={isDone ? 'var(--yellow-40)' : 'color-mix(in srgb, var(--yellow-20) 62%, var(--purple-20))'}
+                  />
                 </button>
               )
             })}

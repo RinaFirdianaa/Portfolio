@@ -21,10 +21,10 @@
   bottom: 0;
   left: 0;
   width: 200%;
-  height: 120%;
+  height: 100%;
   background-repeat: repeat-x;
   background-position: bottom left;
-  background-size: auto 100%;
+  background-size: 50% auto;
   mix-blend-mode: screen;
   /* ✅ FIX: Promote each cloud to its own compositor layer so the browser
      can animate transform on the GPU without repainting anything else. */
@@ -62,6 +62,7 @@
   .cloudLayer {
     animation: none;
     width: 100%;
+    background-size: 100% auto;
     background-repeat: no-repeat;
   }
 

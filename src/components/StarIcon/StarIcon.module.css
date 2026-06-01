@@ -3,11 +3,11 @@
    ============================================================ */
 
 .star {
+  position: relative;
   display: inline-block;
   line-height: 1;
   flex-shrink: 0;
-  /* ✅ FIX: No animation by default — was running glowPulse on EVERY star
-     instance even when glow=false, burning GPU/CPU for nothing. */
+  isolation: isolate;
   will-change: auto;
 }
 
@@ -27,8 +27,36 @@
   }
 }
 
-/* ✅ Only glowing stars animate */
+@keyframes starHaloPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+  50% {
+    opacity: 0.88;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+}
+
 .glow {
   animation: glowPulse 2s ease-in-out infinite;
   will-change: filter, transform;
+}
+
+.glow::before {
+  content: '\2726';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  color: color-mix(in srgb, var(--yellow-20) 76%, transparent);
+  font-size: 1.45em;
+  line-height: 1;
+  text-shadow:
+    0 0 6px color-mix(in srgb, var(--yellow-20) 62%, transparent),
+    0 0 12px color-mix(in srgb, var(--yellow-20) 36%, transparent),
+    0 0 20px color-mix(in srgb, var(--yellow-20) 22%, transparent);
+  transform: translate(-50%, -50%) scale(0.82);
+  animation: starHaloPulse 2.4s ease-in-out infinite;
+  pointer-events: none;
 }

@@ -38,6 +38,7 @@ export default function Navbar() {
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
   const visitedRef  = useRef(new Set())
+  const initialHomeSparkleRef = useRef(false)
 
   // Stable refs so scroll/observer callbacks never go stale
   const fireSparklesRef = useRef(fireSparkles)
@@ -52,7 +53,7 @@ export default function Navbar() {
   const geoCacheRef = useRef(null)
 
   const buildGeoCache = useCallback(() => {
-    if (!navListRef.current) return
+    if (!navListRef.current) return null
     const listWidth = navListRef.current.offsetWidth
     const rightEdge = NAV_LINKS.map(({ href }) => {
       const id   = href.replace('#', '')
@@ -64,7 +65,9 @@ export default function Navbar() {
       const item = navItemRefs.current[id]
       return item ? item.offsetLeft + item.offsetWidth / 2 : 0
     })
-    geoCacheRef.current = { listWidth, rightEdge, centre }
+    const cache = { listWidth, rightEdge, centre }
+    geoCacheRef.current = cache
+    return cache
   }, [])
 
   // Build cache after first paint and on resize
@@ -84,10 +87,12 @@ export default function Navbar() {
 
   const buildSectionOffsets = useCallback(() => {
     const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))
-    sectionOffsetsRef.current = sectionIds.map((id) => {
+    const offsets = sectionIds.map((id) => {
       const el = document.getElementById(id)
       return el ? el.offsetTop : 0
     })
+    sectionOffsetsRef.current = offsets
+    return offsets
   }, [])
 
   useEffect(() => {
@@ -119,6 +124,31 @@ export default function Navbar() {
     })
   }, [])
 
+  const getFillForScroll = useCallback((geo, offsets) => {
+    const scrollY    = window.scrollY
+    const vh         = window.innerHeight
+    const docHeight  = document.documentElement.scrollHeight
+
+    if (vh + scrollY >= docHeight - 10) {
+      return geo.listWidth
+    }
+
+    const threshold = vh * 0.4
+    for (let i = offsets.length - 1; i >= 0; i--) {
+      const top = offsets[i] - threshold
+      if (scrollY >= top) {
+        const nextTop   = i + 1 < offsets.length ? offsets[i + 1] - threshold : docHeight
+        const segPct    = Math.min((scrollY - top) / (nextTop - top), 1)
+        const curRight  = geo.rightEdge[i]
+        const nextRight = i + 1 < geo.rightEdge.length ? geo.rightEdge[i + 1] : geo.listWidth
+        const fill      = curRight + segPct * (nextRight - curRight)
+        return Math.max(fill, geo.rightEdge[0])
+      }
+    }
+
+    return geo.rightEdge[0]
+  }, [])
+
   // ─── Scroll handler ───────────────────────────────────────────────────────
   useEffect(() => {
     let rafScheduled = false
@@ -133,55 +163,25 @@ export default function Navbar() {
         const offsets  = sectionOffsetsRef.current
         if (!geo || offsets.length === 0) return
 
-        const scrollY    = window.scrollY
-        const vh         = window.innerHeight
-        const docHeight  = document.documentElement.scrollHeight
-
-        // Clamp to end when scrolled to bottom
-        if (vh + scrollY >= docHeight - 10) {
-          applyFill(geo.listWidth)
-          return
-        }
-
-        const threshold = vh * 0.4
-        for (let i = offsets.length - 1; i >= 0; i--) {
-          const top = offsets[i] - threshold
-          if (scrollY >= top) {
-            const nextTop   = i + 1 < offsets.length ? offsets[i + 1] - threshold : docHeight
-            const segPct    = Math.min((scrollY - top) / (nextTop - top), 1)
-            const curRight  = geo.rightEdge[i]
-            const nextRight = i + 1 < geo.rightEdge.length ? geo.rightEdge[i + 1] : geo.listWidth
-            const fill      = curRight + segPct * (nextRight - curRight)
-            applyFill(Math.max(fill, geo.rightEdge[0]))
-            return
-          }
-        }
-
-        applyFill(geo.rightEdge[0])
+        applyFill(getFillForScroll(geo, offsets))
       })
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [applyFill])
+  }, [applyFill, getFillForScroll])
 
   // ─── Entrance: apply initial fill without scroll event ───────────────────
   useEffect(() => {
     const t = setTimeout(() => {
-      const offsets  = sectionOffsetsRef.current
-      const geo      = geoCacheRef.current
+      const geo      = buildGeoCache() || geoCacheRef.current
+      const offsets  = buildSectionOffsets() || sectionOffsetsRef.current
       if (!geo || offsets.length === 0) return
 
-      const scrollY    = window.scrollY
-      const threshold  = window.innerHeight * 0.4
-      let activeIdx    = 0
-      for (let i = offsets.length - 1; i >= 0; i--) {
-        if (scrollY >= offsets[i] - threshold) { activeIdx = i; break }
-      }
-      applyFill(geo.rightEdge[activeIdx])
-    }, 100)
+      applyFill(getFillForScroll(geo, offsets))
+    }, 120)
     return () => clearTimeout(t)
-  }, [applyFill])
+  }, [applyFill, buildGeoCache, buildSectionOffsets, getFillForScroll])
 
   // ─── IntersectionObserver: section + sparkles (rare, React state ok) ──────
   const shootSparkles = useCallback((sectionId) => {
@@ -199,6 +199,23 @@ export default function Navbar() {
     )
     setTimeout(() => addScoreRef.current(SCORE_PER_SECTION), SPARKLE_TRAVEL_MS)
   }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (initialHomeSparkleRef.current || window.scrollY > 8) return
+      if (!navItemRefs.current.home || !scoreRef.current) return
+
+      initialHomeSparkleRef.current = true
+      visitedRef.current.add('home')
+      setVisitedSections(prev => new Set([...prev, 'home']))
+      setActiveSection('home')
+      shootSparkles('home')
+      setGlowingSection('home')
+      setTimeout(() => setGlowingSection(null), 800)
+    }, 180)
+
+    return () => clearTimeout(t)
+  }, [shootSparkles])
 
   useEffect(() => {
     const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''))

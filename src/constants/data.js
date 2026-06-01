@@ -9,7 +9,6 @@ export const NAV_LINKS = [
   { label: 'About',    href: '#about' },
   { label: 'Skills',   href: '#skills' },
   { label: 'Projects', href: '#projects' },
-  { label: 'Work',     href: '#work' },
 ]
 
 export const EDUCATION = [
@@ -36,19 +35,27 @@ export const EDUCATION = [
   },
 ]
 
+/*
+  HOW TO ADD SKILLS
+
+  Each section below has an items list. You can add either:
+  - Text bubble:  { label: 'React' }
+  - Image bubble: { label: 'Figma', image: '/images/placeholder.png' }
+
+  The more bubbles you add to one section, the smaller the bubbles become
+  automatically so they fit better inside the box.
+*/
 export const SKILLS = [
   {
     id: 'code',
     icon: '</>',
     label: 'Code',
-    bgColor: 'var(--color-skill-yellow-bg)',
-    borderColor: 'var(--color-skill-yellow-br)',
     items: [
-      'HTML5 & CSS3',
-      'JavaScript (ES6+)',
-      'React',
-      'Python',
-      'C# (Unity)',
+      { label: 'HTML5 & CSS3' },
+      { label: 'JavaScript' },
+      { label: 'React' },
+      { label: 'Python' },
+      { label: 'C#' },
     ],
   },
   {
@@ -58,11 +65,11 @@ export const SKILLS = [
     bgColor: 'var(--color-skill-pink-bg)',
     borderColor: 'var(--color-skill-pink-br)',
     items: [
-      'UI/UX Design',
-      'Wireframing & Prototyping',
-      'User Research',
-      'Human-Computer Interaction',
-      'Game UI / HUDs',
+      { label: 'UI/UX' },
+      { label: 'Wireframes' },
+      { label: 'Prototypes' },
+      { label: 'Research' },
+      { label: 'Game UI' },
     ],
   },
   {
@@ -72,11 +79,11 @@ export const SKILLS = [
     bgColor: 'var(--color-skill-yellow-bg)',
     borderColor: 'var(--color-skill-yellow-br)',
     items: [
-      'Figma',
-      'Adobe XD',
-      'Photoshop',
-      'Illustrator',
-      'Unity',
+      { label: 'Figma', image: '/images/placeholder.png' },
+      { label: 'Adobe XD', image: '/images/placeholder.png' },
+      { label: 'Photoshop', image: '/images/placeholder.png' },
+      { label: 'Illustrator', image: '/images/placeholder.png' },
+      { label: 'Unity', image: '/images/placeholder.png' },
     ],
   },
   {
@@ -86,11 +93,11 @@ export const SKILLS = [
     bgColor: 'var(--color-skill-pink-bg)',
     borderColor: 'var(--color-skill-pink-br)',
     items: [
-      'Communication',
-      'Team Collaboration',
-      'Problem Solving',
-      'Time Management',
-      'Adaptability',
+      { label: 'Communication' },
+      { label: 'Teamwork' },
+      { label: 'Problem Solving' },
+      { label: 'Time Management' },
+      { label: 'Adaptability' },
     ],
   },
 ]

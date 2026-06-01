@@ -51,7 +51,6 @@
 /* --- Education card --- */
 .educationCard {
   position: relative;
-  padding-top: var(--space-2xl);
 }
 
 /* --- Constellation SVG --- */
@@ -82,6 +81,7 @@
 .cardSubtitle {
   position: relative;
   z-index: 1;
+  margin-bottom: var(--space-lg);
   font: var(--font-gamemedium);
   color: var(--purple-40);
   letter-spacing: 0.5px;
@@ -118,19 +118,73 @@
   padding: 0;
   flex-shrink: 0;
   margin-top: 2px;
-  opacity: 0.4;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0.86;
+  transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
   position: relative;
   z-index: 1;
+  filter:
+    drop-shadow(0 0 7px color-mix(in srgb, var(--yellow-20) 72%, transparent))
+    drop-shadow(0 0 14px color-mix(in srgb, var(--yellow-20) 42%, transparent));
+}
+
+.starBtn::after {
+  content: '\2726';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: color-mix(in srgb, var(--yellow-20) 72%, transparent);
+  font-size: 2.35rem;
+  line-height: 1;
+  text-shadow:
+    0 0 8px color-mix(in srgb, var(--yellow-20) 62%, transparent),
+    0 0 18px color-mix(in srgb, var(--yellow-20) 42%, transparent),
+    0 0 28px color-mix(in srgb, var(--yellow-20) 26%, transparent);
+  box-shadow:
+    none;
+  opacity: 0.82;
+  transform: translate(-50%, -50%) scale(0.92);
+  animation: mutedStarPulse 2.4s ease-in-out infinite;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .starBtn:hover {
-  opacity: 0.8;
-  transform: scale(1.2);
+  opacity: 1;
+  transform: scale(1.22);
+  filter:
+    drop-shadow(0 0 10px color-mix(in srgb, var(--yellow-20) 82%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--yellow-20) 48%, transparent));
+}
+
+.starBtn:hover::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08);
 }
 
 .starDone {
   opacity: 1;
+  filter: drop-shadow(0 0 8px var(--yellow-20));
+}
+
+.starDone::after {
+  color: rgba(255, 214, 103, 0.46);
+  opacity: 0.85;
+  animation: none;
+  text-shadow:
+    0 0 8px rgba(255, 214, 103, 0.54),
+    0 0 18px rgba(255, 214, 103, 0.3);
+}
+
+@keyframes mutedStarPulse {
+  0%, 100% {
+    opacity: 0.62;
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  50% {
+    opacity: 0.98;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
 }
 
 /* --- Edu info --- */

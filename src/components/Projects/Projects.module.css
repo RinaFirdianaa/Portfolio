@@ -34,34 +34,50 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(28px, 6vw, 64px);
+  gap: clamp(18px, 4vw, 46px);
 }
 
-.categoryTitle {
-  min-width: 190px;
+.categoryButton {
+  position: relative;
+  min-height: 34px;
+  padding: 0 4px;
   text-align: center;
-  font: 600 clamp(28px, 3.5vw, 36px)/1.1 var(--font-body);
-  color: #111111;
-}
-
-.arrowButton {
-  width: 36px;
-  height: 36px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 50%;
-  color: #111111;
-  font: 600 18px/1 var(--font-game);
+  font: 600 clamp(20px, 2.6vw, 28px)/1.1 var(--font-body);
+  color: var(--color-text-muted);
   transition:
-    background var(--transition-fast),
     color var(--transition-fast),
     transform var(--transition-fast);
 }
 
-.arrowButton:hover {
-  background: var(--pink-10);
-  color: var(--pink-80);
+.categoryButton::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--pink-60);
+  transform: translateX(-50%);
+  transition: width var(--transition-fast);
+}
+
+.categoryButton:hover {
+  color: var(--pink-70);
   transform: translateY(-1px);
+}
+
+.categoryButton:focus-visible {
+  outline: 2px solid rgba(214, 126, 169, 0.42);
+  outline-offset: 6px;
+}
+
+.categoryButtonActive {
+  color: var(--pink-60);
+}
+
+.categoryButtonActive::after {
+  width: 100%;
 }
 
 .cardArc {
@@ -70,15 +86,16 @@
   --card-spread: calc(var(--card-width) * 1.08);
   --wheel-radius: clamp(1280px, 112vw, 1720px);
   position: relative;
-  min-height: calc(var(--card-height) + 92px);
+  min-height: calc(var(--card-height) + 124px);
+  padding-top: 28px;
   margin-inline: calc(var(--section-px) * -2);
   overflow: hidden;
   mask-image:
-    linear-gradient(180deg, #000 0%, #000 50%, rgba(0, 0, 0, 0.72) 78%, transparent 100%),
+    linear-gradient(180deg, #000 0%, #000 100%),
     linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.76) 8%, #000 17%, #000 83%, rgba(0, 0, 0, 0.76) 92%, transparent 100%);
   mask-composite: intersect;
   -webkit-mask-image:
-    linear-gradient(180deg, #000 0%, #000 50%, rgba(0, 0, 0, 0.72) 78%, transparent 100%),
+    linear-gradient(180deg, #000 0%, #000 100%),
     linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.76) 8%, #000 17%, #000 83%, rgba(0, 0, 0, 0.76) 92%, transparent 100%);
   -webkit-mask-composite: source-in;
   cursor: grab;
@@ -170,7 +187,7 @@
 .projectCardActive {
   transform:
     translateX(calc(var(--card-offset) * var(--card-spread)))
-    translateY(calc(var(--card-y) - 26px))
+    translateY(var(--card-y))
     rotate(var(--card-angle));
   box-shadow:
     0 22px 40px var(--card-shadow, rgba(61, 92, 145, 0.28)),
@@ -182,12 +199,21 @@
 .projectCardActive:hover {
   transform:
     translateX(calc(var(--card-offset) * var(--card-spread)))
-    translateY(calc(var(--card-y) - 26px))
+    translateY(var(--card-y))
     rotate(var(--card-angle));
   box-shadow:
     0 22px 40px var(--card-shadow, rgba(61, 92, 145, 0.28)),
     inset 0 0 0 2px rgba(255, 255, 255, 0.78);
   filter: saturate(1.08);
+}
+
+.cardSparkle {
+  position: absolute;
+  top: -22px;
+  right: -20px;
+  z-index: 4;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(83, 65, 120, 0.2));
 }
 
 .cardCornerTop,
@@ -308,8 +334,38 @@
 }
 
 .detailTitle {
+  width: clamp(220px, 32vw, 360px);
   font: 700 clamp(24px, 3vw, 32px)/1.1 var(--font-title);
   color: var(--pink-60);
+  text-align: center;
+}
+
+.detailTitleRow {
+  display: grid;
+  grid-template-columns: 30px clamp(220px, 32vw, 360px) 30px;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 32px);
+}
+
+.detailArrow {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #111111;
+  font: 700 16px/1 var(--font-game);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.detailArrow:hover {
+  background: var(--pink-10);
+  color: var(--pink-80);
+  transform: translateY(-1px);
 }
 
 .projectDetails {
@@ -356,26 +412,17 @@
   margin-top: 14px;
 }
 
-.detailLinks a {
+.detailLinks span {
   min-height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 14px;
-  border: 1px solid rgba(214, 126, 169, 0.34);
+  border: 1px solid rgba(214, 126, 169, 0.22);
   border-radius: var(--radius-pill);
-  font: 600 13px/1 var(--font-body);
-  color: var(--pink-70);
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.detailLinks a:hover {
-  background: var(--pink-10);
-  border-color: rgba(214, 126, 169, 0.58);
-  transform: translateY(-1px);
+  font: 500 13px/1 var(--font-body);
+  color: var(--color-text-muted);
+  background: transparent;
 }
 
 .moreInfoButton {
@@ -555,9 +602,8 @@
     gap: 12px;
   }
 
-  .categoryTitle {
-    min-width: 150px;
-    font-size: 30px;
+  .categoryButton {
+    font-size: 20px;
   }
 
   .cardArc {

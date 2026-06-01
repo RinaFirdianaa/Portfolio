@@ -5,6 +5,8 @@
 .hero {
   height: 618px;
   position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
   min-height: 420px;
   display: flex;
    background: linear-gradient(
@@ -24,7 +26,8 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 100%;
+  max-width: var(--site-max-width);
+  margin-inline: auto;
   padding: var(--space-2xl) clamp(var(--space-2xl), 6vw, var(--space-4xl));
 }
 
