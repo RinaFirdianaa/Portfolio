@@ -55,6 +55,7 @@
   /* Paragraph styles */
   --font-p0: 400 clamp(20px, 4vw, 20px)/1.2 var(--font-body);
   --font-p1: 400 clamp(16px, 2vw, 18px)/1.4 var(--font-body);
+  --font-p2: 400 14px/1.4 var(--font-body);
   --font-p: 400 16px/1.5 var(--font-body);
 
   --font-gamebig: clamp(20px, 4vw, 24px)/1.2 var(--font-game);

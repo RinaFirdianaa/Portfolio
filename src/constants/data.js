@@ -42,8 +42,9 @@ export const EDUCATION = [
   - Text bubble:  { label: 'React' }
   - Image bubble: { label: 'Figma', image: '/images/placeholder.png' }
 
-  The more bubbles you add to one section, the smaller the bubbles become
-  automatically so they fit better inside the box.
+  A section with 5 bubbles starts each bubble at 100px. Every extra bubble
+  makes the starting size 10px smaller, and merged bubbles grow by 30px for
+  every extra skill inside them.
 */
 export const SKILLS = [
   {

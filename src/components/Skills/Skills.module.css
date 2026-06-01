@@ -31,49 +31,46 @@
   color: var(--color-text-light);
 }
 
-/* --- Card Grid --- */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 42px 48px;
-}
-
-.card {
+.universe {
   position: relative;
-  border: 1px solid var(--skill-card-border);
   border-radius: 8px;
-  padding: 8px;
-  min-height: 340px;
+  min-height: 620px;
   overflow: hidden;
-  background: var(--skill-card-bg);
+  background: transparent;
 }
 
-.cardTitle {
-  font: var(--font-h4);
-  font-weight: 600;
-  color: var(--purple-60);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 8px 10px;
+.backgroundLabels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
-.cardIcon {
-  font-size: 0.9rem;
+.backgroundTitle {
+  position: absolute;
+  translate: -50% -50%;
+  rotate: 0deg;
+  font: var(--font-h3);
+  color: color-mix(in srgb, var(--skill-accent) 36%, transparent);
+  opacity: 1;
+  white-space: nowrap;
+  user-select: none;
 }
 
 /* --- Skill Bubbles --- */
 .bubbleStage {
   position: relative;
-  height: 280px;
-  border: 1px dashed var(--skill-card-border);
+  height: 540px;
+  margin: 40px clamp(92px, 10vw, 144px);
+  border: 0;
   border-radius: 8px;
   overflow: hidden;
   touch-action: none;
-  background: rgba(255, 255, 255, 0.22);
+  background: transparent;
   color: transparent;
   font-size: 0;
   line-height: 0;
+  z-index: 1;
 }
 
 .bubble {
@@ -94,7 +91,8 @@
     radial-gradient(8% 8% at 25% 25%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
     radial-gradient(8% 8% at 26% 24%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
     radial-gradient(8% 8% at 27% 23%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
-    radial-gradient(8% 8% at 28% 22%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%);
+    radial-gradient(8% 8% at 28% 22%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(circle at 42% 36%, hsl(var(--skill-bubble-hue), 90%, 82%, 0.22), hsl(var(--skill-bubble-hue), 78%, 58%, 0.12) 62%, hsl(var(--skill-bubble-hue), 70%, 44%, 0.08) 100%);
   box-shadow:
     0 -0.06em 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
     0 -0.15em 0.4em hsl(var(--skill-bubble-hue), 90%, 45%) inset,
@@ -119,7 +117,7 @@
   will-change: transform;
   appearance: none;
   -webkit-appearance: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 .bubble::before,
@@ -139,7 +137,7 @@
   height: 1.5em;
   border-radius: 0.75em;
   box-shadow: 0 0 0 0.5em hsl(0, 0%, 100%) inset;
-  filter: drop-shadow(0.6em 0.6em 4px hsl(var(--skill-bubble-hue), 55%, 32%, 0.1));
+  filter: drop-shadow(0.6em 0.6em 4px hsl(var(--skill-bubble-hue), 78%, 42%, 0.22));
   transform: translate3d(-50%, -50%, -1px);
   z-index: -1;
 }
@@ -150,41 +148,66 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(100% 100% at center, hsl(var(--skill-bubble-hue), 55%, 32%, 0) 35%, hsl(var(--skill-bubble-hue), 55%, 32%, 0.1) 48%, hsl(var(--skill-bubble-hue), 55%, 32%, 0) 50%);
+  background: radial-gradient(100% 100% at center, hsl(var(--skill-bubble-hue), 78%, 42%, 0) 35%, hsl(var(--skill-bubble-hue), 78%, 42%, 0.22) 48%, hsl(var(--skill-bubble-hue), 78%, 42%, 0) 50%);
   filter: blur(4px);
   transform: translate3d(0, 0, -1px);
   z-index: -2;
 }
 
-.bubbleImage {
+.bubbleImageGrid {
   position: absolute;
+  inset: 20%;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  align-items: center;
+  justify-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.bubble[data-image-count='1'] .bubbleImageGrid {
+  grid-template-columns: 1fr;
   inset: 24%;
-  width: 52%;
-  height: 52%;
+}
+
+.bubbleImage {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: contain;
   border-radius: 50%;
   opacity: 0.9;
-  z-index: 1;
-}
-
-.bubbleText {
-  position: absolute;
-  inset: 12px;
-  z-index: 1;
-  width: auto;
-  height: auto;
   pointer-events: none;
-  opacity: 1;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.bubbleText text {
-  fill: color-mix(in srgb, var(--skill-accent) 82%, var(--purple-60));
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+.bubbleLabelGrid {
+  position: absolute;
+  inset: 22%;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  align-items: center;
+  justify-items: center;
+  gap: 8px;
+  pointer-events: none;
 }
 
-.bubble[data-has-image='true'] .bubbleText {
+.bubbleLabelItem {
+  max-width: 100%;
+  color: color-mix(in srgb, var(--skill-accent) 82%, var(--purple-60));
+  font: var(--font-p2);
+  font-weight: 400;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.bubble[data-has-image='true'] .bubbleLabelGrid {
   display: none;
 }
 
@@ -196,7 +219,7 @@
 
 .bubble:hover::before,
 .bubble:focus-visible::before {
-  filter: drop-shadow(0.75em 0.75em 4px hsl(var(--skill-bubble-hue), 55%, 32%, 0.1));
+  filter: drop-shadow(0.75em 0.75em 4px hsl(var(--skill-bubble-hue), 78%, 42%, 0.22));
 }
 
 .bubble:hover::after,
@@ -207,6 +230,24 @@
 .bubble:active {
   cursor: grabbing;
   z-index: 3;
+}
+
+.bubble[data-merge-target='true'] {
+  border-color: color-mix(in srgb, var(--skill-accent) 18%, white);
+  box-shadow:
+    0 -0.06em 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    0 -0.15em 0.4em hsl(var(--skill-bubble-hue), 90%, 45%) inset,
+    0 0.05em 0.05em hsl(var(--skill-bubble-hue), 90%, 45%) inset,
+    0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    -0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    0 0.1em 0.4em hsl(var(--skill-bubble-hue), 90%, 60%) inset,
+    0 0 0 4px color-mix(in srgb, var(--skill-accent) 12%, transparent),
+    0 0 16px color-mix(in srgb, var(--skill-accent) 10%, transparent);
+}
+
+.bubble[data-complete='true'] {
+  animation-name: bubbleCompleteFloat;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes bubbleFloat {
@@ -221,6 +262,24 @@
   }
   75% {
     translate: calc(var(--bubble-drift, 1) * 3%) 0;
+  }
+}
+
+@keyframes bubbleCompleteFloat {
+  from, to {
+    translate: 0 0;
+  }
+  20% {
+    translate: 3% -2%;
+  }
+  45% {
+    translate: 1% 3%;
+  }
+  70% {
+    translate: -3% 1%;
+  }
+  90% {
+    translate: -1% -3%;
   }
 }
 
@@ -239,7 +298,7 @@
 
   .bubble:hover::before,
   .bubble:focus-visible::before {
-    filter: drop-shadow(0.6em 0.6em 4px hsl(var(--skill-bubble-hue), 55%, 32%, 0.1));
+    filter: drop-shadow(0.6em 0.6em 4px hsl(var(--skill-bubble-hue), 78%, 42%, 0.22));
   }
 
   .bubble:hover::after,
@@ -250,11 +309,16 @@
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
-  .grid {
-    grid-template-columns: 1fr;
+  .universe {
+    min-height: 540px;
   }
 
-  .card {
-    min-height: 280px;
+  .bubbleStage {
+    height: 460px;
+    margin: 40px 44px;
+  }
+
+  .backgroundTitle {
+    font: var(--font-h3);
   }
 }
