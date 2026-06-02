@@ -74,13 +74,13 @@
   --space-4xl: 100px;
 
   /* Layout */
-  --site-max-width: 1440px;
-  --max-width:    960px;
-  --section-px:   40px;
-  --radius-sm:    8px;
-  --radius-md:    12px;
-  --radius-lg:    16px;
-  --radius-pill:  999px;
+  --site-max-width:   1440px;
+  --max-width:        960px;
+  --section-px:       40px;
+  --radius-sm:        8px;
+  --radius-md:        12px;
+  --radius-lg:        16px;
+  --radius-pill:      999px;
 
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(200, 100, 180, 0.08);

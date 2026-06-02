@@ -22,12 +22,12 @@ export default function App() {
             <About />
           </section>
 
-          <section id="skills">
-            <Skills />
-          </section>
-
           <section id="projects">
             <Projects />
+          </section>
+
+          <section id="skills">
+            <Skills />
           </section>
         </main>
 

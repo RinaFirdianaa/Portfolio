@@ -227,6 +227,7 @@ export default function About() {
                     <StarIcon
                       size="1.2rem"
                       glow={isDone}
+                      className={styles.educationStarIcon}
                       color={isDone ? 'var(--yellow-40)' : 'color-mix(in srgb, var(--yellow-20) 62%, var(--purple-20))'}
                     />
                   </button>
@@ -257,6 +258,7 @@ export default function About() {
                   <StarIcon
                     size={size}
                     glow={isDone}
+                    className={styles.educationStarIcon}
                     color={isDone ? 'var(--yellow-40)' : 'color-mix(in srgb, var(--yellow-20) 62%, var(--purple-20))'}
                   />
                 </button>

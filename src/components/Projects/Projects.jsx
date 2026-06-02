@@ -15,22 +15,36 @@ const CLICK_SPIN_STEP_MS = 95
 const PROJECT_STAR_SCORE = 5
 const SPARKLE_TRAVEL_MS = 850
 const CARD_SETTLE_MS = 520
+const CARD_FRAMES = {
+  Game: '/images/card_game.png',
+  Design: '/images/card_design.png',
+  Others: '/images/card_others.png',
+}
 
 const CATEGORY_THEMES = {
   Game: {
     '--card-start': 'rgba(182, 211, 250, 0.96)',
     '--card-end': 'rgba(106, 143, 196, 0.98)',
-    '--card-shadow': 'rgba(61, 92, 145, 0.18)',
+    '--card-shadow': 'rgba(126, 93, 181, 0.22)',
+    '--category-accent': 'var(--blue-60)',
+    '--category-accent-dark': 'var(--blue-80)',
+    '--category-accent-soft': 'var(--blue-20)',
   },
   Design: {
     '--card-start': 'rgba(252, 197, 221, 0.96)',
     '--card-end': 'rgba(214, 126, 169, 0.98)',
-    '--card-shadow': 'rgba(155, 74, 104, 0.18)',
+    '--card-shadow': 'rgba(126, 93, 181, 0.22)',
+    '--category-accent': 'var(--pink-60)',
+    '--category-accent-dark': 'var(--pink-80)',
+    '--category-accent-soft': 'var(--pink-10)',
   },
   Others: {
     '--card-start': 'rgba(215, 198, 255, 0.96)',
     '--card-end': 'rgba(126, 93, 181, 0.98)',
-    '--card-shadow': 'rgba(89, 66, 143, 0.18)',
+    '--card-shadow': 'rgba(126, 93, 181, 0.22)',
+    '--category-accent': 'var(--purple-40)',
+    '--category-accent-dark': 'var(--purple-60)',
+    '--category-accent-soft': 'var(--purple-10)',
   },
 }
 
@@ -286,10 +300,13 @@ export default function Projects() {
   return (
     <section id="projects" className={styles.projects} aria-label="Projects">
       <div className={styles.header}>
-        <h2 className={styles.sectionTitle}>Projects</h2>
+        <div>
+          <h2 className={styles.sectionTitle}>Projects</h2>
+          <p className={styles.sectionSubtitle}>Find the stars on the cards</p>
+        </div>
       </div>
 
-      <div className={styles.stage}>
+      <div className={styles.stage} style={activeTheme}>
         <div className={styles.categoryPicker} aria-label="Project sections">
           {PROJECT_CATEGORIES.map((category) => (
             <button
@@ -297,6 +314,7 @@ export default function Projects() {
               className={`${styles.categoryButton} ${
                 activeCategory === category ? styles.categoryButtonActive : ''
               }`}
+              style={CATEGORY_THEMES[category] ?? CATEGORY_THEMES.Game}
               type="button"
               onClick={() => jumpToCategory(category)}
               aria-pressed={activeCategory === category}
@@ -308,7 +326,6 @@ export default function Projects() {
 
         <div
           className={styles.cardArc}
-          style={activeTheme}
           role="list"
           aria-label="Project card wheel"
           onPointerDown={handleDragStart}
@@ -326,6 +343,7 @@ export default function Projects() {
             const hasSparkle =
               sparkleCardIds.has(project.virtualId) &&
               !collectedStarIds.has(project.virtualId)
+            const cardFrame = CARD_FRAMES[project.category] ?? CARD_FRAMES.Game
 
             return (
               <button
@@ -374,17 +392,15 @@ export default function Projects() {
                     }}
                   >
                     <StarIcon
-                      size="40px"
+                      size="24px"
                       color="var(--yellow-40)"
                       glow
                     />
                   </span>
                 ) : null}
-                <span className={styles.cardCornerTop} aria-hidden="true" />
-                <span className={styles.cardCornerBottom} aria-hidden="true" />
-
-                <span className={styles.cardImageWrap}>
-                  <img src={project.image} alt="" className={styles.cardImage} />
+                <span className={styles.cardVisual} aria-hidden="true">
+                  <img src={project.image} alt="" className={styles.cardProjectImage} />
+                  <img src={cardFrame} alt="" className={styles.cardFrame} />
                 </span>
 
                 <span className={styles.cardTitle}>

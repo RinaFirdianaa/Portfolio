@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-md);
 }
 
 .avatar {
@@ -50,6 +50,7 @@
 
 /* --- Education card --- */
 .educationCard {
+  
   position: relative;
 }
 
@@ -75,7 +76,6 @@
   z-index: 1;
   font: var(--font-h2);
   color: var(--pink-60);
-  margin-bottom: 4px;
 }
 
 .cardSubtitle {
@@ -106,8 +106,8 @@
 .eduItem {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding-block: 16px;
+  gap:var(--space-md);
+  padding-block: var(--space-md);
 }
 
 /* --- Star button --- */
@@ -174,6 +174,24 @@
   text-shadow:
     0 0 8px rgba(255, 214, 103, 0.54),
     0 0 18px rgba(255, 214, 103, 0.3);
+}
+
+.educationStarIcon {
+  --star-glow-wide-color: var(--pink-20);
+  --star-glow-soft: 2px;
+  --star-glow-mid: 4px;
+  --star-glow-peak-soft: 5px;
+  --star-glow-peak-mid: 10px;
+  --star-glow-peak-wide: 14px;
+  --star-glow-scale-min: 0.94;
+  --star-glow-scale-max: 1.08;
+  --star-halo-size: 1.18em;
+  --star-halo-soft: 3px;
+  --star-halo-mid: 7px;
+  --star-halo-wide: 10px;
+  --star-halo-scale: 0.72;
+  --star-halo-pulse-min: 0.68;
+  --star-halo-pulse-max: 0.84;
 }
 
 @keyframes mutedStarPulse {

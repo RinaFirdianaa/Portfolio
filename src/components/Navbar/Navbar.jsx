@@ -20,6 +20,7 @@ import styles from './Navbar.module.css'
 
 const SCORE_PER_SECTION = 10
 const SPARKLE_TRAVEL_MS = 850
+const TOTAL_SCORE = 100
 
 export default function Navbar() {
   const scrolled            = useScrolled()
@@ -31,6 +32,9 @@ export default function Navbar() {
   const [visitedSections, setVisitedSections] = useState(new Set())
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
+  const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
+  const [showCongrats, setShowCongrats] = useState(false)
+  const hasShownCongratsRef = useRef(false)
 
   // ─── Refs ─────────────────────────────────────────────────────────────────
   const navListRef  = useRef(null)
@@ -266,6 +270,12 @@ export default function Navbar() {
     return () => cancelAnimationFrame(raf)
   }, [score])
 
+  useEffect(() => {
+    if (hasShownCongratsRef.current || score < TOTAL_SCORE) return
+    hasShownCongratsRef.current = true
+    setShowCongrats(true)
+  }, [score])
+
   // ─── Derived render values (React state only, not scroll-driven) ──────────
   const total           = NAV_LINKS.length
   const activeIndex     = NAV_LINKS.findIndex((l) => l.href.replace('#', '') === activeSection)
@@ -282,18 +292,34 @@ export default function Navbar() {
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
 
-        <div ref={scoreRef} className={styles.scoreBadge} aria-label="Score badge">
-          <StarIcon
-            size="2.5rem"
-            glow={scoreGlowing}
-            className={`${styles.scoreIcon} ${scoreGlowing ? styles.scoreIconGlow : ''}`}
-          />
-          <div className={styles.scoreText}>
-            <span className={styles.scoreLabel}>Score</span>
-            <span className={`${styles.scoreValue} ${scoreGlowing ? styles.scoreValueGlow : ''}`}>
-              {displayScore}
+        <div className={styles.scoreWrap}>
+          <button
+            ref={scoreRef}
+            type="button"
+            className={styles.scoreBadge}
+            aria-label="Score badge"
+            aria-expanded={isScorePopupOpen}
+            onClick={() => setIsScorePopupOpen((open) => !open)}
+          >
+            <StarIcon
+              size="2.5rem"
+              glow={scoreGlowing}
+              className={`${styles.scoreIcon} ${scoreGlowing ? styles.scoreIconGlow : ''}`}
+            />
+            <span className={styles.scoreText}>
+              <span className={styles.scoreLabel}>Points</span>
+              <span className={`${styles.scoreValue} ${scoreGlowing ? styles.scoreValueGlow : ''}`}>
+                {displayScore}
+              </span>
             </span>
-          </div>
+          </button>
+
+          {isScorePopupOpen ? (
+            <div className={styles.scorePopup} role="status">
+              <span className={styles.scorePopupLabel}>Current score</span>
+              <span className={styles.scorePopupValue}>{displayScore} / {TOTAL_SCORE}</span>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -310,6 +336,7 @@ export default function Navbar() {
             const sectionId = href.replace('#', '')
             const isActive  = activeSection === sectionId
             const isGlowing = glowingSection === sectionId
+            const isVisited = visitedSections.has(sectionId)
 
             return (
               <li
@@ -331,9 +358,9 @@ export default function Navbar() {
                   {label}
                   <StarIcon
                     size="0.75rem"
-                    glow={isGlowing}
+                    glow={isGlowing || !isVisited}
                     className={styles.navStar}
-                    style={{ opacity: visitedSections.has(sectionId) ? 0 : 1 }}
+                    style={{ opacity: isVisited && !isGlowing ? 0 : 1 }}
                   />
                 </a>
               </li>
@@ -341,6 +368,23 @@ export default function Navbar() {
           })}
         </ul>
       </nav>
+
+      {showCongrats ? (
+        <div className={styles.congratsOverlay} role="presentation">
+          <div className={styles.congratsPopup} role="dialog" aria-modal="true" aria-labelledby="score-complete-title">
+            <StarIcon size="2rem" color="var(--yellow-40)" glow />
+            <h2 id="score-complete-title" className={styles.congratsTitle}>Congratulations!</h2>
+            <p className={styles.congratsText}>You earned {TOTAL_SCORE} / {TOTAL_SCORE} points.</p>
+            <button
+              type="button"
+              className={styles.congratsButton}
+              onClick={() => setShowCongrats(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ) : null}
     </header>
   )
 }

@@ -10,7 +10,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
 }
 
 .sectionTitle {
@@ -19,10 +18,14 @@
 }
 
 .subtitle {
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  color: var(--color-primary);
+  font: var(--font-gamemedium);
+  color: var(--purple-20);
   margin-top: 4px;
+}
+
+.subtitleDone {
+  color: var(--yellow-40);
+  filter: drop-shadow(0 0 6px var(--yellow-40));
 }
 
 .ptsBadge {
@@ -32,6 +35,8 @@
 }
 
 .universe {
+  --bubble-side-gutter: clamp(64px, 7vw, 92px);
+  margin-top:16px;
   position: relative;
   border-radius: 8px;
   min-height: 620px;
@@ -40,29 +45,38 @@
 }
 
 .backgroundLabels {
+  padding:0px;
   position: absolute;
-  inset: 0;
+  inset: 60px 0;
   pointer-events: none;
   z-index: 2;
 }
 
 .backgroundTitle {
   position: absolute;
-  translate: -50% -50%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  translate: var(--label-translate, -50% -50%);
   rotate: 0deg;
   font: var(--font-h3);
+  line-height: 1;
   color: color-mix(in srgb, var(--skill-accent) 36%, transparent);
   opacity: 1;
   white-space: nowrap;
   user-select: none;
 }
 
+.titleSparkle {
+  color: var(--yellow-20);
+}
+
 /* --- Skill Bubbles --- */
 .bubbleStage {
   position: relative;
-  height: 540px;
-  margin: 40px clamp(92px, 10vw, 144px);
-  border: 0;
+  height: 500px;
+  margin: 60px var(--bubble-side-gutter);
   border-radius: 8px;
   overflow: hidden;
   touch-action: none;
@@ -232,8 +246,12 @@
   z-index: 3;
 }
 
+.bubble[data-dragging='true'] {
+  animation: none;
+}
+
 .bubble[data-merge-target='true'] {
-  border-color: color-mix(in srgb, var(--skill-accent) 18%, white);
+  border-color: hsl(var(--skill-bubble-hue), 52%, 58%);
   box-shadow:
     0 -0.06em 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
     0 -0.15em 0.4em hsl(var(--skill-bubble-hue), 90%, 45%) inset,
@@ -241,8 +259,8 @@
     0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
     -0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
     0 0.1em 0.4em hsl(var(--skill-bubble-hue), 90%, 60%) inset,
-    0 0 0 4px color-mix(in srgb, var(--skill-accent) 12%, transparent),
-    0 0 16px color-mix(in srgb, var(--skill-accent) 10%, transparent);
+    0 0 0 4px hsl(var(--skill-bubble-hue), 52%, 58%, 0.2),
+    0 0 16px hsl(var(--skill-bubble-hue), 52%, 58%, 0.24);
 }
 
 .bubble[data-complete='true'] {
@@ -310,15 +328,20 @@
 /* --- Responsive --- */
 @media (max-width: 600px) {
   .universe {
+    --bubble-side-gutter: 44px;
     min-height: 540px;
   }
 
   .bubbleStage {
-    height: 460px;
-    margin: 40px 44px;
+    height: 440px;
+    margin: 50px var(--bubble-side-gutter);
   }
 
   .backgroundTitle {
     font: var(--font-h3);
+  }
+
+  .backgroundLabels {
+    inset: 50px 0;
   }
 }

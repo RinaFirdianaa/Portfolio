@@ -5,21 +5,24 @@
 
 import { useRef, useState } from 'react'
 import { SKILLS } from '@/constants/data'
+import { useScore } from '@/components/Score/Scorecontext'
+import { useSparkles } from '@/components/Sparkle/SparkleContext'
+import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Skills.module.css'
 
 const START_POSITIONS = [
-  { x: 8, y: 12 },
-  { x: 36, y: 8 },
-  { x: 62, y: 18 },
-  { x: 18, y: 54 },
-  { x: 52, y: 58 },
+  { x: 4, y: 8 },
+  { x: 34, y: 0 },
+  { x: 72, y: 14 },
+  { x: 12, y: 68 },
+  { x: 62, y: 72 },
 ]
 
 const SECTION_ZONES = [
-  { x: 2, y: 8, width: 42, height: 34 },
-  { x: 56, y: 8, width: 42, height: 34 },
-  { x: 2, y: 58, width: 42, height: 34 },
-  { x: 56, y: 58, width: 42, height: 34 },
+  { x: 0, y: 1, width: 42, height: 34 },
+  { x: 62, y: 1, width: 38, height: 34 },
+  { x: 0, y: 50, width: 42, height: 34 },
+  { x: 62, y: 50, width: 38, height: 34 },
 ]
 
 const SKILL_THEMES = {
@@ -65,6 +68,9 @@ const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 const BUBBLE_BASE_SIZE = 100
 const BUBBLE_MERGE_INCREMENT = 30
 const BUBBLE_SIZE_STEP_DOWN = 10
+const BUBBLE_EDGE_BUFFER = 12
+const SKILL_STAR_SCORE = 5
+const SPARKLE_TRAVEL_MS = 850
 const normalizeSkillItem = (item) => (
   typeof item === 'string'
     ? { label: item }
@@ -93,15 +99,25 @@ const getBubbleSizePx = (sectionCount, labels) => (
   getBaseBubbleSize(sectionCount) + (labels.length - 1) * BUBBLE_MERGE_INCREMENT
 )
 const getBubbleSize = (sectionCount, labels) => `${getBubbleSizePx(sectionCount, labels)}px`
+const clampBubbleToStage = (value, maxValue) => (
+  clamp(value, BUBBLE_EDGE_BUFFER, Math.max(BUBBLE_EDGE_BUFFER, maxValue - BUBBLE_EDGE_BUFFER))
+)
 
 export default function Skills() {
+  const { fireSparkles } = useSparkles()
+  const { addScore } = useScore()
   const stageRef = useRef(null)
   const bubbleRefs = useRef({})
+  const titleSparkleRefs = useRef({})
   const activeBubbleRef = useRef(null)
   const bubblePositionsRef = useRef({})
+  const collectedSkillStarIdsRef = useRef(new Set())
   const [bubblePositions, setBubblePositions] = useState({})
   const [skillGroups, setSkillGroups] = useState(makeSkillGroups)
   const [mergeTargetId, setMergeTargetId] = useState(null)
+  const [collectedSkillStarIds, setCollectedSkillStarIds] = useState(() => new Set())
+  const [draggingBubbleId, setDraggingBubbleId] = useState(null)
+  const isSkillsCompleted = collectedSkillStarIds.size >= SKILLS.length
 
   const getSectionZone = (skillId) => SECTION_ZONES[SKILLS.findIndex((skill) => skill.id === skillId)] || SECTION_ZONES[0]
 
@@ -119,9 +135,16 @@ export default function Skills() {
     if (!stage) return
 
     const stageRect = stage.getBoundingClientRect()
-    const bubbleRect = event.currentTarget.getBoundingClientRect()
-    const x = clamp(event.clientX - stageRect.left - bubbleRect.width / 2, 0, stageRect.width - bubbleRect.width)
-    const y = clamp(event.clientY - stageRect.top - bubbleRect.height / 2, 0, stageRect.height - bubbleRect.height)
+    const bubbleWidth = event.currentTarget.offsetWidth
+    const bubbleHeight = event.currentTarget.offsetHeight
+    const x = clampBubbleToStage(
+      event.clientX - stageRect.left - bubbleWidth / 2,
+      stageRect.width - bubbleWidth
+    )
+    const y = clampBubbleToStage(
+      event.clientY - stageRect.top - bubbleHeight / 2,
+      stageRect.height - bubbleHeight
+    )
 
     bubblePositionsRef.current[bubbleId] = { x, y }
     event.currentTarget.style.left = '0px'
@@ -154,7 +177,41 @@ export default function Skills() {
     })
   }
 
+  const triggerSkillSparkles = (skillId) => {
+    if (collectedSkillStarIdsRef.current.has(skillId)) return
+
+    const sparkleEl = titleSparkleRefs.current[skillId]
+    const scoreEl = document.querySelector('[aria-label="Score badge"]')
+    if (!sparkleEl || !scoreEl) return
+
+    collectedSkillStarIdsRef.current.add(skillId)
+    setCollectedSkillStarIds((current) => new Set(current).add(skillId))
+
+    const from = sparkleEl.getBoundingClientRect()
+    const to = scoreEl.getBoundingClientRect()
+
+    fireSparkles(
+      from.left + from.width / 2,
+      from.top + from.height / 2,
+      to.left + to.width / 2,
+      to.top + to.height / 2,
+      12
+    )
+    window.setTimeout(() => addScore(SKILL_STAR_SCORE), SPARKLE_TRAVEL_MS)
+  }
+
   const mergeBubbles = (skillId, sourceId, targetId) => {
+    const skill = SKILLS.find((item) => item.id === skillId)
+    const currentGroups = skillGroups[skillId] || []
+    const currentSource = currentGroups.find((group) => group.id === sourceId)
+    const currentTarget = currentGroups.find((group) => group.id === targetId)
+    const willCompleteSection = Boolean(
+      skill &&
+      currentSource &&
+      currentTarget &&
+      currentSource.labels.length + currentTarget.labels.length >= skill.items.length
+    )
+
     setSkillGroups((current) => {
       const groups = current[skillId] || []
       const source = groups.find((group) => group.id === sourceId)
@@ -184,8 +241,8 @@ export default function Skills() {
             zoneRect.height - 16
           )
           bubblePositionsRef.current[targetId] = {
-            x: clamp(zoneRect.x + (zoneRect.width - finalSize) / 2, 0, stageRect.width - finalSize),
-            y: clamp(zoneRect.y + (zoneRect.height - finalSize) / 2, 0, stageRect.height - finalSize),
+            x: clampBubbleToStage(zoneRect.x + (zoneRect.width - finalSize) / 2, stageRect.width - finalSize),
+            y: clampBubbleToStage(zoneRect.y + (zoneRect.height - finalSize) / 2, stageRect.height - finalSize),
           }
         }
       }
@@ -197,6 +254,10 @@ export default function Skills() {
           .map((group) => (group.id === targetId ? merged : group)),
       }
     })
+
+    if (willCompleteSection) {
+      window.setTimeout(() => triggerSkillSparkles(skillId), 80)
+    }
 
     delete bubblePositionsRef.current[sourceId]
     setBubblePositions((current) => {
@@ -211,6 +272,7 @@ export default function Skills() {
 
   const handlePointerDown = (skillId, bubbleId, event) => {
     activeBubbleRef.current = { skillId, bubbleId }
+    setDraggingBubbleId(bubbleId)
     setMergeTargetId(null)
     event.currentTarget.setPointerCapture(event.pointerId)
     updateBubblePosition(skillId, bubbleId, event)
@@ -225,6 +287,7 @@ export default function Skills() {
   const handlePointerUp = (event) => {
     const activeBubble = activeBubbleRef.current
     activeBubbleRef.current = null
+    setDraggingBubbleId(null)
     setMergeTargetId(null)
 
     if (activeBubble) {
@@ -248,7 +311,9 @@ export default function Skills() {
       <div className={styles.header}>
         <div>
           <h2 className={styles.sectionTitle}>What I bring to the table</h2>
-          <p className={styles.subtitle}>Complete the puzzle</p>
+          <p className={`${styles.subtitle} ${isSkillsCompleted ? styles.subtitleDone : ''}`}>
+            {isSkillsCompleted ? 'Completed!' : 'Merge the bubbles according to the colors'}
+          </p>
         </div>
       </div>
 
@@ -257,6 +322,7 @@ export default function Skills() {
           {SKILLS.map((skill, index) => {
             const zone = getSectionZone(skill.id)
             const isLeftSide = index % 2 === 0
+            const labelTop = `${zone.y + zone.height / 2}%`
             return (
               <span
                 key={skill.id}
@@ -264,11 +330,36 @@ export default function Skills() {
                 style={{
                   ...SKILL_THEMES[skill.id],
                   '--label-rotate': isLeftSide ? '-90deg' : '90deg',
-                  left: isLeftSide ? '4%' : '96%',
-                  top: `${zone.y + zone.height / 2}%`,
+                  '--label-translate': isLeftSide ? '0 -50%' : '-100% -50%',
+                  left: isLeftSide ? '0%' : '100%',
+                  top: labelTop,
                 }}
               >
-                {skill.label}
+                {skill.id === 'soft' ? (
+                  <>
+                    Soft
+                    <br />
+                    Skills
+                  </>
+                ) : skill.label}
+                {!collectedSkillStarIds.has(skill.id) ? (
+                  <span
+                    className={styles.titleSparkle}
+                    ref={(node) => {
+                      if (node) {
+                        titleSparkleRefs.current[skill.id] = node
+                      } else {
+                        delete titleSparkleRefs.current[skill.id]
+                      }
+                    }}
+                  >
+                    <StarIcon
+                      size="14px"
+                      color="var(--yellow-20)"
+                      glow
+                    />
+                  </span>
+                ) : null}
               </span>
             )
           })}
@@ -331,6 +422,7 @@ export default function Skills() {
                   data-label-count={group.labels.length}
                   data-complete={isCompleteBubble ? 'true' : 'false'}
                   data-merge-target={mergeTargetId === group.id ? 'true' : 'false'}
+                  data-dragging={draggingBubbleId === group.id ? 'true' : 'false'}
                 >
                   {group.images.length > 0 ? (
                     <span className={styles.bubbleImageGrid} aria-hidden="true">

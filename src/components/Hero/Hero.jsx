@@ -10,7 +10,7 @@ import styles from './Hero.module.css'
 import StarIcon from '@/components/StarIcon/StarIcon'
 
 const SPARKLE_TRAVEL_MS = 850
-const PLANET_SCORE = 10
+const PLANET_SCORE = 5
 
 export default function Hero() {
   const imageRef         = useRef(null)
@@ -124,7 +124,7 @@ export default function Hero() {
             onMouseLeave={stopSpin}
           >
             <svg
-              className={`${styles.orbitText} ${hovered ? styles.orbitTextSpin : ''}`}
+              className={styles.orbitText}
               viewBox="0 0 200 200"
               aria-hidden="true"
             >
@@ -139,24 +139,28 @@ export default function Hero() {
                   {hovered ? (
                     'weeee!'
                   ) : everHovered ? (
-                    'hover me'
+                    <>
+                      <tspan>hover me </tspan>
+                      <tspan className={styles.orbitStar}>✦</tspan>
+                    </>
                   ) : (
                     <>
                       <tspan>hover me </tspan>
-                      <tspan fill="var(--yellow-40)">✦</tspan>
+                      <tspan className={styles.orbitStar}>✦</tspan>
                     </>
                   )}
                 </textPath>
               </text>
             </svg>
 
-            <img src="/images/rings.png" alt="" className={styles.rings} />
+            <span className={`${styles.cssRings} ${styles.ringBack}`} aria-hidden="true" />
             <img
               ref={imageRef}
               src="/images/hero.png"
               alt="Rina"
               className={styles.heroImage}
             />
+            <span className={`${styles.cssRings} ${styles.ringFront}`} aria-hidden="true" />
           </div>
         </div>
       </div>

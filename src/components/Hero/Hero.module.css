@@ -9,17 +9,17 @@
   margin-left: calc(50% - 50vw);
   min-height: 420px;
   display: flex;
-   background: linear-gradient(
+  background: linear-gradient(
     180deg,
     #5061b1 0%,
     #9c7ae5 100%
-  );
-  align-items: flex-start;
-  overflow: hidden;
-}
-
-/* --- Inner layout --- */
-.inner {
+    );
+    align-items: flex-start;
+    overflow: hidden;
+  }
+  
+  /* --- Inner layout --- */
+  .inner {
   position: relative;
   z-index: 1;
   display: flex;
@@ -101,11 +101,6 @@
   animation: fadeUp 0.85s ease 0.35s both;
 }
 
-.ctaButton:hover {
-  background: rgba(255, 255, 255, 0.34);
-  transform: translateY(-1px);
-}
-
 /* --- Illustration block --- */
 .illustrationBlock {
   padding: 0;
@@ -155,6 +150,27 @@
   letter-spacing: 3px;
 }
 
+@keyframes orbitStarGlow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 2px var(--yellow-20))
+      drop-shadow(0 0 4px var(--yellow-20));
+    opacity: 0.86;
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 5px var(--yellow-40))
+      drop-shadow(0 0 10px var(--yellow-20))
+      drop-shadow(0 0 14px var(--yellow-20));
+    opacity: 1;
+  }
+}
+
+.orbitStar {
+  fill: var(--yellow-40);
+  animation: orbitStarGlow 2s ease-in-out infinite;
+}
+
 /* --- Hero image --- */
 .heroImage {
   display: block;
@@ -168,17 +184,40 @@
   will-change: transform;
 }
 
-/* --- Rings --- */
-.rings {
+.cssRings {
   position: absolute;
-  width: 130%;
-  max-width: none;
-  height: auto;
-  top: 54%;
+  width: 100%;
+  aspect-ratio: 1 / 0.34;
+  top: 63%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(-10deg);
   pointer-events: none;
   z-index: 2;
+  border: 8px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+}
+
+.ringBack {
+  z-index: 0;
+}
+
+.ringFront {
+  z-index: 2;
+  clip-path: inset(52% 0 0 0);
+}
+
+.cssRings::before,
+.cssRings::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 3px solid rgba(213, 188, 245, 0.58);
+}
+
+.cssRings::after {
+  inset: 15px;
+  border-color: rgba(255, 233, 191, 0.38);
 }
 
 .hint{
@@ -218,7 +257,7 @@
     width: clamp(180px, 55vw, 280px);
   }
 
-  .rings {
+  .cssRings {
     width: 400px;
   }
 }
