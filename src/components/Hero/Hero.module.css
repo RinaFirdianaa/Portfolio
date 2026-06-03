@@ -131,8 +131,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(0deg);
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 3;
+}
+
+.orbitHitArea {
+  fill: transparent;
+  pointer-events: all;
 }
 
 @keyframes orbitSpin {
@@ -169,6 +174,13 @@
 .orbitStar {
   fill: var(--yellow-40);
   animation: orbitStarGlow 2s ease-in-out infinite;
+}
+
+.planetWrapper:hover .orbitStar,
+.orbitText:hover .orbitStar {
+  opacity: 0;
+  visibility: hidden;
+  animation: none;
 }
 
 /* --- Hero image --- */

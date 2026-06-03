@@ -115,10 +115,10 @@ export default function Projects() {
     .filter((item) => Math.abs(item.offset) <= RENDER_OFFSET)
     .sort((a, b) => a.offset - b.offset)
   const [sparkleCardIds] = useState(() => new Set(
-    [...wheelItems]
+    [...baseWheelItems]
       .sort(() => Math.random() - 0.5)
       .slice(0, 3)
-      .map((project) => project.wheelId),
+      .map((project) => project.id),
   ))
   const selectedProject =
     visibleCards.find((project) => project.virtualId === selectedCardId) ?? activeItem
@@ -341,8 +341,8 @@ export default function Projects() {
             const angle = offset * 4.5
             const y = depth * depth * 8
             const hasSparkle =
-              sparkleCardIds.has(project.virtualId) &&
-              !collectedStarIds.has(project.virtualId)
+              sparkleCardIds.has(project.id) &&
+              !collectedStarIds.has(project.id)
             const cardFrame = CARD_FRAMES[project.category] ?? CARD_FRAMES.Game
 
             return (
@@ -384,7 +384,7 @@ export default function Projects() {
                         sparkleRefs.current[project.virtualId] = node
 
                         if (offset === 0) {
-                          triggerProjectSparkles(project.virtualId, node)
+                          triggerProjectSparkles(project.id, node)
                         }
                       } else {
                         delete sparkleRefs.current[project.virtualId]

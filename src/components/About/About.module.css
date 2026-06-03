@@ -4,6 +4,7 @@
 
 .about {
   padding: 16px clamp(var(--space-2xl), 6vw, var(--space-4xl));
+  padding-block: 60px !important;
 }
 
 .grid {

@@ -2,7 +2,7 @@
  * Hero.jsx  (optimised)
  */
 
-import { useRef, useState, useEffect } from 'react'
+import { Fragment, useRef, useState, useEffect } from 'react'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
 import CloudBackground from './CloudBackground'
@@ -17,6 +17,8 @@ export default function Hero() {
   const rafRef           = useRef(null)
   const unwindRafRef     = useRef(null)  // ✅ FIX: separate ref for unwind rAF
   const angleRef         = useRef(0)
+  const isSpinningRef    = useRef(false)
+  const scoredRef        = useRef(false)
   const planetWrapperRef = useRef(null)
   const { fireSparkles } = useSparkles()
   const { addScore }     = useScore()
@@ -30,6 +32,7 @@ export default function Hero() {
     return () => {
       cancelAnimationFrame(rafRef.current)
       cancelAnimationFrame(unwindRafRef.current)
+      isSpinningRef.current = false
     }
   }, [])
 
@@ -40,7 +43,8 @@ export default function Hero() {
     setHovered(true)
     setEverHovered(true)
 
-    if (!scored && planetWrapperRef.current) {
+    if (!scoredRef.current && planetWrapperRef.current) {
+      scoredRef.current = true
       const from    = planetWrapperRef.current.getBoundingClientRect()
       const scoreEl = document.querySelector('[aria-label="Score badge"]')
       if (scoreEl) {
@@ -54,21 +58,32 @@ export default function Hero() {
         )
         setTimeout(() => addScore(PLANET_SCORE), SPARKLE_TRAVEL_MS)
         setScored(true)
+      } else {
+        scoredRef.current = false
       }
     }
+
+    if (isSpinningRef.current) {
+      return
+    }
+
+    isSpinningRef.current = true
 
     const loop = () => {
       angleRef.current = (angleRef.current + 3) % 360
       if (imageRef.current) {
         imageRef.current.style.transform = `rotateY(${angleRef.current}deg)`
       }
-      rafRef.current = requestAnimationFrame(loop)
+      if (isSpinningRef.current) {
+        rafRef.current = requestAnimationFrame(loop)
+      }
     }
     rafRef.current = requestAnimationFrame(loop)
   }
 
   const stopSpin = () => {
     setHovered(false)
+    isSpinningRef.current = false
     cancelAnimationFrame(rafRef.current)
 
     const startAngle = angleRef.current % 360
@@ -127,7 +142,10 @@ export default function Hero() {
               className={styles.orbitText}
               viewBox="0 0 200 200"
               aria-hidden="true"
+              onMouseEnter={startSpin}
+              onMouseLeave={stopSpin}
             >
+              <rect className={styles.orbitHitArea} width="200" height="200" />
               <defs>
                 <path
                   id="orbitCircle"
@@ -137,17 +155,19 @@ export default function Hero() {
               <text className={styles.orbitLabel}>
                 <textPath href="#orbitCircle" startOffset="0%">
                   {hovered ? (
-                    'weeee!'
+                    <tspan key="weeee">weeee!</tspan>
+                  ) : scored ? (
+                    <tspan key="collected">hover me</tspan>
                   ) : everHovered ? (
-                    <>
+                    <Fragment key="hover-again">
                       <tspan>hover me </tspan>
                       <tspan className={styles.orbitStar}>✦</tspan>
-                    </>
+                    </Fragment>
                   ) : (
-                    <>
+                    <Fragment key="hover-start">
                       <tspan>hover me </tspan>
                       <tspan className={styles.orbitStar}>✦</tspan>
-                    </>
+                    </Fragment>
                   )}
                 </textPath>
               </text>

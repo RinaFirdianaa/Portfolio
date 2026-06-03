@@ -48,11 +48,55 @@
   align-items: center;
   gap: var(--space-xs);
   border: 0;
-  padding: 0;
+  padding: 4px 8px;
   background: transparent;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font: inherit;
   color: inherit;
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.scoreBadge:hover {
+  background: transparent;
+}
+
+.scoreBadge:hover .scoreIcon {
+  color: var(--yellow-40);
+  transform: scale(1.14) rotate(14deg);
+  filter:
+    drop-shadow(0 0 6px rgba(255, 202, 112, 0.72))
+    drop-shadow(0 0 12px rgba(255, 202, 112, 0.46))
+    drop-shadow(0 0 18px rgba(255, 202, 112, 0.28));
+}
+
+.scoreBadge:hover .scoreLabel,
+.scoreBadge:hover .scoreValue {
+  color: var(--yellow-40);
+}
+
+.scoreBadgeOpen {
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.scoreBadgeOpen .scoreIcon {
+  color: var(--yellow-40);
+  transform: scale(1.14) rotate(14deg);
+  -webkit-text-stroke: 1px var(--yellow-40);
+  paint-order: stroke fill;
+  filter:
+    drop-shadow(0 0 5px rgba(255, 202, 112, 0.72))
+    drop-shadow(0 0 10px rgba(255, 202, 112, 0.42));
+}
+
+.scoreBadgeOpen .scoreLabel,
+.scoreBadgeOpen .scoreValue {
+  color: var(--yellow-40);
 }
 
 .scoreText {
@@ -81,78 +125,10 @@
     color 0.5s ease;
 }
 
-.scorePopup {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 3;
-  min-width: 148px;
-  padding: 10px 12px;
-  border: 1px solid var(--purple-20);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 8px 24px rgba(168, 127, 219, 0.2);
-  text-align: right;
-}
-
-.scorePopupLabel {
-  display: block;
-  font: var(--font-gamesmall);
-  color: var(--purple-20);
-  margin-bottom: 4px;
-}
-
-.scorePopupValue {
-  display: block;
-  font: var(--font-gamemedium);
-  color: var(--purple-60);
-}
-
-.congratsOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  padding: var(--space-lg);
-  background: rgba(101, 111, 190, 0.18);
-}
-
-.congratsPopup {
-  width: min(360px, 100%);
-  padding: 24px;
-  border: 1px solid var(--purple-20);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 18px 48px rgba(168, 127, 219, 0.28);
-  text-align: center;
-}
-
-.congratsTitle {
-  font: var(--font-h3);
-  color: var(--pink-60);
-  margin-top: 8px;
-}
-
-.congratsText {
-  font: var(--font-gamemedium);
-  color: var(--purple-60);
-  margin-top: 8px;
-}
-
-.congratsButton {
-  margin-top: 16px;
-  padding: 8px 16px;
-  border: 1px solid var(--purple-20);
-  border-radius: var(--radius-pill);
-  background: var(--purple-10);
-  color: var(--purple-60);
-  font: var(--font-gamemedium);
-  cursor: pointer;
-}
-
 /* Score icon — transitions always on */
 .scoreIcon {
+  color: var(--yellow-40);
+  filter: none;
   transition:
     transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
     filter 0.6s ease;

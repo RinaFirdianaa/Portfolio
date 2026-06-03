@@ -1,0 +1,113 @@
+.popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 3;
+  min-width: 150px;
+  padding: 16px 22px;
+  border: 1px solid var(--purple-20);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(168, 127, 219, 0.2);
+  text-align: center;
+}
+
+.completed {
+  min-width: 240px;
+  text-align: center;
+}
+
+.completeStar {
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.completeTitle {
+  display: block;
+  margin-bottom: 6px;
+  font: 600 12px/1.2 var(--font-game);
+  color: var(--pink-60);
+}
+
+.completeText {
+  display: block;
+  margin-bottom: 8px;
+  font: 400 9px/1.4 var(--font-game);
+  color: var(--purple-60);
+}
+
+.surpriseText {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font: 400 9px/1.4 var(--font-game);
+  color: var(--purple-60);
+}
+
+.surpriseButton {
+  margin: 0;
+  padding: 8px 60px;
+  border: 1px solid rgba(126, 93, 181, 0.22);
+  border-radius: var(--radius-pill);
+  font: 600 12px/1 var(--font-body);
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--pink-60), var(--purple-40));
+  box-shadow: 0 4px 8px rgba(155, 37, 170, 0.24);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.surpriseButton:hover {
+  box-shadow: 0 4px 12px rgba(155, 37, 170, 0.24);
+  transform: translateY(-1px);
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font: 400 10px/1.2 var(--font-game);
+  text-align: center;
+  color: var(--purple-60);
+}
+
+.value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 4px;
+  color: var(--pink-60);
+}
+
+.currentScore {
+  font: var(--font-gamebig);
+}
+
+.totalScore {
+  font: 600 14px/1 var(--font-game);
+  color: rgba(61, 60, 62, 0.32);
+}
+
+.completed .label {
+  margin-bottom: 8px;
+  font: 400 10px/1.2 var(--font-game);
+  color: var(--purple-20);
+}
+
+.completed .value {
+  justify-content: center;
+  margin-bottom: 4px;
+  color: var(--pink-60);
+}
+
+.completed .currentScore {
+  font: var(--font-gamebig);
+}
+
+.completed .totalScore {
+  font: 600 14px/1 var(--font-game);
+  color: rgba(61, 60, 62, 0.32);
+}

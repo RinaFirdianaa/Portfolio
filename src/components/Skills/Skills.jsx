@@ -32,7 +32,7 @@ const SKILL_THEMES = {
     '--skill-bubble-start': 'rgba(255, 233, 191, 0.96)',
     '--skill-bubble-end': 'rgba(255, 202, 112, 0.62)',
     '--skill-bubble-shadow': 'rgba(169, 128, 57, 0.22)',
-    '--skill-accent': 'var(--yellow-80)',
+    '--skill-accent': 'var(--yellow-60)',
     '--skill-bubble-hue': '38',
   },
   design: {
@@ -41,7 +41,7 @@ const SKILL_THEMES = {
     '--skill-bubble-start': 'rgba(253, 195, 217, 0.96)',
     '--skill-bubble-end': 'rgba(252, 165, 197, 0.64)',
     '--skill-bubble-shadow': 'rgba(215, 113, 150, 0.2)',
-    '--skill-accent': 'var(--pink-80)',
+    '--skill-accent': 'var(--pink-60)',
     '--skill-bubble-hue': '336',
   },
   tools: {
@@ -50,7 +50,7 @@ const SKILL_THEMES = {
     '--skill-bubble-start': 'rgba(213, 188, 245, 0.96)',
     '--skill-bubble-end': 'rgba(168, 127, 219, 0.62)',
     '--skill-bubble-shadow': 'rgba(168, 127, 219, 0.22)',
-    '--skill-accent': 'var(--purple-60)',
+    '--skill-accent': 'var(--purple-40)',
     '--skill-bubble-hue': '265',
   },
   soft: {
@@ -59,7 +59,7 @@ const SKILL_THEMES = {
     '--skill-bubble-start': 'rgba(213, 232, 255, 0.96)',
     '--skill-bubble-end': 'rgba(117, 165, 223, 0.6)',
     '--skill-bubble-shadow': 'rgba(117, 165, 223, 0.22)',
-    '--skill-accent': 'var(--blue-100)',
+    '--skill-accent': 'var(--blue-60)',
     '--skill-bubble-hue': '210',
   },
 }
@@ -322,7 +322,8 @@ export default function Skills() {
           {SKILLS.map((skill, index) => {
             const zone = getSectionZone(skill.id)
             const isLeftSide = index % 2 === 0
-            const labelTop = `${zone.y + zone.height / 2}%`
+            const labelYOffset = skill.id === 'tools' || skill.id === 'soft' ? 15 : 0
+            const labelTop = `${zone.y + zone.height / 2 + labelYOffset}%`
             return (
               <span
                 key={skill.id}
@@ -355,7 +356,7 @@ export default function Skills() {
                   >
                     <StarIcon
                       size="14px"
-                      color="var(--yellow-20)"
+                      color="var(--yellow-40)"
                       glow
                     />
                   </span>

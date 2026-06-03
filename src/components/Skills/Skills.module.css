@@ -3,10 +3,12 @@
    ============================================================ */
 
 .skills {
-  padding: 16px clamp(var(--space-2xl), 6vw, var(--space-4xl));
+  padding: 0px clamp(var(--space-2xl), 6vw, var(--space-4xl));
+  padding-block: 60px !important;
 }
 
 .header {
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -20,7 +22,6 @@
 .subtitle {
   font: var(--font-gamemedium);
   color: var(--purple-20);
-  margin-top: 4px;
 }
 
 .subtitleDone {
@@ -32,20 +33,20 @@
   font-family: var(--font-body);
   font-size: var(--text-xs);
   color: var(--color-text-light);
+  margin-top: 4px;
 }
 
 .universe {
   --bubble-side-gutter: clamp(64px, 7vw, 92px);
-  margin-top:16px;
   position: relative;
   border-radius: 8px;
-  min-height: 620px;
+  min-height: fit-content;
   overflow: hidden;
   background: transparent;
 }
 
 .backgroundLabels {
-  padding:0px;
+  padding: 0px;
   position: absolute;
   inset: 60px 0;
   pointer-events: none;
@@ -60,9 +61,9 @@
   gap: 4px;
   translate: var(--label-translate, -50% -50%);
   rotate: 0deg;
-  font: var(--font-h3);
+  font: 700 clamp(22px, 3vw, 24px)/1.2 var(--font-body);
   line-height: 1;
-  color: color-mix(in srgb, var(--skill-accent) 36%, transparent);
+  color: var(--skill-accent);
   opacity: 1;
   white-space: nowrap;
   user-select: none;
@@ -76,7 +77,7 @@
 .bubbleStage {
   position: relative;
   height: 500px;
-  margin: 60px var(--bubble-side-gutter);
+  margin: 0px var(--bubble-side-gutter);
   border-radius: 8px;
   overflow: hidden;
   touch-action: none;
@@ -269,39 +270,51 @@
 }
 
 @keyframes bubbleFloat {
-  from, to {
+
+  from,
+  to {
     translate: 0 3%;
   }
+
   25% {
     translate: calc(var(--bubble-drift, 1) * -3%) 0;
   }
+
   50% {
     translate: 0 -3%;
   }
+
   75% {
     translate: calc(var(--bubble-drift, 1) * 3%) 0;
   }
 }
 
 @keyframes bubbleCompleteFloat {
-  from, to {
+
+  from,
+  to {
     translate: 0 0;
   }
+
   20% {
     translate: 3% -2%;
   }
+
   45% {
     translate: 1% 3%;
   }
+
   70% {
     translate: -3% 1%;
   }
+
   90% {
     translate: -1% -3%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .bubble,
   .bubble::before,
   .bubble::after {
@@ -338,7 +351,7 @@
   }
 
   .backgroundTitle {
-    font: var(--font-h3);
+    font: 700 clamp(22px, 3vw, 24px)/1.2 var(--font-body);
   }
 
   .backgroundLabels {

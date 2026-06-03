@@ -15,6 +15,7 @@ import { useScrolled } from '@/hooks/useScrolled'
 import { NAV_LINKS } from '@/constants/data'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
+import ScorePopup from '@/components/ScorePopup/ScorePopup'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Navbar.module.css'
 
@@ -33,22 +34,34 @@ export default function Navbar() {
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
-  const [showCongrats, setShowCongrats] = useState(false)
-  const hasShownCongratsRef = useRef(false)
 
   // ─── Refs ─────────────────────────────────────────────────────────────────
   const navListRef  = useRef(null)
+  const scoreWrapRef = useRef(null)
   const scoreRef    = useRef(null)
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
   const visitedRef  = useRef(new Set())
   const initialHomeSparkleRef = useRef(false)
+  const hasOpenedCompleteScoreRef = useRef(false)
 
   // Stable refs so scroll/observer callbacks never go stale
   const fireSparklesRef = useRef(fireSparkles)
   const addScoreRef     = useRef(addScore)
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
+
+  useEffect(() => {
+    if (!isScorePopupOpen) return undefined
+
+    const handleOutsidePointerDown = (event) => {
+      if (scoreWrapRef.current?.contains(event.target)) return
+      setIsScorePopupOpen(false)
+    }
+
+    document.addEventListener('pointerdown', handleOutsidePointerDown)
+    return () => document.removeEventListener('pointerdown', handleOutsidePointerDown)
+  }, [isScorePopupOpen])
 
   // ─── Cached geometry ──────────────────────────────────────────────────────
   // rightEdge[i] = px from left of navList to right edge of nav item i
@@ -270,13 +283,13 @@ export default function Navbar() {
     return () => cancelAnimationFrame(raf)
   }, [score])
 
+  // ─── Derived render values (React state only, not scroll-driven) ──────────
   useEffect(() => {
-    if (hasShownCongratsRef.current || score < TOTAL_SCORE) return
-    hasShownCongratsRef.current = true
-    setShowCongrats(true)
+    if (hasOpenedCompleteScoreRef.current || score < TOTAL_SCORE) return
+    hasOpenedCompleteScoreRef.current = true
+    setIsScorePopupOpen(true)
   }, [score])
 
-  // ─── Derived render values (React state only, not scroll-driven) ──────────
   const total           = NAV_LINKS.length
   const activeIndex     = NAV_LINKS.findIndex((l) => l.href.replace('#', '') === activeSection)
   const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex
@@ -292,13 +305,14 @@ export default function Navbar() {
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
 
-        <div className={styles.scoreWrap}>
+        <div ref={scoreWrapRef} className={styles.scoreWrap}>
           <button
             ref={scoreRef}
             type="button"
-            className={styles.scoreBadge}
+            className={`${styles.scoreBadge} ${isScorePopupOpen ? styles.scoreBadgeOpen : ''}`}
             aria-label="Score badge"
             aria-expanded={isScorePopupOpen}
+            aria-pressed={isScorePopupOpen}
             onClick={() => setIsScorePopupOpen((open) => !open)}
           >
             <StarIcon
@@ -315,10 +329,11 @@ export default function Navbar() {
           </button>
 
           {isScorePopupOpen ? (
-            <div className={styles.scorePopup} role="status">
-              <span className={styles.scorePopupLabel}>Current score</span>
-              <span className={styles.scorePopupValue}>{displayScore} / {TOTAL_SCORE}</span>
-            </div>
+            <ScorePopup
+              score={displayScore}
+              total={TOTAL_SCORE}
+              completed={score >= TOTAL_SCORE}
+            />
           ) : null}
         </div>
       </div>
@@ -368,23 +383,6 @@ export default function Navbar() {
           })}
         </ul>
       </nav>
-
-      {showCongrats ? (
-        <div className={styles.congratsOverlay} role="presentation">
-          <div className={styles.congratsPopup} role="dialog" aria-modal="true" aria-labelledby="score-complete-title">
-            <StarIcon size="2rem" color="var(--yellow-40)" glow />
-            <h2 id="score-complete-title" className={styles.congratsTitle}>Congratulations!</h2>
-            <p className={styles.congratsText}>You earned {TOTAL_SCORE} / {TOTAL_SCORE} points.</p>
-            <button
-              type="button"
-              className={styles.congratsButton}
-              onClick={() => setShowCongrats(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      ) : null}
     </header>
   )
 }
