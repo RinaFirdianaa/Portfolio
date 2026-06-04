@@ -118,9 +118,17 @@ body {
 }
 
 #root {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: var(--site-max-width);
   margin-inline: auto;
+}
+
+#root > main,
+#root > footer {
+  position: relative;
+  z-index: 1;
 }
 
 img {

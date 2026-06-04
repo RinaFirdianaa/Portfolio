@@ -1,0 +1,50 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  left: var(--cloud-left);
+  top: var(--cloud-top);
+  width: var(--cloud-size);
+  max-width: none;
+  opacity: 0;
+  filter: blur(0.2px);
+  transform: translate3d(0, 0, 0) rotate(var(--cloud-rotate));
+  animation:
+    cloudAppear 0.5s ease forwards,
+    cloudFloat var(--cloud-duration) ease-in-out var(--cloud-delay) infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes cloudAppear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: var(--cloud-opacity);
+  }
+}
+
+@keyframes cloudFloat {
+  from {
+    transform: translate3d(0, 0, 0) rotate(var(--cloud-rotate));
+  }
+
+  to {
+    transform:
+      translate3d(var(--cloud-drift-x), var(--cloud-drift-y), 0)
+      rotate(calc(var(--cloud-rotate) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    animation: cloudAppear 0.9s ease forwards;
+  }
+}

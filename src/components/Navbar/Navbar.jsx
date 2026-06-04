@@ -23,7 +23,7 @@ const SCORE_PER_SECTION = 10
 const SPARKLE_TRAVEL_MS = 850
 const TOTAL_SCORE = 100
 
-export default function Navbar() {
+export default function Navbar({ onSurpriseClick }) {
   const scrolled            = useScrolled()
   const { fireSparkles }    = useSparkles()
   const { score, addScore } = useScore()
@@ -333,6 +333,7 @@ export default function Navbar() {
               score={displayScore}
               total={TOTAL_SCORE}
               completed={score >= TOTAL_SCORE}
+              onSurpriseClick={onSurpriseClick}
             />
           ) : null}
         </div>
