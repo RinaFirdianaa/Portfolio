@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { SparkleProvider } from '@/components/Sparkle/SparkleContext'
-import { ScoreProvider } from '@/components/Score/ScoreContext'
+import { ScoreProvider, useScore } from '@/components/Score/ScoreContext'
 import Navbar from '@/components/Navbar/Navbar'
 import Hero from '@/components/Hero/Hero'
 import About from '@/components/About/About'
@@ -9,19 +8,20 @@ import Projects from '@/components/Projects/Projects'
 import Footer from '@/components/Footer/Footer'
 import SurpriseClouds from '@/components/SurpriseClouds/SurpriseClouds'
 
+const TOTAL_SCORE = 100
+
+function CloudsWhenComplete() {
+  const { score } = useScore()
+  return score >= TOTAL_SCORE ? <SurpriseClouds seed={1} /> : null
+}
+
 export default function App() {
-  const [surpriseCloudSeed, setSurpriseCloudSeed] = useState(null)
-
-  const handleSurpriseClick = () => {
-    setSurpriseCloudSeed(Date.now())
-  }
-
   return (
     <SparkleProvider>
       <ScoreProvider>
-        {surpriseCloudSeed ? <SurpriseClouds seed={surpriseCloudSeed} /> : null}
+        <CloudsWhenComplete />
 
-        <Navbar onSurpriseClick={handleSurpriseClick} />
+        <Navbar />
 
         <main>
           <section id="home">
