@@ -29,6 +29,32 @@
   color: var(--purple-20);
 }
 
+:global(html.dark) .bubble[data-skill-id="code"] .bubbleLabelItem    { color: var(--yellow-10); }
+:global(html.dark) .bubble[data-skill-id="design"] .bubbleLabelItem  { color: var(--pink-10); }
+:global(html.dark) .bubble[data-skill-id="soft"] .bubbleLabelItem    { color: var(--blue-10); }
+
+:global(html.dark) .bubble {
+  border-color: rgba(255, 255, 255, 0.5);
+  background:
+    radial-gradient(8% 8% at 22% 28%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 23% 27%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 24% 26%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 25% 25%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 26% 24%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 27% 23%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(8% 8% at 28% 22%, hsl(0, 0%, 100%) 45%, hsla(0, 0%, 100%, 0) 50%),
+    radial-gradient(circle at 42% 36%, hsl(var(--skill-bubble-hue), 90%, 82%, 0.38), hsl(var(--skill-bubble-hue), 78%, 58%, 0.22) 62%, hsl(var(--skill-bubble-hue), 70%, 44%, 0.14) 100%);
+  box-shadow:
+    0 -0.06em 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    0 -0.15em 0.4em hsl(var(--skill-bubble-hue), 90%, 55%) inset,
+    0 0.05em 0.05em hsl(var(--skill-bubble-hue), 90%, 55%) inset,
+    0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    -0.05em 0 0.1em hsl(var(--skill-bubble-hue), 90%, 100%) inset,
+    0 0.1em 0.4em hsl(var(--skill-bubble-hue), 90%, 65%) inset,
+    0 0 8px hsl(var(--skill-bubble-hue), 80%, 60%, 0.15);
+}
+
+
 .subtitleDone {
   color: var(--yellow-40);
   filter: drop-shadow(0 0 6px var(--yellow-40));

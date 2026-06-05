@@ -418,6 +418,7 @@ export default function Skills() {
                   onPointerUp={handlePointerUp}
                   onPointerCancel={handlePointerUp}
                   aria-label={label}
+                  data-skill-id={skill.id}
                   data-has-image={group.images.length > 0 ? 'true' : 'false'}
                   data-image-count={group.images.length}
                   data-label-count={group.labels.length}

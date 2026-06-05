@@ -35,6 +35,7 @@
 .brand {
   font: var(--font-h2);
   letter-spacing: 0.4px;
+  width: fit-content;
   background: linear-gradient(90deg, var(--pink-40) 0%, var(--purple-40) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -276,6 +277,9 @@
 :global(html.dark) .navList::before {
   background: linear-gradient(90deg, #D77196 0%, #A87FDB 100%);
 }
+
+:global(html.dark) .scoreLabel { color: var(--purple-40); }
+:global(html.dark) .scoreValue { color: var(--purple-20); }
 
 :global(html.dark) .navLink {
   color: var(--purple-10);

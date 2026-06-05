@@ -1,0 +1,40 @@
+.layer {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  top:  var(--star-top);
+  left: var(--star-left);
+  font-size: var(--star-size);
+  color: var(--star-color);
+  opacity: 0;
+  line-height: 1;
+  animation:
+    starAppear 1.5s ease var(--star-appear-delay) forwards,
+    starTwinkle var(--star-duration) ease-in-out var(--star-delay) infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes starAppear {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: var(--star-opacity); transform: scale(1); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: var(--star-opacity);       transform: scale(1)    rotate(0deg);   }
+  50%       { opacity: calc(var(--star-opacity) * 0.3); transform: scale(0.7)  rotate(20deg);  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star {
+    animation: starAppear 0s forwards;
+    opacity: var(--star-opacity);
+  }
+}

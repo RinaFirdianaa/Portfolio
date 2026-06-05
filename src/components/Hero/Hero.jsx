@@ -176,12 +176,19 @@ export default function Hero() {
             </svg>
 
             <span className={`${styles.cssRings} ${styles.ringBack}`} aria-hidden="true" />
-            <img
-              ref={imageRef}
-              src={isDark ? '/images/hero-dark.png' : '/images/hero.png'}
-              alt="Rina"
-              className={styles.heroImage}
-            />
+            <div ref={imageRef} className={styles.heroImageWrapper}>
+              <img
+                src="/images/hero.png"
+                alt="Rina"
+                className={`${styles.heroImage} ${isDark ? styles.heroImageHidden : ''}`}
+              />
+              <img
+                src="/images/hero-dark.png"
+                alt=""
+                aria-hidden="true"
+                className={`${styles.heroImage} ${styles.heroImageDark} ${isDark ? '' : styles.heroImageHidden}`}
+              />
+            </div>
             <span className={`${styles.cssRings} ${styles.ringFront}`} aria-hidden="true" />
           </div>
         </div>

@@ -17,6 +17,10 @@
     align-items: flex-start;
     overflow: hidden;
   }
+
+:global(html.dark) .hero {
+  background: linear-gradient(180deg, #3F537D 25%, #D77196 100%);
+}
   
   /* --- Inner layout --- */
   .inner {
@@ -184,16 +188,32 @@
 }
 
 /* --- Hero image --- */
+.heroImageWrapper {
+  position: relative;
+  z-index: 1;
+  width: clamp(220px, 25vw, 380px);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
 .heroImage {
   display: block;
-  width: clamp(220px, 25vw, 380px);
+  width: 100%;
   max-width: none;
   height: auto;
   object-fit: contain;
-  position: relative;
-  z-index: 1;
-  transform: translateZ(0);
-  will-change: transform;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.heroImageDark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+.heroImageHidden {
+  opacity: 0;
 }
 
 .cssRings {

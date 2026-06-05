@@ -122,3 +122,17 @@
   letter-spacing: 0.5px;
   color: var(--pink-40);
 }
+
+:global(html.dark) .popup {
+  background: var(--color-bg);
+}
+
+:global(html.dark) .label        { color: var(--purple-20); }
+:global(html.dark) .currentScore  { color: var(--purple-20); }
+:global(html.dark) .totalScore    { color: var(--blue-40); }
+:global(html.dark) .hint          { color: var(--pink-10); }
+
+:global(html.dark) .completeTitle      { color: var(--yellow-40); }
+:global(html.dark) .completeScoreNum   { color: var(--purple-20); }
+:global(html.dark) .completeScoreTotal { color: var(--blue-40); }
+:global(html.dark) .completeText       { color: var(--pink-10); }
