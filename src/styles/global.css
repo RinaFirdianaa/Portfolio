@@ -93,6 +93,33 @@
   --transition-slow:   0.4s ease;
 }
 
+/* ── Dark mode overrides ───────────────────────────────────── */
+html.dark {
+  --white:      #0f0a1e;
+  --white-soft: #1a1230;
+
+  --purple-10:  #1e1440;
+  --purple-20:  #2d1f5e;
+  --purple-40:  #b89fec;
+  --purple-60:  #d4c0ff;
+
+  --pink-10:    #1e0f1a;
+  --pink-20:    #3d1a30;
+  --pink-40:    #f0a0c8;
+  --pink-60:    #f7c0da;
+
+  --yellow-40:  #ffd670;
+}
+
+html.dark body {
+  background-color: #0f0a1e;
+  color: #e8d8ff;
+}
+
+html.dark #root {
+  background-color: #0f0a1e;
+}
+
 /* --- Reset --- */
 *,
 *::before,

@@ -19,14 +19,17 @@
 /* --- Top Bar --- */
 .topBar {
   background: var(--white);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--white);
   padding: 16px clamp(var(--space-2xl), 6vw, var(--space-4xl));
   width: 100%;
   max-width: var(--site-max-width);
   margin-inline: auto;
+}
+
+.topBar .scoreWrap {
+  justify-self: end;
 }
 
 .brand {
@@ -37,6 +40,33 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.darkToggle {
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  line-height: 1;
+}
+
+.darkToggle:hover {
+  transform: scale(1.2) rotate(15deg);
+}
+
+.darkToggleIcon {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 .scoreWrap {

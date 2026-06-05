@@ -23,6 +23,12 @@
   font: var(--font-gamemedium);
   color: var(--purple-40);
   letter-spacing: 0.5px;
+  transition: color 0.4s ease, filter 0.4s ease;
+}
+
+.sectionSubtitleDone {
+  color: var(--yellow-40);
+  filter: drop-shadow(0 0 6px var(--yellow-40));
 }
 
 .ptsBadge {

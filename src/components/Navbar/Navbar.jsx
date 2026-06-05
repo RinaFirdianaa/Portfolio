@@ -34,6 +34,11 @@ export default function Navbar() {
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme')
+    if (saved) return saved === 'dark'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
 
   // ─── Refs ─────────────────────────────────────────────────────────────────
   const navListRef  = useRef(null)
@@ -50,6 +55,11 @@ export default function Navbar() {
   const addScoreRef     = useRef(addScore)
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark)
+    localStorage.setItem('theme', isDark ? 'dark' : 'light')
+  }, [isDark])
 
   useEffect(() => {
     if (!isScorePopupOpen) return undefined
@@ -304,6 +314,22 @@ export default function Navbar() {
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
+
+        <button
+          className={styles.darkToggle}
+          type="button"
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setIsDark(d => !d)}
+        >
+          <img
+            src={isDark
+              ? 'https://cdn-icons-png.flaticon.com/512/581/581601.png'
+              : 'https://cdn-icons-png.flaticon.com/512/6421/6421095.png'
+            }
+            alt={isDark ? 'Moon' : 'Sun'}
+            className={styles.darkToggleIcon}
+          />
+        </button>
 
         <div ref={scoreWrapRef} className={styles.scoreWrap}>
           <button

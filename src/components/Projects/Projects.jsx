@@ -302,7 +302,9 @@ export default function Projects() {
       <div className={styles.header}>
         <div>
           <h2 className={styles.sectionTitle}>Projects</h2>
-          <p className={styles.sectionSubtitle}>Find the stars on the cards</p>
+          <p className={`${styles.sectionSubtitle} ${collectedStarIds.size >= sparkleCardIds.size ? styles.sectionSubtitleDone : ''}`}>
+            {collectedStarIds.size >= sparkleCardIds.size ? 'Completed!' : 'Find the stars on the cards'}
+          </p>
         </div>
       </div>
 
