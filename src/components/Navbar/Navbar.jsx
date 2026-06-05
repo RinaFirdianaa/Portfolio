@@ -322,10 +322,7 @@ export default function Navbar() {
           onClick={() => setIsDark(d => !d)}
         >
           <img
-            src={isDark
-              ? 'https://cdn-icons-png.flaticon.com/512/581/581601.png'
-              : 'https://cdn-icons-png.flaticon.com/512/6421/6421095.png'
-            }
+            src={isDark ? '/images/icons/moon.png' : '/images/icons/sun.png'}
             alt={isDark ? 'Moon' : 'Sun'}
             className={styles.darkToggleIcon}
           />

@@ -91,33 +91,56 @@
   --transition-fast:   0.15s ease;
   --transition-normal: 0.25s ease;
   --transition-slow:   0.4s ease;
+
+  /* Semantic color tokens — light mode defaults */
+  --color-bg:           #ffffff;
+  --color-nav:          #ffffff;
+  --color-surface:      #ffffff;
+  --color-surface-alt:  #f9f0ff;
+  --color-text-primary:   #1a1a2e;
+  --color-text-secondary: #4a4060;
+  --color-text-muted:     #7a6a90;
+  --color-text-light:     #a090b8;
+  --color-border:  rgba(168, 127, 219, 0.2);
+  --color-shadow:  rgba(168, 127, 219, 0.12);
+  --color-skill-pink-bg:    rgba(252, 165, 197, 0.12);
+  --color-skill-pink-br:    rgba(252, 165, 197, 0.32);
+  --color-skill-yellow-bg:  rgba(255, 202, 112, 0.12);
+  --color-skill-yellow-br:  rgba(255, 202, 112, 0.32);
 }
 
-/* ── Dark mode overrides ───────────────────────────────────── */
+/* ── Dark mode overrides ────────────────────────────────────── */
 html.dark {
-  --white:      #0f0a1e;
-  --white-soft: #1a1230;
+  /* Backgrounds */
+  --color-bg:           #0f0a1e;
+  --color-nav:          #0a0715;
+  --color-surface:      #1a1230;
+  --color-surface-alt:  #221640;
 
-  --purple-10:  #1e1440;
-  --purple-20:  #2d1f5e;
-  --purple-40:  #b89fec;
-  --purple-60:  #d4c0ff;
+  /* Text */
+  --color-text-primary:   #e8d8ff;
+  --color-text-secondary: #c4b0e0;
+  --color-text-muted:     #9080b0;
+  --color-text-light:     #6a5a8a;
 
-  --pink-10:    #1e0f1a;
-  --pink-20:    #3d1a30;
-  --pink-40:    #f0a0c8;
-  --pink-60:    #f7c0da;
+  /* Border / shadow */
+  --color-border:  rgba(168, 127, 219, 0.15);
+  --color-shadow:  rgba(0, 0, 0, 0.4);
 
-  --yellow-40:  #ffd670;
+  /* Skill section */
+  --color-skill-pink-bg: rgba(252, 165, 197, 0.08);
+  --color-skill-pink-br: rgba(252, 165, 197, 0.2);
+  --color-skill-yellow-bg: rgba(255, 202, 112, 0.08);
+  --color-skill-yellow-br: rgba(255, 202, 112, 0.2);
 }
 
 html.dark body {
-  background-color: #0f0a1e;
-  color: #e8d8ff;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 html.dark #root {
-  background-color: #0f0a1e;
+  background-color: var(--color-bg);
 }
 
 /* --- Reset --- */
@@ -127,6 +150,11 @@ html.dark #root {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
 }
 
 html {
