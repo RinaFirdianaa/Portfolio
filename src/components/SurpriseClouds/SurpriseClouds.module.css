@@ -1,50 +1,40 @@
 .layer {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 100%;
   z-index: 0;
-  overflow: hidden;
   pointer-events: none;
 }
 
 .cloud {
   position: absolute;
-  left: var(--cloud-left);
+  left: 0;
   top: var(--cloud-top);
   width: var(--cloud-size);
   max-width: none;
   opacity: 0;
-  filter: blur(0.2px);
-  transform: translate3d(0, 0, 0) rotate(var(--cloud-rotate));
   animation:
-    cloudAppear 0.5s ease forwards,
-    cloudFloat var(--cloud-duration) ease-in-out var(--cloud-delay) infinite alternate;
-  will-change: transform, opacity;
+    cloudAppear 2s ease var(--cloud-appear-delay) forwards,
+    cloudScroll var(--cloud-duration) linear var(--cloud-scroll-delay) infinite;
 }
 
+/* Fade in once */
 @keyframes cloudAppear {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: var(--cloud-opacity);
-  }
+  from { opacity: 0; }
+  to   { opacity: var(--cloud-opacity); }
 }
 
-@keyframes cloudFloat {
-  from {
-    transform: translate3d(0, 0, 0) rotate(var(--cloud-rotate));
-  }
-
-  to {
-    transform:
-      translate3d(var(--cloud-drift-x), var(--cloud-drift-y), 0)
-      rotate(calc(var(--cloud-rotate) * -1));
-  }
+/* Scroll continuously left → right, loop seamlessly */
+@keyframes cloudScroll {
+  from { transform: translateX(calc(-1 * var(--cloud-size))); }
+  to   { transform: translateX(100vw); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cloud {
-    animation: cloudAppear 0.9s ease forwards;
+    animation: none;
+    opacity: var(--cloud-opacity);
   }
 }
