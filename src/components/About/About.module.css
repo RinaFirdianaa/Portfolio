@@ -89,6 +89,10 @@
   transition: color 0.4s ease, filter 0.4s ease;
 }
 
+:global(html.dark) .cardSubtitle {
+  color: var(--purple-20);
+}
+
 .cardSubtitleDone {
   color: var(--yellow-40);
   filter: drop-shadow(0 0 6px var(--yellow-40));

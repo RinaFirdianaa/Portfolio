@@ -22,6 +22,7 @@
   --purple-20: #d5bcf5;
   --purple-40: #a87fdb;
   --purple-60: #656fbe;
+  --purple-80: #383E63;
 
   /* Pink */
   --pink-10: #feedf5;
@@ -103,6 +104,7 @@
   --color-text-light:     #a090b8;
   --color-border:  rgba(168, 127, 219, 0.2);
   --color-shadow:  rgba(168, 127, 219, 0.12);
+  --color-nav-strip:  var(--pink-10);
   --color-skill-pink-bg:    rgba(252, 165, 197, 0.12);
   --color-skill-pink-br:    rgba(252, 165, 197, 0.32);
   --color-skill-yellow-bg:  rgba(255, 202, 112, 0.12);
@@ -112,28 +114,29 @@
 /* ── Dark mode overrides ────────────────────────────────────── */
 html.dark {
   /* Backgrounds */
-  --color-bg:           #0f0a1e;
-  --color-nav:          #0a0715;
+  --color-bg:           #383E63;
+  --color-nav:          #383E63;
   --color-surface:      #1a1230;
   --color-surface-alt:  #221640;
 
   /* Text */
-  --color-text-primary:   #e8d8ff;
-  --color-text-secondary: #c4b0e0;
-  --color-text-muted:     #9080b0;
-  --color-text-light:     #6a5a8a;
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-muted:     #e9daff;  
+  --color-text-light:     #c4b0e0;
 
   /* Border / shadow */
   --color-border:  rgba(168, 127, 219, 0.15);
   --color-shadow:  rgba(0, 0, 0, 0.4);
 
   /* Skill section */
+  --color-nav-strip:  #5785BC;
   --color-skill-pink-bg: rgba(252, 165, 197, 0.08);
   --color-skill-pink-br: rgba(252, 165, 197, 0.2);
   --color-skill-yellow-bg: rgba(255, 202, 112, 0.08);
   --color-skill-yellow-br: rgba(255, 202, 112, 0.2);
 }
-
+  
 html.dark body {
   background-color: var(--color-bg);
   color: var(--color-text-primary);

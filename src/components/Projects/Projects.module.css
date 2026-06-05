@@ -26,6 +26,10 @@
   transition: color 0.4s ease, filter 0.4s ease;
 }
 
+:global(html.dark) .sectionSubtitle {
+  color: var(--purple-20);
+}
+
 .sectionSubtitleDone {
   color: var(--yellow-40);
   filter: drop-shadow(0 0 6px var(--yellow-40));
@@ -301,7 +305,7 @@
   display: inline-grid;
   place-items: center;
   border-radius: 50%;
-  color: #111111;
+  color: var(--color-text-primary);
   font: 700 16px/1 var(--font-game);
   transition:
     background var(--transition-fast),

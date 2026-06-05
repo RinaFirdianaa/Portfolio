@@ -22,6 +22,10 @@
 
 .subtitle {
   font: var(--font-gamemedium);
+  color: var(--purple-40);
+}
+
+:global(html.dark) .subtitle {
   color: var(--purple-20);
 }
 

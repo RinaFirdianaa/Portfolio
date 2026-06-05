@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { ThemeProvider } from '@/components/Theme/ThemeContext'
 import { SparkleProvider } from '@/components/Sparkle/SparkleContext'
 import { ScoreProvider, useScore } from '@/components/Score/ScoreContext'
 import Navbar from '@/components/Navbar/Navbar'
@@ -31,6 +32,7 @@ function CloudsWhenComplete() {
 
 export default function App() {
   return (
+    <ThemeProvider>
     <SparkleProvider>
       <ScoreProvider>
         <CloudsWhenComplete />
@@ -58,5 +60,6 @@ export default function App() {
         <Footer />
       </ScoreProvider>
     </SparkleProvider>
+    </ThemeProvider>
   )
 }

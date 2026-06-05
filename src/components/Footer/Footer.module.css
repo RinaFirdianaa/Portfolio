@@ -8,6 +8,15 @@
   background-color: var(--purple-20);
 }
 
+:global(html.dark) .footer {
+  background-color: var(--purple-60);
+}
+
+:global(html.dark) .tagline,
+:global(html.dark) .signoff {
+  color: var(--purple-20);
+}
+
 .inner {
   padding:24px;
   display: flex;

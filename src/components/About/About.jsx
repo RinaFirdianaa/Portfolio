@@ -8,6 +8,7 @@ import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './About.module.css'
+import { useTheme } from '@/components/Theme/ThemeContext'
 
 const BOTTOM_STARS = [
   { id: 'star-a', size: '1.2rem' },
@@ -53,6 +54,7 @@ function AnimatedLine({ x1, y1, x2, y2, length, animate }) {
 }
 
 export default function About() {
+  const { isDark } = useTheme()
   const [clickOrder, setClickOrder] = useState([])
   const [marked, setMarked]         = useState(() => new Set())
   const [lines, setLines]           = useState([])
@@ -171,7 +173,7 @@ export default function About() {
           <h2 className={styles.sectionTitle}>Something to know about me</h2>
 
           <div className={styles.avatarRow}>
-            <img src="/images/chibi.png" alt="Rina" className={styles.avatar} />
+            <img src={isDark ? '/images/chibi-dark.png' : '/images/chibi.png'} alt="Rina" className={styles.avatar} />
             <p className={styles.bioIntro}>
               "I'm just a CS grad from SIT (DigiPen) who ended up loving design more than coding."
             </p>

@@ -58,6 +58,12 @@
   animation: cloudScroll 20s linear infinite;
 }
 
+/* ── Dark mode image swaps ─────────────────────────────────── */
+:global(html.dark) .cloud1 { background-image: url('/images/Cloud1-dark.PNG'); mix-blend-mode: normal; }
+:global(html.dark) .cloud2 { background-image: url('/images/Cloud2-dark.PNG'); mix-blend-mode: normal; }
+:global(html.dark) .cloud3 { background-image: url('/images/Cloud3-dark.PNG'); mix-blend-mode: normal; }
+:global(html.dark) .cloud4 { background-image: url('/images/Cloud4-dark.PNG'); mix-blend-mode: normal; }
+
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
   .cloudLayer {
     animation: none;

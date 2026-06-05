@@ -5,6 +5,7 @@
 import { Fragment, useRef, useState, useEffect } from 'react'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
+import { useTheme } from '@/components/Theme/ThemeContext'
 import CloudBackground from './CloudBackground'
 import styles from './Hero.module.css'
 import StarIcon from '@/components/StarIcon/StarIcon'
@@ -22,6 +23,7 @@ export default function Hero() {
   const planetWrapperRef = useRef(null)
   const { fireSparkles } = useSparkles()
   const { addScore }     = useScore()
+  const { isDark }       = useTheme()
 
   const [hovered, setHovered]         = useState(false)
   const [everHovered, setEverHovered] = useState(false)
@@ -176,7 +178,7 @@ export default function Hero() {
             <span className={`${styles.cssRings} ${styles.ringBack}`} aria-hidden="true" />
             <img
               ref={imageRef}
-              src="/images/hero.png"
+              src={isDark ? '/images/hero-dark.png' : '/images/hero.png'}
               alt="Rina"
               className={styles.heroImage}
             />

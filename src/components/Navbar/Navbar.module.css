@@ -167,7 +167,7 @@
 
 /* --- Nav Links --- */
 .nav {
-  background: var(--pink-10);
+  background: var(--color-nav-strip);
 }
 
 .navList {
@@ -191,7 +191,7 @@
   left: min(0px, calc((var(--site-max-width) - 100vw) / 2));
   width: calc(var(--nav-fill, 0%) + max(0px, calc((100vw - var(--site-max-width)) / 2)));
   height: 100%;
-  background: linear-gradient(90deg, var(--purple-40) 0%, var(--blue-80) 100%);
+  background: linear-gradient(90deg, #6670C5 0%, #A87FDB 100%);
   border-radius: 0 999px 999px 0;
   z-index: 0;
   transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.25s ease;
@@ -270,6 +270,19 @@
   font-size: 10px;
   color: var(--yellow-40);
   line-height: 1;
+}
+
+/* ── Dark mode overrides ─────────────────────────────────── */
+:global(html.dark) .navList::before {
+  background: linear-gradient(90deg, #D77196 0%, #A87FDB 100%);
+}
+
+:global(html.dark) .navLink {
+  color: var(--purple-10);
+}
+
+:global(html.dark) .navLink.filled {
+  color: var(--white);
 }
 
 /* Glow on active label when sparkles fire */
