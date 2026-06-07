@@ -176,6 +176,19 @@ body {
   overflow-x: hidden;
 }
 
+body.info-popup-open main,
+body.info-popup-open footer {
+  filter: blur(6px);
+  pointer-events: none;
+  transition: filter 0.2s ease;
+}
+
+body.info-popup-open [data-header-inner] {
+  filter: blur(6px);
+  pointer-events: none;
+  transition: filter 0.2s ease;
+}
+
 #root {
   position: relative;
   z-index: 1;
@@ -183,6 +196,7 @@ body {
   max-width: var(--site-max-width);
   margin-inline: auto;
 }
+
 
 #root > main,
 #root > footer {

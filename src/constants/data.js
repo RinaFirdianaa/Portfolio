@@ -157,17 +157,23 @@ export const PROJECTS = [
       {
         title: 'Overview',
         summary: 'A bubble tea sim meets horror — story, concept, and visual direction.',
-        image: '/images/placeholder.png',
+        images: ['/images/placeholder.png'],
+        
       },
       {
-        title: 'Gameplay & Levels',
+        title: 'Gameplay',
         summary: 'Mechanics design and level breakdowns across all 3 stages, ending in the final competition.',
-        image: '/images/placeholder.png',
+        images: ['/images/placeholder.png'],
       },
       {
-        title: '3D Art & UI',
+        title: '2D & UI Art',
+        summary: '',
+        images: ['/images/placeholder.png'],
+      },
+      {
+        title: '3D Art',
         summary: 'Characters, shop environment, equipment models, and in-game UI crafted in Maya, Procreate, and Figma.',
-        image: '/images/placeholder.png',
+        images: ['/images/Projects/BobaTime.png', '/images/placeholder.png'],
       },
     ],
   },

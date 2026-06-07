@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useScrolled } from '@/hooks/useScrolled'
 import { useTheme } from '@/components/Theme/ThemeContext'
 import { NAV_LINKS } from '@/constants/data'
@@ -35,11 +36,14 @@ export default function Navbar() {
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
+  const [popupPos, setPopupPos] = useState({ top: 0, right: 0 })
   const { isDark, toggle: toggleDark } = useTheme()
 
   // ─── Refs ─────────────────────────────────────────────────────────────────
-  const navListRef  = useRef(null)
-  const scoreWrapRef = useRef(null)
+  const navListRef     = useRef(null)
+  const scoreWrapRef   = useRef(null)
+  const popupPortalRef = useRef(null)
+  const headerRef      = useRef(null)
   const scoreRef    = useRef(null)
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
@@ -53,11 +57,12 @@ export default function Navbar() {
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
 
-  useEffect(() => {
+useEffect(() => {
     if (!isScorePopupOpen) return undefined
 
     const handleOutsidePointerDown = (event) => {
       if (scoreWrapRef.current?.contains(event.target)) return
+      if (popupPortalRef.current?.contains(event.target)) return
       setIsScorePopupOpen(false)
     }
 
@@ -303,7 +308,23 @@ export default function Navbar() {
   }
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+    <>
+    {isScorePopupOpen && createPortal(
+      <div
+        ref={popupPortalRef}
+        className={styles.popupPortal}
+        style={{ top: popupPos.top, right: popupPos.right }}
+      >
+        <ScorePopup
+          score={displayScore}
+          total={TOTAL_SCORE}
+          completed={score >= TOTAL_SCORE}
+        />
+      </div>,
+      document.body
+    )}
+    <header ref={headerRef} className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+      <div data-header-inner>
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
 
@@ -328,7 +349,19 @@ export default function Navbar() {
             aria-label="Score badge"
             aria-expanded={isScorePopupOpen}
             aria-pressed={isScorePopupOpen}
-            onClick={() => setIsScorePopupOpen((open) => !open)}
+            onClick={() => {
+              if (!isScorePopupOpen && scoreWrapRef.current) {
+                const rect = scoreWrapRef.current.getBoundingClientRect()
+                setPopupPos({
+                  top: rect.bottom + 10,
+                  right: window.innerWidth - rect.right,
+                })
+              }
+              setIsScorePopupOpen((open) => {
+                console.log('[ScorePopup] toggling to', !open)
+                return !open
+              })
+            }}
           >
             <StarIcon
               size="2.5rem"
@@ -343,13 +376,6 @@ export default function Navbar() {
             </span>
           </button>
 
-          {isScorePopupOpen ? (
-            <ScorePopup
-              score={displayScore}
-              total={TOTAL_SCORE}
-              completed={score >= TOTAL_SCORE}
-            />
-          ) : null}
         </div>
       </div>
 
@@ -398,6 +424,8 @@ export default function Navbar() {
           })}
         </ul>
       </nav>
+      </div>
     </header>
+    </>
   )
 }

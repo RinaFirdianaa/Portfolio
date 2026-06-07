@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { PROJECTS, PROJECT_CATEGORIES } from '@/constants/data'
 import { useScore } from '@/components/Score/Scorecontext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
@@ -87,6 +88,7 @@ export default function Projects() {
   const [selectedCardId, setSelectedCardId] = useState(null)
   const [isInfoOpen, setIsInfoOpen] = useState(false)
   const [activeInfoPage, setActiveInfoPage] = useState(0)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [dragStartX, setDragStartX] = useState(null)
   const [collectedStarIds, setCollectedStarIds] = useState(() => new Set())
   const lastDragTimeRef = useRef(0)
@@ -94,6 +96,11 @@ export default function Projects() {
   const clickSpinTimerRef = useRef(null)
   const sparkleRefs = useRef({})
   const collectedStarIdsRef = useRef(new Set())
+  useEffect(() => {
+    document.body.classList.toggle('info-popup-open', isInfoOpen)
+    return () => document.body.classList.remove('info-popup-open')
+  }, [isInfoOpen])
+
   const activeItem = wheelItems[activeItemIndex]
   const activeCategory = activeItem.category
   const activeTheme = CATEGORY_THEMES[activeCategory] ?? CATEGORY_THEMES.Game
@@ -496,62 +503,76 @@ export default function Projects() {
         </aside>
       </div>
 
-      {isInfoOpen ? (
+      {isInfoOpen ? createPortal(
         <div
           className={styles.infoOverlay}
           role="presentation"
           onClick={() => setIsInfoOpen(false)}
         >
           <div
-            className={styles.infoModal}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="project-info-title"
+            className={styles.infoWrapper}
+            style={activeTheme}
             onClick={(event) => event.stopPropagation()}
           >
-            {/* Tab bar */}
+            {/* Tab bar + close */}
             <div className={styles.infoTabBar}>
               {selectedPages.map((page, i) => (
                 <button
                   key={page.title}
                   type="button"
                   className={`${styles.infoTab} ${activeInfoPage === i ? styles.infoTabActive : ''}`}
-                  onClick={() => setActiveInfoPage(i)}
+                  onClick={() => { setActiveInfoPage(i); setActiveImageIndex(0) }}
                 >
                   {page.title}
                 </button>
               ))}
-              <button
-                className={styles.infoClose}
-                type="button"
-                onClick={() => setIsInfoOpen(false)}
-                aria-label="Close"
-              >
-                ✕
-              </button>
             </div>
 
-            {/* Content */}
-            <div className={styles.infoContent}>
-              <button
-                className={styles.infoNavArrow}
-                type="button"
-                onClick={() => setActiveInfoPage((p) => (p - 1 + selectedPages.length) % selectedPages.length)}
-                disabled={selectedPages.length <= 1}
-                aria-label="Previous page"
+            {/* Arrow + card + arrow */}
+            <div className={styles.infoRow}>
+              <div
+                className={styles.infoModal}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="project-info-title"
               >
-                ‹
-              </button>
-
-              <div className={styles.infoInner}>
                 <h4 id="project-info-title" className={styles.infoPageTitle}>
                   {currentInfoPage.title}
                 </h4>
                 <div className={styles.infoBody}>
-                  <figure className={styles.infoImageCard}>
-                    <img src={currentInfoPage.image ?? PLACEHOLDER_IMAGE} alt="" />
-                  </figure>
+                  <div className={styles.infoImageCarousel}>
+                    <figure className={styles.infoImageCard}>
+                      <img src={(currentInfoPage.images?.[activeImageIndex]) ?? currentInfoPage.image ?? PLACEHOLDER_IMAGE} alt="" />
+                    </figure>
+                    <div className={styles.imageNav}>
+                      {(currentInfoPage.images?.length ?? 0) > 1 && (
+                        <button
+                          className={styles.imageNavArrow}
+                          onClick={() => setActiveImageIndex(i => (i - 1 + currentInfoPage.images.length) % currentInfoPage.images.length)}
+                          aria-label="Previous image"
+                        >‹</button>
+                      )}
+                      <div className={styles.imageDots}>
+                        {(currentInfoPage.images ?? [currentInfoPage.image]).map((_, i) => (
+                          <button
+                            key={i}
+                            className={`${styles.imageDot} ${activeImageIndex === i ? styles.imageDotActive : ''}`}
+                            onClick={() => setActiveImageIndex(i)}
+                            aria-label={`Image ${i + 1}`}
+                          />
+                        ))}
+                      </div>
+                      {(currentInfoPage.images?.length ?? 0) > 1 && (
+                        <button
+                          className={styles.imageNavArrow}
+                          onClick={() => setActiveImageIndex(i => (i + 1) % currentInfoPage.images.length)}
+                          aria-label="Next image"
+                        >›</button>
+                      )}
+                    </div>
+                  </div>
                   <div className={styles.infoText}>
+
                     <p>{currentInfoPage.summary ?? selectedProject.description}</p>
                     <dl className={styles.infoFacts}>
                       {selectedProject.role ? (
@@ -567,32 +588,12 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Dots */}
-                <div className={styles.infoDots}>
-                  {selectedPages.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`${styles.infoDot} ${activeInfoPage === i ? styles.infoDotActive : ''}`}
-                      onClick={() => setActiveInfoPage(i)}
-                      aria-label={`Page ${i + 1}`}
-                    />
-                  ))}
-                </div>
               </div>
 
-              <button
-                className={styles.infoNavArrow}
-                type="button"
-                onClick={() => setActiveInfoPage((p) => (p + 1) % selectedPages.length)}
-                disabled={selectedPages.length <= 1}
-                aria-label="Next page"
-              >
-                ›
-              </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       ) : null}
 
     </section>

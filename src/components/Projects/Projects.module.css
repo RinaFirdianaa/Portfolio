@@ -426,116 +426,172 @@
 .infoOverlay {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: rgba(26, 18, 34, 0.5);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.82);
 }
 
-.infoModal {
-  position: relative;
-  width: min(900px, 100%);
-  max-height: min(760px, 88vh);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 24px 70px rgba(63, 43, 88, 0.35);
+/* ── Outer wrapper (tabs + row) ───────────────────── */
+.infoWrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: min(960px, 92vw);
+  max-height: 90vh;
+  gap: 0;
 }
 
 /* ── Tab bar ──────────────────────────────────────── */
 .infoTabBar {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
-  padding: 14px 16px 0;
-  background: var(--purple-60);
-  flex-shrink: 0;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  align-self: center;
 }
 
 .infoTab {
-  padding: 10px 22px;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  font: 500 14px/1 var(--font-body);
-  color: var(--purple-10);
-  background: rgba(255, 255, 255, 0.15);
+  padding: 22px 28px 10px;
+  border-radius: 999px 999px 0 0;
+  font: var(--font-p1);
+  color: #666;
+  background: #D9D9D9;
   transition: background var(--transition-fast), color var(--transition-fast);
   white-space: nowrap;
 }
 
 .infoTabActive {
-  background: var(--color-bg, #ffffff);
-  color: var(--purple-60);
+  background: #ffffff;
+  color: var(--category-accent);
   font-weight: 700;
+  margin-bottom: -2px;
+  padding-bottom: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .infoClose {
-  margin-left: auto;
-  margin-bottom: 6px;
-  width: 30px;
-  height: 30px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
   display: inline-grid;
   place-items: center;
   border-radius: 50%;
-  font: 700 14px/1 var(--font-body);
-  color: var(--purple-10);
-  background: rgba(255, 255, 255, 0.15);
-  transition: background var(--transition-fast);
+  font: 700 12px/1 var(--font-body);
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.12);
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .infoClose:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255,255,255,0.25);
+  color: #fff;
 }
 
-/* ── Content area ─────────────────────────────────── */
-.infoContent {
+/* ── Arrow + card row ─────────────────────────────── */
+.infoRow {
   display: flex;
   align-items: center;
   gap: 0;
-  background: var(--color-bg, #ffffff);
-  border: 2px solid var(--purple-20);
-  border-top: none;
-  flex: 1;
-  overflow: hidden;
+  min-height: 0;
+  width: 100%;
 }
 
 .infoNavArrow {
   flex-shrink: 0;
-  width: 44px;
-  height: 100%;
+  width: 36px;
+  height: 80px;
   display: grid;
   place-items: center;
-  font: 700 28px/1 var(--font-body);
+  font: 700 22px/1 var(--font-body);
   color: var(--purple-40);
-  opacity: 0.5;
-  transition: opacity var(--transition-fast);
+  background: rgba(255, 255, 255, 0.9);
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 
-.infoNavArrow:hover { opacity: 1; }
-.infoNavArrow:disabled { opacity: 0.15; }
+.infoRow > .infoNavArrow:first-child {
+  border-radius: 999px 0 0 999px;
+}
 
-.infoInner {
+.infoRow > .infoNavArrow:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.infoNavArrow:hover { color: var(--purple-60); background: #fff; }
+.infoNavArrow:disabled { opacity: 0.2; }
+
+/* ── White card ───────────────────────────────────── */
+.infoModal {
   flex: 1;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--category-accent-soft);
+  border-top: none;
+  box-shadow: 0 24px 70px rgba(63, 43, 88, 0.4);
+  padding: 28px 28px 20px;
   overflow-y: auto;
-  padding: 24px 8px 20px;
   min-width: 0;
 }
 
 .infoPageTitle {
   text-align: center;
-  font: 700 clamp(22px, 3vw, 32px)/1.1 var(--font-title);
-  color: var(--pink-60);
+  font: var(--font-h2);
+  color: var(--category-accent);
   margin-bottom: 20px;
 }
 
 .infoBody {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(200px, 0.8fr);
   gap: 22px;
   align-items: start;
+}
+
+.infoImageCarousel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.imageNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.imageNavArrow {
+  font: 700 20px/1 var(--font-body);
+  color: var(--category-accent);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+  padding: 0 4px;
+}
+
+.imageNavArrow:hover { opacity: 1; }
+
+.imageDots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.imageDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--category-accent-soft);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.imageDotActive {
+  background: var(--category-accent);
+  transform: scale(1.3);
 }
 
 .infoImageCard {
@@ -579,7 +635,7 @@
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 .infoDot {
