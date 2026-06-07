@@ -8,7 +8,9 @@
   z-index: 100;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background: var(--color-nav);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: box-shadow var(--transition-normal);
 }
 
@@ -81,7 +83,7 @@
   gap: var(--space-xs);
   border: 0;
   padding: 4px 8px;
-  background: transparent;
+  background: var(--color-nav);
   border-radius: var(--radius-pill);
   cursor: pointer;
   font: inherit;
@@ -93,7 +95,7 @@
 }
 
 .scoreBadge:hover {
-  background: transparent;
+  background: var(--color-nav);
 }
 
 .scoreBadge:hover .scoreIcon {
@@ -111,7 +113,7 @@
 }
 
 .scoreBadgeOpen {
-  background: transparent;
+  background: var(--color-nav);
   box-shadow: none;
   transform: translateY(-1px);
 }
@@ -274,6 +276,10 @@
 }
 
 /* ── Dark mode overrides ─────────────────────────────────── */
+:global(html.dark) .header {
+  background: rgba(56, 62, 99, 0.75);
+}
+
 :global(html.dark) .navList::before {
   background: linear-gradient(90deg, #D77196 0%, #A87FDB 100%);
 }

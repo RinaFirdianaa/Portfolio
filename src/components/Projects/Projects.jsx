@@ -450,16 +450,27 @@ export default function Projects() {
                 {selectedProject.role}
               </span>
             ) : null}
-            {selectedProject.status ? (
+            {selectedProject.date ? (
               <span>
-                <strong>Status</strong>
-                {selectedProject.status}
+                <strong>Date</strong>
+                {selectedProject.date}
               </span>
             ) : null}
             {selectedProject.tools?.length ? (
               <span>
                 <strong>Tools</strong>
-                {selectedProject.tools.join(', ')}
+                <span className={styles.toolList}>
+                  {selectedProject.tools.map((tool) => {
+                    const name  = typeof tool === 'string' ? tool : tool.name
+                    const image = typeof tool === 'string' ? null : tool.image
+                    return (
+                      <span key={name} className={styles.toolItem}>
+                        {image && <img src={image} alt="" className={styles.toolIcon} />}
+                        {name}
+                      </span>
+                    )
+                  })}
+                </span>
               </span>
             ) : null}
           </div>
@@ -498,67 +509,87 @@ export default function Projects() {
             aria-labelledby="project-info-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              className={styles.infoClose}
-              type="button"
-              onClick={() => setIsInfoOpen(false)}
-              aria-label="Close project images"
-            >
-              x
-            </button>
-            <span className={styles.infoCategory}>{selectedProject.category}</span>
-            <h4 id="project-info-title" className={styles.infoTitle}>
-              {selectedProject.title}
-            </h4>
-            <div className={styles.infoPager} aria-label="Project popup pages">
+            {/* Tab bar */}
+            <div className={styles.infoTabBar}>
+              {selectedPages.map((page, i) => (
+                <button
+                  key={page.title}
+                  type="button"
+                  className={`${styles.infoTab} ${activeInfoPage === i ? styles.infoTabActive : ''}`}
+                  onClick={() => setActiveInfoPage(i)}
+                >
+                  {page.title}
+                </button>
+              ))}
               <button
+                className={styles.infoClose}
                 type="button"
-                onClick={() => setActiveInfoPage((page) => (
-                  (page - 1 + selectedPages.length) % selectedPages.length
-                ))}
-                disabled={selectedPages.length <= 1}
+                onClick={() => setIsInfoOpen(false)}
+                aria-label="Close"
               >
-                &lt;
-              </button>
-              <span>{activeInfoPage + 1} / {selectedPages.length}</span>
-              <button
-                type="button"
-                onClick={() => setActiveInfoPage((page) => (
-                  (page + 1) % selectedPages.length
-                ))}
-                disabled={selectedPages.length <= 1}
-              >
-                &gt;
+                ✕
               </button>
             </div>
-            <div className={styles.infoBody}>
-              <figure className={styles.infoImageCard}>
-                <img src={currentInfoPage.image ?? PLACEHOLDER_IMAGE} alt="" />
-              </figure>
-              <div className={styles.infoText}>
-                <h5>{currentInfoPage.title}</h5>
-                <p>{currentInfoPage.summary ?? selectedProject.description}</p>
-                <dl className={styles.infoFacts}>
-                  {selectedProject.role ? (
-                    <>
-                      <dt>Role</dt>
-                      <dd>{selectedProject.role}</dd>
-                    </>
-                  ) : null}
-                  {selectedProject.status ? (
-                    <>
-                      <dt>Status</dt>
-                      <dd>{selectedProject.status}</dd>
-                    </>
-                  ) : null}
-                  {selectedProject.tools?.length ? (
-                    <>
-                      <dt>Tools</dt>
-                      <dd>{selectedProject.tools.join(', ')}</dd>
-                    </>
-                  ) : null}
-                </dl>
+
+            {/* Content */}
+            <div className={styles.infoContent}>
+              <button
+                className={styles.infoNavArrow}
+                type="button"
+                onClick={() => setActiveInfoPage((p) => (p - 1 + selectedPages.length) % selectedPages.length)}
+                disabled={selectedPages.length <= 1}
+                aria-label="Previous page"
+              >
+                ‹
+              </button>
+
+              <div className={styles.infoInner}>
+                <h4 id="project-info-title" className={styles.infoPageTitle}>
+                  {currentInfoPage.title}
+                </h4>
+                <div className={styles.infoBody}>
+                  <figure className={styles.infoImageCard}>
+                    <img src={currentInfoPage.image ?? PLACEHOLDER_IMAGE} alt="" />
+                  </figure>
+                  <div className={styles.infoText}>
+                    <p>{currentInfoPage.summary ?? selectedProject.description}</p>
+                    <dl className={styles.infoFacts}>
+                      {selectedProject.role ? (
+                        <><dt>Role</dt><dd>{selectedProject.role}</dd></>
+                      ) : null}
+                      {selectedProject.date ? (
+                        <><dt>Date</dt><dd>{selectedProject.date}</dd></>
+                      ) : null}
+                      {selectedProject.tools?.length ? (
+                        <><dt>Tools</dt><dd>{selectedProject.tools.map(t => typeof t === 'string' ? t : t.name).join(', ')}</dd></>
+                      ) : null}
+                    </dl>
+                  </div>
+                </div>
+
+                {/* Dots */}
+                <div className={styles.infoDots}>
+                  {selectedPages.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`${styles.infoDot} ${activeInfoPage === i ? styles.infoDotActive : ''}`}
+                      onClick={() => setActiveInfoPage(i)}
+                      aria-label={`Page ${i + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
+
+              <button
+                className={styles.infoNavArrow}
+                type="button"
+                onClick={() => setActiveInfoPage((p) => (p + 1) % selectedPages.length)}
+                disabled={selectedPages.length <= 1}
+                aria-label="Next page"
+              >
+                ›
+              </button>
             </div>
           </div>
         </div>
