@@ -1,7 +1,3 @@
-/**
- * Hero.jsx  (optimised)
- */
-
 import { Fragment, useRef, useState, useEffect } from 'react'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
@@ -16,7 +12,7 @@ const PLANET_SCORE = 5
 export default function Hero() {
   const imageRef         = useRef(null)
   const rafRef           = useRef(null)
-  const unwindRafRef     = useRef(null)  // ✅ FIX: separate ref for unwind rAF
+  const unwindRafRef     = useRef(null)
   const angleRef         = useRef(0)
   const isSpinningRef    = useRef(false)
   const scoredRef        = useRef(false)
@@ -28,8 +24,6 @@ export default function Hero() {
   const [hovered, setHovered]         = useState(false)
   const [everHovered, setEverHovered] = useState(false)
   const [scored, setScored]           = useState(false)
-
-  // ✅ FIX: Cancel any lingering animation frames on unmount
   useEffect(() => {
     return () => {
       cancelAnimationFrame(rafRef.current)
@@ -39,7 +33,6 @@ export default function Hero() {
   }, [])
 
   const startSpin = () => {
-    // ✅ FIX: Cancel any in-progress unwind before starting a new spin
     cancelAnimationFrame(unwindRafRef.current)
 
     setHovered(true)
@@ -101,7 +94,6 @@ export default function Hero() {
         imageRef.current.style.transform = `rotateY(${angle}deg)`
       }
       if (t < 1) {
-        // ✅ FIX: Store unwind rAF in its own ref so startSpin can cancel it
         unwindRafRef.current = requestAnimationFrame(unwind)
       } else if (imageRef.current) {
         imageRef.current.style.transform = ''

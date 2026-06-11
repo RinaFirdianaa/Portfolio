@@ -1,14 +1,8 @@
-/* ============================================================
-   CloudBackground.module.css  (optimised)
-   ============================================================ */
-
 .background {
   position: absolute;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
-  /* ✅ FIX: Contain paint so cloud repaints don't affect rest of page */
-  contain: layout paint size;
+  overflow: hidden;  contain: layout paint size;
   isolation: isolate;
 }
 
@@ -25,10 +19,7 @@
   background-repeat: repeat-x;
   background-position: bottom left;
   background-size: 50% auto;
-  mix-blend-mode: screen;
-  /* ✅ FIX: Promote each cloud to its own compositor layer so the browser
-     can animate transform on the GPU without repainting anything else. */
-  backface-visibility: hidden;
+  mix-blend-mode: screen;  backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
   will-change: transform;
 }
@@ -58,7 +49,6 @@
   animation: cloudScroll 20s linear infinite;
 }
 
-/* ── Dark mode image swaps ─────────────────────────────────── */
 :global(html.dark) .cloud1 { background-image: url('/images/Cloud1-dark.PNG'); mix-blend-mode: normal; }
 :global(html.dark) .cloud2 { background-image: url('/images/Cloud2-dark.PNG'); mix-blend-mode: normal; }
 :global(html.dark) .cloud3 { background-image: url('/images/Cloud3-dark.PNG'); mix-blend-mode: normal; }

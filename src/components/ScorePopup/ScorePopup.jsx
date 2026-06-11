@@ -23,7 +23,7 @@ export default function ScorePopup({ score, total, completed = false }) {
         <span className={styles.currentScore}>{score}</span>
         <span className={styles.totalScore}>/{total}</span>
       </span>
-<span className={styles.hint}>keep exploring ✦</span>
+      <span className={styles.hint}>keep exploring ✦</span>
     </div>
   )
 }

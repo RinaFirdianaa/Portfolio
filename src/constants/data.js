@@ -150,30 +150,64 @@ export const PROJECTS = [
     links: [
       { label: '3D', href: '#' },
       { label: 'UI/UX', href: '#' },
+      { label: 'Scripting', href: '#' },
     ],
     // Replace with your actual image path: '/images/projects/boba-time.jpg'
     image: '/images/Projects/BobaTime.png',
     pages: [
       {
         title: 'Overview',
-        summary: 'A bubble tea sim meets horror — story, concept, and visual direction.',
-        images: ['/images/placeholder.png'],
-        
+        summary: 
+        'Boba Time is a 3D narrative-driven game built on a custom game engine by a team of 9 people' +
+                  '. 3 designers and 6 developers.' + 
+                  ' \n\n It tells the story of a young girl whose father once left home to chase the idea of making the world’s greatest bubble tea. Years later, he returns, only to find the house empty.' + 
+                  ' Left with that quiet absence and memory, she decides to learn the craft herself and build a bubble tea shop called Boba Time.'+
+                  ' \n\n The game takes the player through 3 levels, starting from simple practice, growing into running a real shop, and finally competing in a high-stakes bubble tea competition.'+
+                  ' The ending changes depending on how well the player performs, giving each playthrough a slightly different emotional outcome',
+        video: 'https://www.youtube.com/embed/yUd73w6TIa4',
       },
       {
         title: 'Gameplay',
-        summary: 'Mechanics design and level breakdowns across all 3 stages, ending in the final competition.',
-        images: ['/images/placeholder.png'],
+        summary:
+          'Boba Time is a fast-paced casual game about making and serving bubble tea orders before time runs out. Players choose the correct tea base and toppings, then seal each cup accurately while dealing with a growing queue of customers that gets more chaotic over time.' +
+          '\n\nThe game has three levels, each adding new mechanics to the main gameplay loop. Level 1 consist of the tutorial and letting player to get used to the main gameplay loop. It also introduces special customer types that disrupt your workflow. Level 2 increases the challenge by introducing a shop upgrade system, including a fryer and more troublesome customers that adds an extra preparation step and makes time management more important. Level 3 is the final stage, a timed competition where a combo system rewards consecutive correct orders, and your final score leads to different endings.' +
+          '\n\nThe difficulty is designed to grow step by step, so players can learn the basics first before things get more complex. Throughout the game, the focus stays on the fun fantasy of running a busy bubble tea shop.',
+        images: ['/images/Projects/BobaTime/BobaTime1.jpg', '/images/Projects/BobaTime/BobaTime2.jpg', '/images/Projects/BobaTime/BobaTime3.jpg', '/images/Projects/BobaTime/BobaTime4.jpg', '/images/Projects/BobaTime/BobaTime5.jpg' ,'/images/Projects/BobaTime/BobaTime6.jpg'],
+        imageLinks: [
+          { label: 'tea base', imageIndex: 0 },
+          { label: 'toppings', imageIndex: 1 },
+          { label: 'special customer types', imageIndex: 2 },
+          { label: 'shop upgrade system', imageIndex: 4 },
+          { label: 'troublesome customers', imageIndex: 3 },
+          { label: 'final score', imageIndex: 5 },
+        ],
       },
       {
         title: '2D & UI Art',
-        summary: '',
-        images: ['/images/placeholder.png'],
+        summary:
+          '2D\nBoba Time uses a soft and colourful 2D art style with warm pastel colours that create a cosy and emotional feeling. The characters have a cute chibi design with expressive faces. Story scenes are shown through simple comic-style panels that help tell the story between levels.' +
+          '\n\nUI\nThe UI was designed to blend seamlessly with the game\'s cosy aesthetic, using rounded shapes, soft pastel colours, and playful typography throughout. Key information such as objectives, timers, upgrades, and progression is displayed in a clear and easy-to-read way, helping players stay focused on gameplay without feeling overwhelmed.',
+        images: ['/images/Projects/BobaTime/BobaTime8.png', '/images/Projects/BobaTime/BobaTime7.png', '/images/Projects/BobaTime/BobaTime11.png'],
+        imageLinks: [
+          { label: '2D', imageIndex: 0 },
+          { label: 'UI', imageIndex: 1 },
+        ],
       },
       {
         title: '3D Art',
-        summary: 'Characters, shop environment, equipment models, and in-game UI crafted in Maya, Procreate, and Figma.',
-        images: ['/images/Projects/BobaTime.png', '/images/placeholder.png'],
+        summary: 'All the 3D assets were made in Maya using a cute, stylised low-poly look to give Boba Time its warm and playful feel. I modelled the characters, including different customer types for each level, along with the environment and props like the town square, street lamps, seating areas, and shop equipment. I also created the bubble tea assets used in gameplay and added animations to help bring the characters and world to life.',
+        images: ['/images/Projects/BobaTime/BobaTime10.png', '/images/Projects/BobaTime/BobaTime9.png'],
+        animations: [
+          { label: 'Boy Angry 2', model: '/images/Projects/BobaTime/fbx/boyAngry2.fbx', image: '/images/Projects/BobaTime/Angry.png' },
+          { label: 'Critic Walking', model: '/images/Projects/BobaTime/fbx/critic_walking.fbx', image: '/images/Projects/BobaTime/Walking.png' },
+          { label: 'Girl Idle', model: '/images/Projects/BobaTime/fbx/girlIdle.fbx', image: '/images/Projects/BobaTime/Idle.png' },
+          { label: 'Hot Guy 3 Stars', model: '/images/Projects/BobaTime/fbx/Hotguy_3stars.fbx', image: '/images/Projects/BobaTime/Kisses.png' },
+          { label: 'Indecisive Think', model: '/images/Projects/BobaTime/fbx/Indicisive_Think.fbx', image: '/images/Projects/BobaTime/Thinking.png' },
+          { label: 'Karen Scolding', model: '/images/Projects/BobaTime/fbx/karen_scolding.fbx', image: '/images/Projects/BobaTime/Scolding.png' },
+          { label: 'Happy', model: '/images/Projects/BobaTime/fbx/player_happy.fbx', image: '/images/Projects/BobaTime/Happy.png' },
+          { label: 'Rival Angry', model: '/images/Projects/BobaTime/fbx/rival_angry.fbx', image: '/images/Projects/BobaTime/Dissapointed.png' },
+          { label: 'Sus Rival Sitting', model: '/images/Projects/BobaTime/fbx/susRival_sitting.fbx', image: '/images/Projects/BobaTime/Sitting.png' },
+        ],
       },
     ],
   },

@@ -36,33 +36,33 @@ function CloudsWhenComplete() {
 export default function App() {
   return (
     <ThemeProvider>
-    <SparkleProvider>
-      <ScoreProvider>
-        <CloudsWhenComplete />
+      <SparkleProvider>
+        <ScoreProvider>
+          <CloudsWhenComplete />
 
-        <Navbar />
+          <Navbar />
 
-        <main>
-          <section id="home">
-            <Hero />
-          </section>
+          <main>
+            <section id="home">
+              <Hero />
+            </section>
 
-          <section id="about">
-            <About />
-          </section>
+            <section id="about">
+              <About />
+            </section>
 
-          <section id="projects">
-            <Projects />
-          </section>
+            <section id="projects">
+              <Projects />
+            </section>
 
-          <section id="skills">
-            <Skills />
-          </section>
-        </main>
+            <section id="skills">
+              <Skills />
+            </section>
+          </main>
 
-        <Footer />
-      </ScoreProvider>
-    </SparkleProvider>
+          <Footer />
+        </ScoreProvider>
+      </SparkleProvider>
     </ThemeProvider>
   )
 }

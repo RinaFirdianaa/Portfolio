@@ -23,8 +23,6 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   transition: box-shadow var(--transition-normal);
 }
 
@@ -126,6 +124,12 @@
   color: var(--yellow-40);
 }
 
+.scoreBadge:hover .scoreValue {
+  text-shadow:
+    0 0 8px var(--yellow-40),
+    0 0 18px var(--yellow-40);
+}
+
 .scoreBadgeOpen {
   background: var(--color-nav);
   box-shadow: none;
@@ -140,11 +144,6 @@
   filter:
     drop-shadow(0 0 5px rgba(255, 202, 112, 0.72))
     drop-shadow(0 0 10px rgba(255, 202, 112, 0.42));
-}
-
-.scoreBadgeOpen .scoreLabel,
-.scoreBadgeOpen .scoreValue {
-  color: var(--yellow-40);
 }
 
 .scoreText {

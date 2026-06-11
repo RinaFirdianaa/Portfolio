@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './SurpriseStars.module.css'
 
-const STAR_COUNT = 80
+const STAR_COUNT = 44
 const STAR_CHARS = ['✦', '✧', '⋆', '✦', '✧']
 const STAR_COLORS = [
   'var(--purple-20)',

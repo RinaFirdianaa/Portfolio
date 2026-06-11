@@ -1,9 +1,4 @@
-/**
- * SparkleContext.jsx  (optimised)
- * Global sparkle system — sparkles burst outward from source then fly straight to score.
- */
-
-import { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react'
+import { createContext, memo, useContext, useState, useRef, useEffect, useCallback } from 'react'
 
 const SparkleCtx = createContext(null)
 
@@ -28,7 +23,6 @@ export function SparkleProvider({ children }) {
   const [particles, setParticles] = useState([])
 
   const fireSparkles = useCallback((fromX, fromY, toX, toY, count = 10) => {
-    // ✅ FIX: Pre-generate IDs outside setState so we don't rely on closure
     const ids = Array.from({ length: count }, () => ++_id)
 
     const newParticles = ids.map((id, i) => ({
@@ -44,13 +38,9 @@ export function SparkleProvider({ children }) {
       burstAngle: Math.random() * Math.PI * 2,
       burstDistance: 18 + Math.random() * 22,
     }))
-
-    // ✅ FIX: Use functional update to avoid stale state — no spread of
-    // previous array on every call (was O(n) copy per fire burst).
     setParticles(prev => [...prev, ...newParticles])
 
     setTimeout(() => {
-      // ✅ FIX: Filter by the pre-captured ID set, not by re-finding objects
       const idSet = new Set(ids)
       setParticles(prev => prev.filter(p => !idSet.has(p.id)))
     }, 1000 + count * 55)
@@ -59,15 +49,10 @@ export function SparkleProvider({ children }) {
   return (
     <SparkleCtx.Provider value={{ fireSparkles }}>
       {children}
-      {/* ✅ FIX: SparkleCanvas is outside the provider value so it only
-          re-renders when `particles` changes, not on every context update */}
       <SparkleCanvas particles={particles} />
     </SparkleCtx.Provider>
   )
 }
-
-// ✅ FIX: Memoize canvas so it doesn't re-render with provider
-import { memo } from 'react'
 
 const SparkleCanvas = memo(function SparkleCanvas({ particles }) {
   return (
@@ -129,7 +114,7 @@ function SparkleParticle({ fromX, fromY, toX, toY, delay, size, color, char, bur
     }, delay)
 
     return () => clearTimeout(timer)
-  }, []) // deps intentionally empty — particle props never change after mount
+  }, [burstAngle, burstDistance, delay, fromX, fromY, toX, toY])
 
   return (
     <div

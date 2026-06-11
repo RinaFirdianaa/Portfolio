@@ -1,9 +1,3 @@
-/**
- * CloudBackground.jsx
- * Full-page dark blue→purple gradient background with 4 animated cloud layers.
- * Uses mix-blend-mode: screen to knock out the black from the PNG clouds.
- */
-
 import styles from './CloudBackground.module.css'
 
 export default function CloudBackground() {

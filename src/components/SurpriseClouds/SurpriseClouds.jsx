@@ -9,7 +9,7 @@ const CLOUD_IMAGES = [
   '/images/bg_clouds/bg_cloud5.png',
 ]
 
-const CLOUD_COUNT = 16
+const CLOUD_COUNT = 10
 
 function randomBetween(min, max) {
   return min + Math.random() * (max - min)
@@ -17,7 +17,6 @@ function randomBetween(min, max) {
 
 function buildClouds(seed) {
   const pageH   = document.documentElement.scrollHeight
-  const pageW   = document.documentElement.clientWidth
 
   const aboutEl  = document.getElementById('about')
   const skillsEl = document.getElementById('skills')

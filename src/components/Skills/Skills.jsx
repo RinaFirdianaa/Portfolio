@@ -5,7 +5,7 @@
 
 import { useRef, useState } from 'react'
 import { SKILLS } from '@/constants/data'
-import { useScore } from '@/components/Score/Scorecontext'
+import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Skills.module.css'
@@ -110,6 +110,9 @@ export default function Skills() {
   const bubbleRefs = useRef({})
   const titleSparkleRefs = useRef({})
   const activeBubbleRef = useRef(null)
+  const dragMetricsRef = useRef(null)
+  const pointerMoveRafRef = useRef(null)
+  const pendingPointerMoveRef = useRef(null)
   const bubblePositionsRef = useRef({})
   const collectedSkillStarIdsRef = useRef(new Set())
   const [bubblePositions, setBubblePositions] = useState({})
@@ -130,26 +133,23 @@ export default function Skills() {
     }
   }
 
-  const updateBubblePosition = (skillId, bubbleId, event) => {
-    const stage = stageRef.current
-    if (!stage) return
+  const updateBubblePosition = (bubbleId, bubbleEl, clientX, clientY) => {
+    const metrics = dragMetricsRef.current
+    if (!metrics?.stageRect) return
 
-    const stageRect = stage.getBoundingClientRect()
-    const bubbleWidth = event.currentTarget.offsetWidth
-    const bubbleHeight = event.currentTarget.offsetHeight
     const x = clampBubbleToStage(
-      event.clientX - stageRect.left - bubbleWidth / 2,
-      stageRect.width - bubbleWidth
+      clientX - metrics.stageRect.left - metrics.bubbleWidth / 2,
+      metrics.stageRect.width - metrics.bubbleWidth
     )
     const y = clampBubbleToStage(
-      event.clientY - stageRect.top - bubbleHeight / 2,
-      stageRect.height - bubbleHeight
+      clientY - metrics.stageRect.top - metrics.bubbleHeight / 2,
+      metrics.stageRect.height - metrics.bubbleHeight
     )
 
     bubblePositionsRef.current[bubbleId] = { x, y }
-    event.currentTarget.style.left = '0px'
-    event.currentTarget.style.top = '0px'
-    event.currentTarget.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    bubbleEl.style.left = '0px'
+    bubbleEl.style.top = '0px'
+    bubbleEl.style.transform = `translate3d(${x}px, ${y}px, 0)`
   }
 
   const findMergeTarget = (skillId, bubbleId) => {
@@ -272,21 +272,54 @@ export default function Skills() {
 
   const handlePointerDown = (skillId, bubbleId, event) => {
     activeBubbleRef.current = { skillId, bubbleId }
+    dragMetricsRef.current = {
+      stageRect: stageRef.current?.getBoundingClientRect(),
+      bubbleWidth: event.currentTarget.offsetWidth,
+      bubbleHeight: event.currentTarget.offsetHeight,
+    }
     setDraggingBubbleId(bubbleId)
     setMergeTargetId(null)
     event.currentTarget.setPointerCapture(event.pointerId)
-    updateBubblePosition(skillId, bubbleId, event)
+    updateBubblePosition(bubbleId, event.currentTarget, event.clientX, event.clientY)
   }
 
   const handlePointerMove = (skillId, bubbleId, event) => {
     if (activeBubbleRef.current?.bubbleId !== bubbleId) return
-    updateBubblePosition(skillId, bubbleId, event)
-    setMergeTargetId(findMergeTarget(skillId, bubbleId)?.id || null)
+
+    pendingPointerMoveRef.current = {
+      skillId,
+      bubbleId,
+      bubbleEl: event.currentTarget,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    }
+
+    if (pointerMoveRafRef.current) return
+
+    pointerMoveRafRef.current = requestAnimationFrame(() => {
+      pointerMoveRafRef.current = null
+      const pendingMove = pendingPointerMoveRef.current
+      if (!pendingMove || activeBubbleRef.current?.bubbleId !== pendingMove.bubbleId) return
+
+      updateBubblePosition(
+        pendingMove.bubbleId,
+        pendingMove.bubbleEl,
+        pendingMove.clientX,
+        pendingMove.clientY
+      )
+      setMergeTargetId(findMergeTarget(pendingMove.skillId, pendingMove.bubbleId)?.id || null)
+    })
   }
 
   const handlePointerUp = (event) => {
     const activeBubble = activeBubbleRef.current
     activeBubbleRef.current = null
+    dragMetricsRef.current = null
+    pendingPointerMoveRef.current = null
+    if (pointerMoveRafRef.current) {
+      cancelAnimationFrame(pointerMoveRafRef.current)
+      pointerMoveRafRef.current = null
+    }
     setDraggingBubbleId(null)
     setMergeTargetId(null)
 

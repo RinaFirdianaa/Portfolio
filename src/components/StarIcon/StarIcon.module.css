@@ -1,7 +1,3 @@
-/* ============================================================
-   StarIcon.module.css  (optimised)
-   ============================================================ */
-
 .star {
   position: relative;
   display: inline-block;
@@ -13,16 +9,16 @@
 
 @keyframes glowPulse {
   0%, 100% {
-    filter:
-      drop-shadow(0 0 var(--star-glow-soft, 1px) var(--yellow-20))
-      drop-shadow(0 0 var(--star-glow-mid, 2px) var(--yellow-20));
+    text-shadow:
+      0 0 var(--star-glow-soft, 1px) var(--yellow-20),
+      0 0 var(--star-glow-mid, 2px) var(--yellow-20);
     transform: scale(var(--star-glow-scale-min, 0.96));
   }
   50% {
-    filter:
-      drop-shadow(0 0 var(--star-glow-peak-soft, 3px) var(--yellow-20))
-      drop-shadow(0 0 var(--star-glow-peak-mid, 5px) var(--yellow-20))
-      drop-shadow(0 0 var(--star-glow-peak-wide, 8px) var(--star-glow-wide-color, var(--yellow-20)));
+    text-shadow:
+      0 0 var(--star-glow-peak-soft, 3px) var(--yellow-20),
+      0 0 var(--star-glow-peak-mid, 5px) var(--yellow-20),
+      0 0 var(--star-glow-peak-wide, 8px) var(--star-glow-wide-color, var(--yellow-20));
     transform: scale(var(--star-glow-scale-max, 1.04));
   }
 }
@@ -40,7 +36,7 @@
 
 .glow {
   animation: glowPulse 2s ease-in-out infinite;
-  will-change: filter, transform;
+  will-change: transform;
 }
 
 .glow::before {

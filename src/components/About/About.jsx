@@ -1,7 +1,3 @@
-/**
- * About.jsx  (optimised)
- */
-
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { EDUCATION } from '@/constants/data'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
@@ -41,7 +37,7 @@ function AnimatedLine({ x1, y1, x2, y2, length, animate }) {
       el.style.strokeDasharray  = length
       el.style.strokeDashoffset = '0'
     }
-  }, [])
+  }, [animate, length])
 
   return (
     <line
@@ -55,7 +51,7 @@ function AnimatedLine({ x1, y1, x2, y2, length, animate }) {
 
 export default function About() {
   const { isDark } = useTheme()
-  const [clickOrder, setClickOrder] = useState([])
+  const [, setClickOrder] = useState([])
   const [marked, setMarked]         = useState(() => new Set())
   const [lines, setLines]           = useState([])
   const [completed, setCompleted]   = useState(false)
@@ -68,9 +64,6 @@ export default function About() {
 
   const starRefs = useRef({})
   const cardRef  = useRef(null)
-
-  // ✅ FIX: Cache container rect; only re-read on window resize instead of
-  //    calling getBoundingClientRect() twice per click (forces layout reflow).
   const containerRectRef = useRef(null)
   useEffect(() => {
     const update = () => { containerRectRef.current = null } // invalidate cache
@@ -81,8 +74,6 @@ export default function About() {
   const getStarCentre = useCallback((id) => {
     const el = starRefs.current[id]
     if (!el || !cardRef.current) return null
-
-    // Read container rect once and cache it within the same gesture
     if (!containerRectRef.current) {
       containerRectRef.current = cardRef.current.getBoundingClientRect()
     }
@@ -94,9 +85,6 @@ export default function About() {
       y: elRect.top  + elRect.height / 2 - containerRect.top,
     }
   }, [])
-
-  // ✅ FIX: Invalidate cached container rect before each click so a scroll
-  //    between clicks doesn't produce wrong line coordinates.
   const handleStarClick = useCallback((id) => {
     containerRectRef.current = null // always fresh on click
 

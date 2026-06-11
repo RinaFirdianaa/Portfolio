@@ -1,15 +1,3 @@
-/**
- * Navbar.jsx  (optimised v2)
- *
- * Key change: the fill bar is driven by writing a CSS custom property
- * DIRECTLY to the DOM inside the rAF callback — no React state, no re-renders
- * on scroll whatsoever. React only re-renders for section/glow/score changes,
- * which are rare events, not per-frame.
- *
- * Also: nav item geometry (offsetLeft/offsetWidth) is cached once after mount
- * and only invalidated on resize, eliminating repeated layout reads.
- */
-
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useScrolled } from '@/hooks/useScrolled'
@@ -38,8 +26,6 @@ export default function Navbar() {
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
   const [popupPos, setPopupPos] = useState({ top: 0, right: 0 })
   const { isDark, toggle: toggleDark } = useTheme()
-
-  // ─── Refs ─────────────────────────────────────────────────────────────────
   const navListRef     = useRef(null)
   const scoreWrapRef   = useRef(null)
   const popupPortalRef = useRef(null)
@@ -50,14 +36,15 @@ export default function Navbar() {
   const visitedRef  = useRef(new Set())
   const initialHomeSparkleRef = useRef(false)
   const hasOpenedCompleteScoreRef = useRef(false)
-
-  // Stable refs so scroll/observer callbacks never go stale
+  const displayScoreRef = useRef(displayScore)
+  const scoreGlowTimeoutRef = useRef(null)
   const fireSparklesRef = useRef(fireSparkles)
   const addScoreRef     = useRef(addScore)
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
+  useEffect(() => { displayScoreRef.current = displayScore }, [displayScore])
 
-useEffect(() => {
+  useEffect(() => {
     if (!isScorePopupOpen) return undefined
 
     const handleOutsidePointerDown = (event) => {
@@ -69,11 +56,6 @@ useEffect(() => {
     document.addEventListener('pointerdown', handleOutsidePointerDown)
     return () => document.removeEventListener('pointerdown', handleOutsidePointerDown)
   }, [isScorePopupOpen])
-
-  // ─── Cached geometry ──────────────────────────────────────────────────────
-  // rightEdge[i] = px from left of navList to right edge of nav item i
-  // listWidth    = total width of navList
-  // These are read from the DOM once and cached; re-read only on resize.
   const geoCacheRef = useRef(null)
 
   const buildGeoCache = useCallback(() => {
@@ -93,10 +75,7 @@ useEffect(() => {
     geoCacheRef.current = cache
     return cache
   }, [])
-
-  // Build cache after first paint and on resize
   useEffect(() => {
-    // Small delay so refs are guaranteed populated after first render
     const t = setTimeout(buildGeoCache, 50)
     window.addEventListener('resize', buildGeoCache, { passive: true })
     return () => {
@@ -104,9 +83,6 @@ useEffect(() => {
       window.removeEventListener('resize', buildGeoCache)
     }
   }, [buildGeoCache])
-
-  // ─── Section offsets cache ────────────────────────────────────────────────
-  // section top positions; rebuilt on resize / content changes
   const sectionOffsetsRef = useRef([])
 
   const buildSectionOffsets = useCallback(() => {
@@ -127,15 +103,11 @@ useEffect(() => {
       window.removeEventListener('resize', buildSectionOffsets)
     }
   }, [buildSectionOffsets])
-
-  // ─── Fill bar: written directly to DOM, zero React renders on scroll ──────
   const applyFill = useCallback((fillPx) => {
     const geo = geoCacheRef.current
     if (!navListRef.current || !geo) return
     const pct = (fillPx / geo.listWidth) * 100
     navListRef.current.style.setProperty('--nav-fill', `${pct}%`)
-
-    // Also update .filled class on each link without React re-render
     NAV_LINKS.forEach(({ href }, i) => {
       const id = href.replace('#', '')
       const el = navItemRefs.current[id]?.querySelector('a')
@@ -172,8 +144,6 @@ useEffect(() => {
 
     return geo.rightEdge[0]
   }, [])
-
-  // ─── Scroll handler ───────────────────────────────────────────────────────
   useEffect(() => {
     let rafScheduled = false
 
@@ -194,8 +164,6 @@ useEffect(() => {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [applyFill, getFillForScroll])
-
-  // ─── Entrance: apply initial fill without scroll event ───────────────────
   useEffect(() => {
     const t = setTimeout(() => {
       const geo      = buildGeoCache() || geoCacheRef.current
@@ -206,8 +174,6 @@ useEffect(() => {
     }, 120)
     return () => clearTimeout(t)
   }, [applyFill, buildGeoCache, buildSectionOffsets, getFillForScroll])
-
-  // ─── IntersectionObserver: section + sparkles (rare, React state ok) ──────
   const shootSparkles = useCallback((sectionId) => {
     const navEl   = navItemRefs.current[sectionId]
     const scoreEl = scoreRef.current
@@ -269,28 +235,37 @@ useEffect(() => {
     sections.forEach((s) => observer.observe(s))
     return () => sections.forEach((s) => observer.unobserve(s))
   }, [shootSparkles])
-
-  // ─── Score counter animation ──────────────────────────────────────────────
   useEffect(() => {
-    if (displayScore === score) return
+    const start = displayScoreRef.current
+    if (start === score) return undefined
+
+    window.clearTimeout(scoreGlowTimeoutRef.current)
     setScoreGlowing(true)
-    const start     = displayScore
     const end       = score
     const duration  = 800
     const startTime = performance.now()
     const easeOut   = (t) => 1 - Math.pow(1 - t, 3)
     let raf
+
     const tick = (now) => {
       const t = Math.min((now - startTime) / duration, 1)
-      setDisplayScore(Math.round(start + (end - start) * easeOut(t)))
+      const nextScore = Math.round(start + (end - start) * easeOut(t))
+      displayScoreRef.current = nextScore
+      setDisplayScore(nextScore)
       if (t < 1) { raf = requestAnimationFrame(tick) }
-      else        { setTimeout(() => setScoreGlowing(false), 400) }
+      else {
+        scoreGlowTimeoutRef.current = window.setTimeout(() => {
+          setScoreGlowing(false)
+        }, 250)
+      }
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [score])
 
-  // ─── Derived render values (React state only, not scroll-driven) ──────────
+    raf = requestAnimationFrame(tick)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.clearTimeout(scoreGlowTimeoutRef.current)
+    }
+  }, [score])
   useEffect(() => {
     if (hasOpenedCompleteScoreRef.current || score < TOTAL_SCORE) return
     hasOpenedCompleteScoreRef.current = true
@@ -357,10 +332,7 @@ useEffect(() => {
                   right: window.innerWidth - rect.right,
                 })
               }
-              setIsScorePopupOpen((open) => {
-                console.log('[ScorePopup] toggling to', !open)
-                return !open
-              })
+              setIsScorePopupOpen((open) => !open)
             }}
           >
             <StarIcon
@@ -380,10 +352,6 @@ useEffect(() => {
       </div>
 
       <nav className={styles.nav} aria-label="Main navigation">
-        {/*
-          --nav-fill is now set directly via navListRef.style, not React state.
-          The initial value here is just a fallback for first paint.
-        */}
         <ul
           ref={navListRef}
           className={`${styles.navList} ${isComplete ? styles.complete : ''} ${styles.scrolling}`}
@@ -400,12 +368,6 @@ useEffect(() => {
                 ref={(el) => { navItemRefs.current[sectionId] = el }}
                 className={styles.navItem}
               >
-                {/*
-                  NOTE: .filled class is toggled directly via classList in
-                  applyFill() above — React doesn't re-render for it.
-                  isActive and isGlowing still come from React state (they're
-                  rare events, not scroll-driven).
-                */}
                 <a
                   href={href}
                   onClick={(e) => handleNavClick(e, href)}

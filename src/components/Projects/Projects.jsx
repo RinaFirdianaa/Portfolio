@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { PROJECTS, PROJECT_CATEGORIES } from '@/constants/data'
-import { useScore } from '@/components/Score/Scorecontext'
+import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Projects.module.css'
@@ -49,6 +49,289 @@ const CATEGORY_THEMES = {
   },
 }
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const renderInfoSummary = (summary, imageLinks, setActiveImageIndex) => {
+  if (!summary || !imageLinks?.length) {
+    return summary
+  }
+
+  const validLinks = imageLinks
+    .filter((link) => link.label && Number.isInteger(link.imageIndex))
+    .sort((a, b) => b.label.length - a.label.length)
+
+  if (!validLinks.length) {
+    return summary
+  }
+
+  const linkByLabel = new Map(
+    validLinks.map((link) => [link.label.toLowerCase(), link]),
+  )
+  const pattern = new RegExp(`(${validLinks.map((link) => escapeRegExp(link.label)).join('|')})`, 'gi')
+
+  return summary.split(pattern).map((part, index) => {
+    const link = linkByLabel.get(part.toLowerCase())
+
+    if (!link) {
+      return part
+    }
+
+    return (
+      <button
+        key={`${part}-${index}`}
+        type="button"
+        className={styles.infoTextLink}
+        onClick={() => setActiveImageIndex(link.imageIndex)}
+      >
+        {part}
+      </button>
+    )
+  })
+}
+
+function FbxModelViewer({ model }) {
+  const mountRef = useRef(null)
+  const [hasError, setHasError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    if (!model || !mountRef.current) {
+      return undefined
+    }
+
+    const mount = mountRef.current
+    let scene = null
+    let renderer = null
+    let frameId = null
+    let mixer = null
+    let controls = null
+    let resizeObserver = null
+    let isDisposed = false
+
+    setHasError(false)
+    setIsLoaded(false)
+
+    const startViewer = async () => {
+      const THREE = await import('three')
+      const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js')
+      const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js')
+
+      if (isDisposed) {
+        return
+      }
+
+      scene = new THREE.Scene()
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000)
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
+      const clock = new THREE.Clock()
+      const loader = new FBXLoader()
+
+      camera.position.set(0, 0.75, 5)
+      camera.lookAt(0, 0.75, 0)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.outputColorSpace = THREE.SRGBColorSpace
+      mount.appendChild(renderer.domElement)
+
+      controls = new OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true
+      controls.dampingFactor = 0.08
+      controls.screenSpacePanning = true
+      controls.enablePan = true
+      controls.enableZoom = true
+      controls.enableRotate = true
+      controls.autoRotate = true
+      controls.autoRotateSpeed = 0.8
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.ROTATE,
+      }
+      controls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_ROTATE,
+      }
+
+      scene.add(new THREE.HemisphereLight(0xffffff, 0xb8a390, 2.2))
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 2.3)
+      keyLight.position.set(3, 4, 4)
+      scene.add(keyLight)
+
+      const fillLight = new THREE.DirectionalLight(0xffd8cc, 1)
+      fillLight.position.set(-3, 2, 2)
+      scene.add(fillLight)
+
+      const frameScene = () => {
+        const { width, height } = mount.getBoundingClientRect()
+        const nextWidth = Math.max(1, width)
+        const nextHeight = Math.max(1, height)
+
+        renderer.setSize(nextWidth, nextHeight, false)
+        camera.aspect = nextWidth / nextHeight
+        camera.updateProjectionMatrix()
+      }
+
+      const centerModel = (object) => {
+        const box = new THREE.Box3().setFromObject(object)
+        const center = box.getCenter(new THREE.Vector3())
+        const size = box.getSize(new THREE.Vector3())
+        const maxSize = Math.max(size.x, size.y, size.z) || 1
+
+        object.position.sub(center)
+        object.scale.setScalar(2.45 / maxSize)
+
+        const scaledBox = new THREE.Box3().setFromObject(object)
+        const scaledCenter = scaledBox.getCenter(new THREE.Vector3())
+
+        object.position.x -= scaledCenter.x
+        object.position.z -= scaledCenter.z
+        object.position.y -= scaledBox.min.y
+
+        const framedBox = new THREE.Box3().setFromObject(object)
+        const framedSize = framedBox.getSize(new THREE.Vector3())
+        const framedCenter = framedBox.getCenter(new THREE.Vector3())
+        const distance = Math.max(framedSize.x, framedSize.y, framedSize.z) * 2.1
+
+        camera.position.set(framedCenter.x, framedCenter.y + framedSize.y * 0.08, distance)
+        camera.lookAt(framedCenter.x, framedCenter.y, framedCenter.z)
+        camera.updateProjectionMatrix()
+
+        controls.target.copy(framedCenter)
+        controls.update()
+      }
+
+      const animate = () => {
+        frameId = window.requestAnimationFrame(animate)
+
+        if (mixer) {
+          mixer.update(clock.getDelta())
+        }
+
+        if (controls) {
+          controls.update()
+        }
+
+        renderer.render(scene, camera)
+      }
+
+      resizeObserver = new ResizeObserver(frameScene)
+      resizeObserver.observe(mount)
+      frameScene()
+
+      loader.load(
+        model,
+        (object) => {
+          if (isDisposed) {
+            return
+          }
+
+          centerModel(object)
+          object.traverse((child) => {
+            if (!child.isMesh) {
+              return
+            }
+
+            child.castShadow = false
+            child.receiveShadow = false
+            const materials = Array.isArray(child.material) ? child.material : [child.material]
+            materials.filter(Boolean).forEach((material) => {
+              material.transparent = false
+              material.opacity = 1
+              material.depthWrite = true
+              material.side = THREE.DoubleSide
+              if (material.map) {
+                material.map.colorSpace = THREE.SRGBColorSpace
+                material.map.needsUpdate = true
+              }
+              material.needsUpdate = true
+            })
+          })
+
+          scene.add(object)
+          setIsLoaded(true)
+
+          if (object.animations.length) {
+            mixer = new THREE.AnimationMixer(object)
+            mixer.clipAction(object.animations[0]).play()
+          }
+        },
+        undefined,
+        () => setHasError(true),
+      )
+
+      animate()
+    }
+
+    startViewer().catch(() => setHasError(true))
+
+    return () => {
+      isDisposed = true
+
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+
+      if (frameId) {
+        window.cancelAnimationFrame(frameId)
+      }
+
+      if (scene) {
+        scene.traverse((object) => {
+          if (!object.isMesh) {
+            return
+          }
+
+          object.geometry?.dispose()
+          const materials = Array.isArray(object.material) ? object.material : [object.material]
+          materials.filter(Boolean).forEach((material) => material.dispose())
+        })
+      }
+
+      if (renderer) {
+        renderer.dispose()
+        renderer.domElement.remove()
+      }
+    }
+  }, [model])
+
+  return (
+    <div className={styles.infoModelCard} ref={mountRef}>
+      <span className={styles.modelControlsHint}>
+        <strong>right click + drag</strong> to rotate
+      </span>
+      {!isLoaded && !hasError ? (
+        <span className={styles.infoModelStatus}>Loading model...</span>
+      ) : null}
+      {hasError ? (
+        <span className={styles.infoModelError}>Model could not load</span>
+      ) : null}
+    </div>
+  )
+}
+
+function AnimationSelector({ animations, onSelect }) {
+  return (
+    <div className={styles.animationSelectorCard}>
+      <h5>Click to view animation</h5>
+      <div className={styles.animationGrid}>
+        {animations.map((animation) => (
+          <button
+            key={animation.model}
+            type="button"
+            className={styles.animationTile}
+            onClick={() => onSelect(animation)}
+          >
+            <span className={styles.animationPreview}>
+              <img src={animation.image ?? PLACEHOLDER_IMAGE} alt="" />
+            </span>
+            <span>{animation.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Projects() {
   const { fireSparkles } = useSparkles()
   const { addScore } = useScore()
@@ -89,6 +372,7 @@ export default function Projects() {
   const [isInfoOpen, setIsInfoOpen] = useState(false)
   const [activeInfoPage, setActiveInfoPage] = useState(0)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [selectedAnimation, setSelectedAnimation] = useState(null)
   const [dragStartX, setDragStartX] = useState(null)
   const [collectedStarIds, setCollectedStarIds] = useState(() => new Set())
   const lastDragTimeRef = useRef(0)
@@ -98,7 +382,11 @@ export default function Projects() {
   const collectedStarIdsRef = useRef(new Set())
   useEffect(() => {
     document.body.classList.toggle('info-popup-open', isInfoOpen)
-    return () => document.body.classList.remove('info-popup-open')
+    document.body.style.overflow = isInfoOpen ? 'hidden' : ''
+    return () => {
+      document.body.classList.remove('info-popup-open')
+      document.body.style.overflow = ''
+    }
   }, [isInfoOpen])
 
   const activeItem = wheelItems[activeItemIndex]
@@ -139,6 +427,17 @@ export default function Projects() {
         },
       ]
   const currentInfoPage = selectedPages[activeInfoPage] ?? selectedPages[0]
+  const currentImageSlides = !currentInfoPage.video && !currentInfoPage.model
+    ? [
+        ...(currentInfoPage.images?.length
+          ? currentInfoPage.images
+          : [currentInfoPage.image ?? PLACEHOLDER_IMAGE]),
+        ...(currentInfoPage.animations?.length ? ['animation-selector'] : []),
+      ]
+    : []
+  const isAnimationSelectorSlide =
+    currentInfoPage.animations?.length &&
+    activeImageIndex === currentImageSlides.length - 1
 
   const triggerProjectSparkles = (cardId, sparkleEl) => {
     if (collectedStarIdsRef.current.has(cardId)) {
@@ -184,6 +483,7 @@ export default function Projects() {
     setSelectedCardId(null)
     setIsInfoOpen(false)
     setActiveInfoPage(0)
+    setSelectedAnimation(null)
   }
 
   const spinCardToCenter = (cardId, offset) => {
@@ -244,6 +544,7 @@ export default function Projects() {
     setSelectedCardId(null)
     setIsInfoOpen(false)
     setActiveInfoPage(0)
+    setSelectedAnimation(null)
 
     if (targetOffset === 0) {
       return
@@ -495,6 +796,8 @@ export default function Projects() {
             type="button"
             onClick={() => {
               setActiveInfoPage(0)
+              setActiveImageIndex(0)
+              setSelectedAnimation(null)
               setIsInfoOpen(true)
             }}
           >
@@ -507,7 +810,10 @@ export default function Projects() {
         <div
           className={styles.infoOverlay}
           role="presentation"
-          onClick={() => setIsInfoOpen(false)}
+          onClick={() => {
+            setIsInfoOpen(false)
+            setSelectedAnimation(null)
+          }}
         >
           <div
             className={styles.infoWrapper}
@@ -521,7 +827,11 @@ export default function Projects() {
                   key={page.title}
                   type="button"
                   className={`${styles.infoTab} ${activeInfoPage === i ? styles.infoTabActive : ''}`}
-                  onClick={() => { setActiveInfoPage(i); setActiveImageIndex(0) }}
+                  onClick={() => {
+                    setActiveInfoPage(i)
+                    setActiveImageIndex(0)
+                    setSelectedAnimation(null)
+                  }}
                 >
                   {page.title}
                 </button>
@@ -536,24 +846,52 @@ export default function Projects() {
                 aria-modal="true"
                 aria-labelledby="project-info-title"
               >
+                <button
+                  className={styles.infoClose}
+                  type="button"
+                  onClick={() => {
+                    setIsInfoOpen(false)
+                    setSelectedAnimation(null)
+                  }}
+                  aria-label="Close project details"
+                >
+                  ×
+                </button>
                 <h4 id="project-info-title" className={styles.infoPageTitle}>
                   {currentInfoPage.title}
                 </h4>
                 <div className={styles.infoBody}>
                   <div className={styles.infoImageCarousel}>
+                    {currentInfoPage.video ? (
+                      <div className={styles.infoVideoCard}>
+                        <iframe
+                          src={currentInfoPage.video}
+                          title="Project video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : currentInfoPage.model ? (
+                      <FbxModelViewer model={currentInfoPage.model} />
+                    ) : isAnimationSelectorSlide ? (
+                      <AnimationSelector
+                        animations={currentInfoPage.animations}
+                        onSelect={setSelectedAnimation}
+                      />
+                    ) : (
                     <figure className={styles.infoImageCard}>
-                      <img src={(currentInfoPage.images?.[activeImageIndex]) ?? currentInfoPage.image ?? PLACEHOLDER_IMAGE} alt="" />
+                      <img src={currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE} alt="" />
                     </figure>
-                    <div className={styles.imageNav}>
-                      {(currentInfoPage.images?.length ?? 0) > 1 && (
-                        <button
-                          className={styles.imageNavArrow}
-                          onClick={() => setActiveImageIndex(i => (i - 1 + currentInfoPage.images.length) % currentInfoPage.images.length)}
-                          aria-label="Previous image"
-                        >‹</button>
-                      )}
+                    )}
+                    {!currentInfoPage.video && !currentInfoPage.model && <div className={styles.imageNav}>
+                      <button
+                        className={styles.imageNavArrow}
+                        style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
+                        onClick={() => setActiveImageIndex(i => (i - 1 + currentImageSlides.length) % currentImageSlides.length)}
+                        aria-label="Previous image"
+                      >‹</button>
                       <div className={styles.imageDots}>
-                        {(currentInfoPage.images ?? [currentInfoPage.image]).map((_, i) => (
+                        {currentImageSlides.map((_, i) => (
                           <button
                             key={i}
                             className={`${styles.imageDot} ${activeImageIndex === i ? styles.imageDotActive : ''}`}
@@ -562,35 +900,60 @@ export default function Projects() {
                           />
                         ))}
                       </div>
-                      {(currentInfoPage.images?.length ?? 0) > 1 && (
-                        <button
-                          className={styles.imageNavArrow}
-                          onClick={() => setActiveImageIndex(i => (i + 1) % currentInfoPage.images.length)}
-                          aria-label="Next image"
-                        >›</button>
-                      )}
-                    </div>
+                      <button
+                        className={styles.imageNavArrow}
+                        style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
+                        onClick={() => setActiveImageIndex(i => (i + 1) % currentImageSlides.length)}
+                        aria-label="Next image"
+                      >›</button>
+                    </div>}
                   </div>
                   <div className={styles.infoText}>
 
-                    <p>{currentInfoPage.summary ?? selectedProject.description}</p>
-                    <dl className={styles.infoFacts}>
-                      {selectedProject.role ? (
-                        <><dt>Role</dt><dd>{selectedProject.role}</dd></>
-                      ) : null}
-                      {selectedProject.date ? (
-                        <><dt>Date</dt><dd>{selectedProject.date}</dd></>
-                      ) : null}
-                      {selectedProject.tools?.length ? (
-                        <><dt>Tools</dt><dd>{selectedProject.tools.map(t => typeof t === 'string' ? t : t.name).join(', ')}</dd></>
-                      ) : null}
-                    </dl>
+                    <p>
+                      {renderInfoSummary(
+                        currentInfoPage.summary ?? selectedProject.description,
+                        currentInfoPage.imageLinks,
+                        setActiveImageIndex,
+                      )}
+                    </p>
                   </div>
                 </div>
 
               </div>
 
             </div>
+          </div>
+        </div>,
+        document.body
+      ) : null}
+
+      {selectedAnimation ? createPortal(
+        <div
+          className={styles.modelOverlay}
+          role="presentation"
+          onClick={() => setSelectedAnimation(null)}
+        >
+          <div
+            className={styles.modelModal}
+            style={activeTheme}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="animation-viewer-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className={styles.modelClose}
+              type="button"
+              onClick={() => setSelectedAnimation(null)}
+              aria-label="Close animation viewer"
+            >
+              Ã—
+            </button>
+            <h4 id="animation-viewer-title" className={styles.modelTitle}>
+              {selectedAnimation.label}
+            </h4>
+            <FbxModelViewer model={selectedAnimation.model} />
           </div>
         </div>,
         document.body

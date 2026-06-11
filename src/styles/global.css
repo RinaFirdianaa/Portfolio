@@ -59,7 +59,8 @@
   --font-p0: 400 clamp(20px, 4vw, 20px)/1.2 var(--font-body);
   --font-p1: 400 clamp(16px, 2vw, 18px)/1.4 var(--font-body);
   --font-p2: 400 14px/1.4 var(--font-body);
-  --font-p: 400 16px/1.5 var(--font-body);
+  --font-p3: 400 12px/1.35 var(--font-body);
+  --font-p: 400 10px/1.5 var(--font-body);
 
   --font-gamebig: clamp(20px, 4vw, 24px)/1.2 var(--font-game);
   --font-gamemedium: clamp(12px, 2vw, 12px)/1.4 var(--font-game);
@@ -154,11 +155,6 @@ html.dark #root {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  transition:
-    background-color 0.4s ease,
-    color 0.4s ease,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease;
 }
 
 html {
