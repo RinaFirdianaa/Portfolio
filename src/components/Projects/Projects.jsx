@@ -471,6 +471,20 @@ export default function Projects() {
   const isAnimationSelectorSlide =
     currentInfoPage.animations?.length &&
     activeImageIndex === currentImageSlides.length - 1
+  const previewImageSlides = currentImageSlides.filter((slide) => slide !== 'animation-selector')
+  const selectedPreviewImageIndex = Math.max(0, previewImageSlides.indexOf(selectedPreviewImage))
+  const movePreviewImage = (direction) => {
+    if (!previewImageSlides.length) {
+      return
+    }
+
+    const nextIndex =
+      (selectedPreviewImageIndex + direction + previewImageSlides.length) % previewImageSlides.length
+    const nextImage = previewImageSlides[nextIndex]
+
+    setSelectedPreviewImage(nextImage)
+    setActiveImageIndex(currentImageSlides.indexOf(nextImage))
+  }
 
   const triggerProjectSparkles = (cardId, sparkleEl) => {
     if (collectedStarIdsRef.current.has(cardId)) {
@@ -1044,7 +1058,21 @@ export default function Projects() {
             >
               Ã—
             </button>
+            <button
+              className={`${styles.previewArrow} ${styles.previewArrowLeft}`}
+              type="button"
+              onClick={() => movePreviewImage(-1)}
+              aria-label="Previous image"
+              style={{ visibility: previewImageSlides.length > 1 ? 'visible' : 'hidden' }}
+            />
             <img src={selectedPreviewImage} alt="" className={styles.imagePreviewFull} />
+            <button
+              className={`${styles.previewArrow} ${styles.previewArrowRight}`}
+              type="button"
+              onClick={() => movePreviewImage(1)}
+              aria-label="Next image"
+              style={{ visibility: previewImageSlides.length > 1 ? 'visible' : 'hidden' }}
+            />
           </div>
         </div>,
         document.body
