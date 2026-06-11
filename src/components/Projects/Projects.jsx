@@ -89,6 +89,38 @@ const renderInfoSummary = (summary, imageLinks, setActiveImageIndex) => {
   })
 }
 
+const syncImageOverlayArea = (image) => {
+  const container = image.parentElement
+
+  if (!container || !image.naturalWidth || !image.naturalHeight) {
+    return
+  }
+
+  const containerWidth = container.clientWidth
+  const containerHeight = container.clientHeight
+  const containerAspect = containerWidth / containerHeight
+  const imageAspect = image.naturalWidth / image.naturalHeight
+  let top = 0
+  let right = 0
+  let bottom = 0
+  let left = 0
+
+  if (imageAspect > containerAspect) {
+    const displayedHeight = containerWidth / imageAspect
+    top = (containerHeight - displayedHeight) / 2
+    bottom = top
+  } else {
+    const displayedWidth = containerHeight * imageAspect
+    left = (containerWidth - displayedWidth) / 2
+    right = left
+  }
+
+  container.style.setProperty('--image-overlay-top', `${top}px`)
+  container.style.setProperty('--image-overlay-right', `${right}px`)
+  container.style.setProperty('--image-overlay-bottom', `${bottom}px`)
+  container.style.setProperty('--image-overlay-left', `${left}px`)
+}
+
 function FbxModelViewer({ model }) {
   const mountRef = useRef(null)
   const [hasError, setHasError] = useState(false)
@@ -373,6 +405,7 @@ export default function Projects() {
   const [activeInfoPage, setActiveInfoPage] = useState(0)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [selectedAnimation, setSelectedAnimation] = useState(null)
+  const [selectedPreviewImage, setSelectedPreviewImage] = useState(null)
   const [dragStartX, setDragStartX] = useState(null)
   const [collectedStarIds, setCollectedStarIds] = useState(() => new Set())
   const lastDragTimeRef = useRef(0)
@@ -484,6 +517,7 @@ export default function Projects() {
     setIsInfoOpen(false)
     setActiveInfoPage(0)
     setSelectedAnimation(null)
+    setSelectedPreviewImage(null)
   }
 
   const spinCardToCenter = (cardId, offset) => {
@@ -545,6 +579,7 @@ export default function Projects() {
     setIsInfoOpen(false)
     setActiveInfoPage(0)
     setSelectedAnimation(null)
+    setSelectedPreviewImage(null)
 
     if (targetOffset === 0) {
       return
@@ -794,12 +829,13 @@ export default function Projects() {
           <button
             className={styles.moreInfoButton}
             type="button"
-            onClick={() => {
-              setActiveInfoPage(0)
-              setActiveImageIndex(0)
-              setSelectedAnimation(null)
-              setIsInfoOpen(true)
-            }}
+          onClick={() => {
+            setActiveInfoPage(0)
+            setActiveImageIndex(0)
+            setSelectedAnimation(null)
+            setSelectedPreviewImage(null)
+            setIsInfoOpen(true)
+          }}
           >
             More info
           </button>
@@ -813,6 +849,7 @@ export default function Projects() {
           onClick={() => {
             setIsInfoOpen(false)
             setSelectedAnimation(null)
+            setSelectedPreviewImage(null)
           }}
         >
           <div
@@ -831,6 +868,7 @@ export default function Projects() {
                     setActiveInfoPage(i)
                     setActiveImageIndex(0)
                     setSelectedAnimation(null)
+                    setSelectedPreviewImage(null)
                   }}
                 >
                   {page.title}
@@ -852,6 +890,7 @@ export default function Projects() {
                   onClick={() => {
                     setIsInfoOpen(false)
                     setSelectedAnimation(null)
+                    setSelectedPreviewImage(null)
                   }}
                   aria-label="Close project details"
                 >
@@ -879,9 +918,33 @@ export default function Projects() {
                         onSelect={setSelectedAnimation}
                       />
                     ) : (
-                    <figure className={styles.infoImageCard}>
-                      <img src={currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE} alt="" />
-                    </figure>
+                    <button
+                      className={styles.infoImageCard}
+                      type="button"
+                      onMouseEnter={(event) => {
+                        const image = event.currentTarget.querySelector(`.${styles.infoImage}`)
+                        if (image) {
+                          syncImageOverlayArea(image)
+                        }
+                      }}
+                      onClick={() => setSelectedPreviewImage(currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE)}
+                      aria-label="Open image preview"
+                    >
+                      <span className={styles.infoImageInner}>
+                        <img
+                          src={currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE}
+                          alt=""
+                          className={styles.infoImage}
+                          onLoad={(event) => syncImageOverlayArea(event.currentTarget)}
+                        />
+                        <img
+                          src="/images/icons/zoomin.png"
+                          alt=""
+                          className={styles.imageZoomIcon}
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </button>
                     )}
                     {!currentInfoPage.video && !currentInfoPage.model && <div className={styles.imageNav}>
                       <button
@@ -954,6 +1017,34 @@ export default function Projects() {
               {selectedAnimation.label}
             </h4>
             <FbxModelViewer model={selectedAnimation.model} />
+          </div>
+        </div>,
+        document.body
+      ) : null}
+
+      {selectedPreviewImage ? createPortal(
+        <div
+          className={styles.modelOverlay}
+          role="presentation"
+          onClick={() => setSelectedPreviewImage(null)}
+        >
+          <div
+            className={`${styles.modelModal} ${styles.imagePreviewModal}`}
+            style={activeTheme}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image preview"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className={styles.modelClose}
+              type="button"
+              onClick={() => setSelectedPreviewImage(null)}
+              aria-label="Close image preview"
+            >
+              Ã—
+            </button>
+            <img src={selectedPreviewImage} alt="" className={styles.imagePreviewFull} />
           </div>
         </div>,
         document.body

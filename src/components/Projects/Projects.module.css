@@ -681,6 +681,7 @@
 }
 
 .infoImageCard {
+  position: relative;
   width: 100%;
   max-width: 480px;
   height: var(--popup-media-height);
@@ -689,13 +690,57 @@
   border-radius: var(--radius-md);
   background: var(--pink-10);
   margin: 0 auto;
+  cursor: zoom-in;
 }
 
-.infoImageCard img {
+.infoImageInner {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.infoImage {
   width: 100%;
   height: 100%;
   object-fit: contain;
   background: #ffffff;
+}
+
+.infoImageInner::before {
+  content: '';
+  position: absolute;
+  top: var(--image-overlay-top, 0);
+  right: var(--image-overlay-right, 0);
+  bottom: var(--image-overlay-bottom, 0);
+  left: var(--image-overlay-left, 0);
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.imageZoomIcon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  background: transparent;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.infoImageCard:hover .infoImageInner::before,
+.infoImageCard:hover .imageZoomIcon {
+  opacity: 1;
+}
+
+.infoImageCard:hover .imageZoomIcon {
+  transform: translate(-50%, -50%) scale(1.04);
 }
 
 .infoModelCard {
@@ -911,6 +956,19 @@
   height: auto;
   min-height: 0;
   background: transparent;
+}
+
+.imagePreviewModal {
+  padding: 48px 20px 20px;
+}
+
+.imagePreviewFull {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .infoText {

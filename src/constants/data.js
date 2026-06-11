@@ -196,7 +196,11 @@ export const PROJECTS = [
       {
         title: '3D Art',
         summary: 'All the 3D assets were made in Maya using a cute, stylised low-poly look to give Boba Time its warm and playful feel. I modelled the characters, including different customer types for each level, along with the environment and props like the town square, street lamps, seating areas, and shop equipment. I also created the bubble tea assets used in gameplay and added animations to help bring the characters and world to life.',
-        images: ['/images/Projects/BobaTime/BobaTime10.png', '/images/Projects/BobaTime/BobaTime9.png'],
+        images: ['/images/Projects/BobaTime/BobaTime10.png'],
+        imageLinks: [
+          { label: 'environment', imageIndex: 0 },
+          { label: 'characters', imageIndex: 1 },
+        ],
         animations: [
           { label: 'Boy Angry 2', model: '/images/Projects/BobaTime/fbx/boyAngry2.fbx', image: '/images/Projects/BobaTime/Angry.png' },
           { label: 'Critic Walking', model: '/images/Projects/BobaTime/fbx/critic_walking.fbx', image: '/images/Projects/BobaTime/Walking.png' },
