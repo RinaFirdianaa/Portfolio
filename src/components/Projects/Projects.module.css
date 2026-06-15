@@ -607,7 +607,7 @@
 }
 
 .infoBody {
-  --popup-media-height: min(360px, calc((92vw - 120px) * 0.75));
+  --popup-media-height: min(320px, calc((92vw - 120px) * 0.75));
   display: grid;
   grid-template-columns: minmax(280px, 480px) minmax(220px, 1fr);
   gap: 22px;
@@ -623,8 +623,7 @@
   flex-direction: column;
   gap: 10px;
   justify-self: center;
-  align-self: center;
-  transform: translateY(-16px);
+  align-self: start;
 }
 
 .infoVideoCard {
@@ -741,6 +740,24 @@
 
 .infoImageCard:hover .imageZoomIcon {
   transform: translate(-50%, -50%) scale(1.04);
+}
+
+.imageCalloutLayer {
+  position: absolute;
+  top: var(--image-overlay-top, 0);
+  right: var(--image-overlay-right, 0);
+  bottom: var(--image-overlay-bottom, 0);
+  left: var(--image-overlay-left, 0);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.imageCalloutBox {
+  position: absolute;
+  border: 1px solid #ff3b30;
+  border-radius: 22px;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
 .infoModelCard {
@@ -1044,6 +1061,34 @@
 
 .infoTextLink:hover {
   color: var(--category-accent-dark);
+}
+
+.infoBulletList {
+  margin: 4px 0 0 1.2em;
+  padding-left: 0.6em;
+  list-style: disc;
+}
+
+.infoDownloadLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  min-height: 34px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  font: var(--font-p2);
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--category-accent);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.infoDownloadLink:hover {
+  background: var(--category-accent-dark);
+  transform: translateY(-1px);
 }
 
 .infoFacts {

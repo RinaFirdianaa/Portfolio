@@ -139,13 +139,7 @@ export const PROJECTS = [
       'Boba Time is a 3D single-player game where you inherit a bubble tea shop and chase your absent father\'s legacy as the best boba maker. The game tasks you with making bubble tea, serving customers, and managing the store across 3 levels — culminating in a head-to-head competition. I designed the gameplay mechanics and built all 3 levels in Unity using C#, and served as the main artist — modeling the shop, equipment, and characters in Maya, and designing all UI/UX with Procreate and Figma.',
     type: 'Game Development & 3D Art',
     role: 'Gameplay Designer, Level Designer & Lead Artist',
-    tools: [
-      { name: 'Unity',     image: '/images/Tools/Unity.png' },
-      { name: 'C#',        image: '/images/Tools/csharp.png' },
-      { name: 'Maya',      image: '/images/Tools/maya.png' },
-      { name: 'Procreate', image: '/images/Tools/procreate.jpeg' },
-      { name: 'Figma',     image: '/images/Tools/figma.png' },
-    ],
+    tools: ['unity', 'csharp', 'maya', 'procreate', 'figma'],
     date: '2024 - 2025',
     links: [
       { label: '3D', href: '#' },
@@ -216,40 +210,269 @@ export const PROJECTS = [
     ],
   },
   {
+    id: 'design-1',
+    title: 'Dashboard',
+    detailTitle: 'Web Dashboard',
+    category: 'Design',
+    summary:
+      'I designed and developed a web-based AWS CloudWatch Alarm Reporting Dashboard to monitor infrastructure alarms more clearly and efficiently. The dashboard presents alarm data in a structured interface, using summary cards, charts, tables, and filters to help users quickly understand system health, identify issues, and investigate alarms.',
+    description:
+      'I designed and developed a web-based AWS CloudWatch Alarm Reporting Dashboard to monitor infrastructure alarms more clearly and efficiently. The dashboard presents alarm data in a structured interface, using summary cards, charts, tables, and filters to help users quickly understand system health, identify issues, and investigate alarms.',
+    type: 'Web Dashboard',
+    tools: ['figma', 'react', 'css'],
+    date: '2025',
+    image: '/images/Projects/Dashboard.png',
+    pages: [
+      {
+        title: 'Overview',
+        summary:
+          'I designed and developed a web-based CloudWatch Alarm Reporting Dashboard to monitor infrastructure alarms more clearly and efficiently. The dashboard presents CloudWatch alarm data in a structured interface, using summary cards, charts, tables, and filters to help users understand system health at a glance.' +
+          '\n\n**Problem**\nTo investigate an alarm, users often had to click through multiple pages in AWS, open individual alarm details, check related metrics, and switch between different views. This made the process slower and less efficient, especially when monitoring many alarms across different services.',
+        image: '/images/Projects/Dashboard/Dashboard2.png',
+      },
+      {
+        title: 'Goals',
+        summary:
+          'The design goals were to make alarm monitoring clearer, faster, and easier to manage. I wanted the dashboard to help users:' +
+          '\n\n- Understand system health at a glance' +
+          '\n- Identify critical alarm states quickly' +
+          '\n- Filter and organise alarms without extra navigation' +
+          '\n- View alarm data in a more visual and structured way' +
+          '\n- Customise the dashboard based on different monitoring needs',
+        image: '/images/Projects/Dashboard/Dashboard9.png',
+      },
+      {
+        title: 'Design',
+        summary:
+          'The solution was a centralised dashboard that brings alarm information into one clear interface. Instead of forcing users to move through multiple CloudWatch pages, the dashboard displays key alarm information through summary cards, visual charts, and a structured alarm table.' +
+          '\n\n' +
+          '**Summary Cards**\nThe dashboard uses summary cards to show the total number of alarms and the number of alarms in each state: OK, ALARM, and INSUFFICIENT DATA. This gives users a quick view of system health at a glance.' +
+          '\n\n**Alarm Table**\nThe alarm table displays key details such as alarm name, current state, service, namespace, tags, and last updated time. This makes the information easier to scan and helps users investigate alarms in a more organised way.' +
+          '\n\n**Filtering & Organisation**\nUsers can search and filter alarms by name, service, alarm state, namespace, and tags. The filters update instantly without requiring a full page reload, making the investigation process faster and smoother.' +
+          '\n\n**Data Visualisation**\nThe dashboard uses charts, tables, summary cards, and text cards to present alarm data in different ways. This helps users move between a high-level overview and more detailed alarm information depending on what they need.' +
+          '\n\n**Customisable Dashboard Cards**\nUsers can move, resize, add, edit, and save dashboard cards. This allows different users or teams to personalise the layout based on their monitoring needs.' +
+          '\n\n**Historical Alarm View**\nThe dashboard supports historical alarm visualisation, allowing users to view alarm behaviour across selected time ranges. This helps users observe patterns and understand how alarm states change over time.',
+        image: '/images/Projects/Dashboard/Dashboard1.png',
+        images: [
+          '/images/Projects/Dashboard/Dashboard1.png',
+          '/images/Projects/Dashboard/Dashboard6.png',
+          '/images/Projects/Dashboard/Dashboard5.jpg',
+          '/images/Projects/Dashboard/Dashboard7.jpg',
+        ],
+        imageLinks: [
+          {
+            label: 'summary cards',
+            imageIndex: 0,
+            callout: { imageIndex: 0, x: 1.5, y: 18, width: 55, height: 20 },
+          },
+          {
+            label: 'Alarm Table',
+            imageIndex: 0,
+            callout: { imageIndex: 0, x: 1.5, y: 58, width: 96, height: 37 },
+          },
+          {
+            label: 'Filtering & Organisation',
+            imageIndex: 0,
+            callout: { imageIndex: 0, x: 1.5, y: 50, width: 96, height: 13 },
+          },
+          {
+            label: 'Data Visualisation',
+            imageIndex: 2,
+          },
+          {
+            label: 'charts',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 71, y: 25, width: 28, height: 70 },
+          },
+          {
+            label: 'text cards',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 1.5, y: 15, width: 96, height: 13 },
+          },
+          {
+            label: 'tables',
+            imageIndex: 0,
+            callout: { imageIndex: 0, x: 1.5, y: 58, width: 96, height: 37 },
+          },
+          {
+            label: 'Customisable Dashboard Cards',
+            imageIndex: 1,
+          },
+          {
+            label: 'can move',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 1.5, y: 15, width: 96, height: 5 },
+          },
+          {
+            label: 'edit',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 92, y: 19, width: 4, height: 5 },
+          },
+          {
+            label: 'resize',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 68.5, y: 58.5, width: 4, height: 5 },
+          },
+          {
+            label: 'add',
+            imageIndex: 2,
+            callout: { imageIndex: 2, x: 89.3, y: 3.5, width: 10, height: 7 },
+          },
+          {
+            label: 'Historical Alarm View',
+            imageIndex: 3,
+          },
+        ],
+      },
+      {
+        title: 'Outcome',
+        summary:
+          'The final dashboard met the design goals by making CloudWatch alarm monitoring clearer and easier to manage.' +
+          '\n\nSummary cards help users **understand system health at a glance**, while clear alarm states make it easier to **identify critical issues quickly**. Filters allow users to **search and organise alarms without extra navigation** by service, state, name, namespace, and tags.' +
+          '\n\nBy using charts, tables, and visual cards, the dashboard allows users to **view alarm data in a more visual and structured way**. Customisable cards also allow users to **adjust the dashboard based on different monitoring needs**.',
+        image: '/images/Projects/Dashboard/Dashboard8.png',
+      },
+    ],
+  },
+  {
+    id: 'muju',
+    title: 'Muju',
+    detailTitle: 'Muju Card Game',
+    category: 'Others',
+    summary: 'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and UI/UX Designer, I was responsible for designing the core gameplay mechanics, and card layouts.',
+    description:
+      'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and UI/UX Designer, I was responsible for designing the core gameplay mechanics and card layouts.',
+    type: 'Card Game',
+    role: 'Gameplay Designer and UI/UX Designer',
+    tools: ['figma', 'procreate'],
+    date: '2024',
+    links: [
+      { label: 'Card Game', href: '#' },
+      { label: 'UI/UX', href: '#' },
+    ],
+    image: '/images/Projects/Muju.png',
+    pages: [
+      {
+        title: 'Overview',
+        summary:
+          'Muju is a single-player tabletop dungeon card game that blends exploration, turn-based combat, and resource management into a strategic survival experience. Players progress through a dungeon deck filled with monsters, random scenarios, and item opportunities, requiring careful decision-making to manage health, coins, and limited inventory space.' +
+          '\n\nThroughout the journey, players must adapt to unpredictable encounters while optimizing their loadout through a constrained item system. Every four rounds introduces a Muju encounter, a powerful entity with unique abilities and special conditions that challenge the player\'s strategy and preparation. Defeating a Muju rewards its card, marking progression toward the final objective.',
+        image: '/images/Projects/Muju/Muju2.png',
+      },
+      {
+        title: 'Gameplay',
+        summary:
+          'In Muju, gameplay is based on choosing between two actions each round: going to the store or entering the dungeon.' +
+          '\n\nAt the start of the game, the player chooses a role card: Mage, Warrior, or Archer. Each role gives different starting strengths and influences how the player approaches combat throughout the game.' +
+          '\n\nIn the store, the player draws three item cards, chooses one to buy, and puts the other two back into the deck. The player can only hold up to two items, so they must discard one if they want to buy a new one. Items help in combat and are returned to the item deck after being used or broken.' +
+          '\n\nWhen entering the dungeon, the player draws a card from the Dungeon deck. This can be a monster or a scenario. In combat, the player rolls a 6-sided die and adds it to their attack value. The enemy rolls a 4-sided die and adds it to their attack. The player can also use items to increase their attack. Damage is calculated by comparing total attack values, and the fight continues until either the player or the enemy is defeated.' +
+          '\n\nIf the player wins, they earn coins from the monster card. They can then choose to go back to the store, use items, or continue exploring the dungeon.' +
+          '\n\nScenario cards create random events that can help or hurt the player, such as gaining items or losing health. Some scenarios also involve fighting two enemies at once, where the player can only attack one at a time while both enemies can attack the player.' +
+          '\n\nEvery four rounds, the player faces a Muju instead of a normal dungeon card. Mujus are powerful enemies with special rules or requirements. Defeating a Muju gives the player its card. The game ends when the player defeats three Mujus.',
+        image: '/images/Projects/Muju/Muju1.png',
+      },
+      {
+        title: 'UI/UX Design',
+        summary:
+          'To keep the game easy to understand, I used the same icons and colors across all card types. This helps players quickly understand what each card does without needing to read too much.' +
+          '\n\nPlayer & Muju Cards\nPlayer and Muju cards show key stats such as health, attack, and starting coins. The heart icon represents health, the sword icon represents attack, and the coin icon shows how many coins the player starts with. This makes the card information easy to read at a glance.' +
+          '\n\nMonster Cards\nMonster cards show health and attack using the same icons as the other cards. The coin value is placed on the back of the monster card, so when a monster is defeated, players can flip it over and use it as a coin token. This reduces the need for extra components and keeps the game easier to manage.' +
+          '\n\nItem Cards\nItem cards show the cost, attack bonus, and durability. The coin icon shows how much the item costs, while the sword icon shows how much attack it adds. I also added short flavor text and a "breaks after X attacks" note to make the items feel more fun and playful.' +
+          '\n\nDesign Approach\nI reused the same icon system across all card types so players only need to learn it once. This makes the cards easier to understand, reduces confusion, and helps the gameplay feel faster and smoother, especially for new players.',
+        images: [
+          '/images/Projects/Muju/Muju3.png',
+          '/images/Projects/Muju/Muju4.png',
+          '/images/Projects/Muju/Muju5.png',
+        ],
+        imageLinks: [
+          { label: 'Player & Muju Cards', imageIndex: 0 },
+          { label: 'Monster Cards', imageIndex: 2 },
+          { label: 'Item Cards', imageIndex: 1 },
+        ],
+      },
+    ],
+  },
+  {
     id: 'wonderland',
     title: 'Wonderland',
     category: 'Game',
-    summary: 'A fantasy mobile game interface with whimsical visuals and accessible UX.',
+    summary: 'Developed a 2D cooperative puzzle game using the school\'s custom game engine as part of a team of five developers. Served as the Game Designer and Artist, designing the game\'s puzzles, implementing gameplay features in C++, and developing the game\'s user interface systems',
     description:
       'A fantasy-themed mobile game interface that blends whimsical visual design with accessible UX patterns.',
     type: 'Game UI',
-    role: 'UI/UX Designer',
-    tools: [
-      { name: 'Figma',      image: '/images/tools/maya.png' },
-      { name: 'Photoshop',  image: '/images/tools/maya.png' },
-      { name: 'Unity',      image: '/images/tools/maya.png' },
-    ],
+    role: 'Gameplay Designer, Artist & Developer',
+    tools: ['procreate', 'c++'],
     date: '2024',
     links: [
-      { label: 'Case Study', href: '#' },
+      { label: '2D', href: '#' },
+      { label: 'Downloadable', href: '#' },
     ],
-    image: '/images/placeholder.png',
+    image: '/images/Projects/Wonderland.png',
     pages: [
       {
-        title: 'Concept',
-        summary: 'Early direction for the Wonderland visual style.',
-        image: '/images/placeholder.png',
+        title: 'Overview',
+        summary:
+          'Wonderland is a 2D cooperative puzzle platformer where two players work together as Alice and Alter Alice to escape the strange world of Wonderland. The game is built around the idea that each player experiences the same level differently. While Alice sees the world normally, Alter Alice sees everything upside down, creating different paths, obstacles, and solutions for each player.' +
+          '\n\nThe game focuses on teamwork, communication, and puzzle-solving. Players must use their different perspectives and abilities to help each other progress through each level and overcome the challenges found throughout Wonderland.',
+        video: 'https://youtu.be/garvaJ6r98w',
+        download: {
+          label: 'Download Wonderland',
+          href: '/images/Projects/Wonderland/Wonderland.zip',
+        },
       },
       {
-        title: 'Interface',
-        summary: 'Game interface layout and player-facing controls.',
-        image: '/images/placeholder.png',
+        title: 'Gameplay',
+        summary:
+          'Players control Alice and Alter Alice, who explore the same environment from opposite perspectives. Because one player sees the world upside down, platforms and obstacles may appear completely different to each character. This requires players to communicate and work together to find a way forward.' +
+          '\n\nAnother key mechanic is character size. Throughout the game, one Alice may become smaller while the other becomes larger. Smaller characters can fit through narrow spaces and reach areas that would otherwise be inaccessible, while larger characters can move obstacles or jump higher.' +
+          '\n\nMany puzzles combine these mechanics. For example, Alter Alice may be able to move a box that Alice cannot interact with. By pushing the box off an edge, it falls into Alice\'s side of the level and becomes a platform that the smaller Alice can use to reach higher areas.',
+        images: [
+          '/images/Projects/Wonderland/Wonderland1.jpg',
+          '/images/Projects/Wonderland/Wonderland2.jpg',
+          '/images/Projects/Wonderland/Wonderland3.jpg',
+        ],
+        imageLinks: [
+          { label: 'box', imageIndex: 0 },
+          { label: 'character size', imageIndex: 2 },
+        ],
+      },
+      {
+        title: '2D Art',
+        summary:
+          'Since the project was mainly assessed on gameplay and programming rather than visuals, the art style was kept simple and focused on supporting the game experience.' +
+          '\n\nCharacter Design\nAlice and Alter Alice share the same design, with the only difference being their colours. Alice wears white while Alter Alice wears black, helping to show that they are mirror versions of the same character.' +
+          '\n\nEnvironment & Key Props\nThe environment is inspired by Alice\'s Adventures in Wonderland, using a simple and whimsical art style to create a mysterious Wonderland atmosphere. Important props, such as the card-themed boxes, are based on the playing card elements that are strongly associated with the story.' +
+          '\n\nUI Design\nThe pause menu, game over screen, and death screen all feature the Cheshire Cat\'s face in the background. This serves as a subtle hint that he may be connected to the strange events and chaos happening throughout Wonderland.',
+        images: [
+          '/images/Projects/Wonderland/Wonderland4.png',
+          '/images/Projects/Wonderland/Wonderland5.png',
+          '/images/Projects/Wonderland/Wonderland6.png',
+          '/images/Projects/Wonderland/Wonderland7.png',
+        ],
+        imageLinks: [
+          { label: 'Character Design', imageIndex: 0 },
+          { label: 'Environment', imageIndex: 1 },
+          { label: 'Key Props', imageIndex: 2 },
+          { label: 'UI Design', imageIndex: 3 },
+        ],
       },
     ],
   },
 ]
 
 export const PROJECT_CATEGORIES = ['Design', 'Game', 'Others']
+
+export const PROJECT_TOOLS = {
+  unity: { name: 'Unity', image: '/images/Tools/Unity.png' },
+  csharp: { name: 'C#', image: '/images/Tools/csharp.png' },
+  'c++': { name: 'C++', image: '/images/Tools/c++.png' },
+  maya: { name: 'Maya', image: '/images/Tools/maya.png' },
+  procreate: { name: 'Procreate', image: '/images/Tools/procreate.jpeg' },
+  figma: { name: 'Figma', image: '/images/Tools/figma.png' },
+  react: { name: 'React' },
+  css: { name: 'CSS' },
+  photoshop: { name: 'Photoshop' },
+}
 
 export const EXPERIENCES = [
   {

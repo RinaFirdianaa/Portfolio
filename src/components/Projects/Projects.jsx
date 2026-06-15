@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { PROJECTS, PROJECT_CATEGORIES } from '@/constants/data'
+import { PROJECTS, PROJECT_CATEGORIES, PROJECT_TOOLS } from '@/constants/data'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
@@ -51,9 +51,19 @@ const CATEGORY_THEMES = {
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-const renderInfoSummary = (summary, imageLinks, setActiveImageIndex) => {
-  if (!summary || !imageLinks?.length) {
-    return summary
+const renderBoldText = (text, keyPrefix) => (
+  text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={`${keyPrefix}-bold-${index}`}>{part.slice(2, -2)}</strong>
+    }
+
+    return part
+  })
+)
+
+const renderInlineSummary = (text, imageLinks, setActiveImageIndex, setActiveImageCallout, keyPrefix) => {
+  if (!text || !imageLinks?.length) {
+    return renderBoldText(text ?? '', keyPrefix)
   }
 
   const validLinks = imageLinks
@@ -61,7 +71,7 @@ const renderInfoSummary = (summary, imageLinks, setActiveImageIndex) => {
     .sort((a, b) => b.label.length - a.label.length)
 
   if (!validLinks.length) {
-    return summary
+    return renderBoldText(text, keyPrefix)
   }
 
   const linkByLabel = new Map(
@@ -69,24 +79,97 @@ const renderInfoSummary = (summary, imageLinks, setActiveImageIndex) => {
   )
   const pattern = new RegExp(`(${validLinks.map((link) => escapeRegExp(link.label)).join('|')})`, 'gi')
 
-  return summary.split(pattern).map((part, index) => {
+  return text.split(pattern).map((part, index) => {
     const link = linkByLabel.get(part.toLowerCase())
 
     if (!link) {
-      return part
+      return renderBoldText(part, `${keyPrefix}-text-${index}`)
     }
 
     return (
       <button
-        key={`${part}-${index}`}
+        key={`${keyPrefix}-${part}-${index}`}
         type="button"
         className={styles.infoTextLink}
-        onClick={() => setActiveImageIndex(link.imageIndex)}
+        onClick={() => {
+          setActiveImageIndex(link.imageIndex)
+          setActiveImageCallout(link.callout ?? null)
+        }}
       >
         {part}
       </button>
     )
   })
+}
+
+const renderInfoSummary = (summary, imageLinks, setActiveImageIndex, setActiveImageCallout) => {
+  const lines = (summary ?? '').split('\n')
+  const nodes = []
+  let bulletItems = []
+
+  const flushBullets = () => {
+    if (!bulletItems.length) return
+
+    const listIndex = nodes.length
+    nodes.push(
+      <ul key={`bullet-list-${listIndex}`} className={styles.infoBulletList}>
+        {bulletItems.map((item, index) => (
+          <li key={`bullet-${listIndex}-${index}`}>
+            {renderInlineSummary(item, imageLinks, setActiveImageIndex, setActiveImageCallout, `bullet-${listIndex}-${index}`)}
+          </li>
+        ))}
+      </ul>,
+    )
+    bulletItems = []
+  }
+
+  lines.forEach((line, index) => {
+    if (line.startsWith('- ')) {
+      bulletItems.push(line.slice(2))
+      return
+    }
+
+    flushBullets()
+    nodes.push(
+      <span key={`line-${index}`}>
+        {renderInlineSummary(line, imageLinks, setActiveImageIndex, setActiveImageCallout, `line-${index}`)}
+        {index < lines.length - 1 ? '\n' : null}
+      </span>,
+    )
+  })
+
+  flushBullets()
+  return nodes
+}
+
+const getEmbedVideoUrl = (videoUrl) => {
+  if (!videoUrl) {
+    return ''
+  }
+
+  try {
+    const url = new URL(videoUrl)
+
+    if (url.hostname === 'youtu.be') {
+      const videoId = url.pathname.replace('/', '')
+      return `https://www.youtube.com/embed/${videoId}`
+    }
+
+    if (url.hostname.includes('youtube.com')) {
+      if (url.pathname.startsWith('/embed/')) {
+        return videoUrl
+      }
+
+      const videoId = url.searchParams.get('v')
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`
+      }
+    }
+  } catch {
+    return videoUrl
+  }
+
+  return videoUrl
 }
 
 const syncImageOverlayArea = (image) => {
@@ -119,6 +202,14 @@ const syncImageOverlayArea = (image) => {
   container.style.setProperty('--image-overlay-right', `${right}px`)
   container.style.setProperty('--image-overlay-bottom', `${bottom}px`)
   container.style.setProperty('--image-overlay-left', `${left}px`)
+}
+
+const getProjectTool = (tool) => {
+  if (typeof tool !== 'string') {
+    return tool
+  }
+
+  return PROJECT_TOOLS[tool] ?? { name: tool }
 }
 
 function FbxModelViewer({ model }) {
@@ -404,6 +495,7 @@ export default function Projects() {
   const [isInfoOpen, setIsInfoOpen] = useState(false)
   const [activeInfoPage, setActiveInfoPage] = useState(0)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [activeImageCallout, setActiveImageCallout] = useState(null)
   const [selectedAnimation, setSelectedAnimation] = useState(null)
   const [selectedPreviewImage, setSelectedPreviewImage] = useState(null)
   const [dragStartX, setDragStartX] = useState(null)
@@ -454,7 +546,7 @@ export default function Projects() {
     ? selectedProject.pages
     : [
         {
-          title: selectedProject.title,
+          title: selectedProject.pageTitle ?? selectedProject.detailTitle ?? selectedProject.title,
           summary: selectedProject.description,
           image: selectedProject.image ?? PLACEHOLDER_IMAGE,
         },
@@ -530,6 +622,7 @@ export default function Projects() {
     setSelectedCardId(null)
     setIsInfoOpen(false)
     setActiveInfoPage(0)
+    setActiveImageCallout(null)
     setSelectedAnimation(null)
     setSelectedPreviewImage(null)
   }
@@ -540,6 +633,7 @@ export default function Projects() {
     if (offset === 0) {
       setSelectedCardId(cardId)
       setActiveInfoPage(0)
+      setActiveImageCallout(null)
       return
     }
 
@@ -563,6 +657,7 @@ export default function Projects() {
       clickSpinTimerRef.current = window.setTimeout(() => {
         setSelectedCardId(cardId)
         setActiveInfoPage(0)
+        setActiveImageCallout(null)
       }, CLICK_SPIN_STEP_MS)
     }
 
@@ -592,6 +687,7 @@ export default function Projects() {
     setSelectedCardId(null)
     setIsInfoOpen(false)
     setActiveInfoPage(0)
+    setActiveImageCallout(null)
     setSelectedAnimation(null)
     setSelectedPreviewImage(null)
 
@@ -784,7 +880,7 @@ export default function Projects() {
             >
               &lt;
             </button>
-            <h4 className={styles.detailTitle}>{selectedProject.title}</h4>
+            <h4 className={styles.detailTitle}>{selectedProject.detailTitle ?? selectedProject.title}</h4>
             <button
               className={styles.detailArrow}
               type="button"
@@ -818,8 +914,7 @@ export default function Projects() {
                 <strong>Tools</strong>
                 <span className={styles.toolList}>
                   {selectedProject.tools.map((tool) => {
-                    const name  = typeof tool === 'string' ? tool : tool.name
-                    const image = typeof tool === 'string' ? null : tool.image
+                    const { name, image } = getProjectTool(tool)
                     return (
                       <span key={name} className={styles.toolItem}>
                         {image && <img src={image} alt="" className={styles.toolIcon} />}
@@ -846,6 +941,7 @@ export default function Projects() {
           onClick={() => {
             setActiveInfoPage(0)
             setActiveImageIndex(0)
+            setActiveImageCallout(null)
             setSelectedAnimation(null)
             setSelectedPreviewImage(null)
             setIsInfoOpen(true)
@@ -862,6 +958,7 @@ export default function Projects() {
           role="presentation"
           onClick={() => {
             setIsInfoOpen(false)
+            setActiveImageCallout(null)
             setSelectedAnimation(null)
             setSelectedPreviewImage(null)
           }}
@@ -881,6 +978,7 @@ export default function Projects() {
                   onClick={() => {
                     setActiveInfoPage(i)
                     setActiveImageIndex(0)
+                    setActiveImageCallout(null)
                     setSelectedAnimation(null)
                     setSelectedPreviewImage(null)
                   }}
@@ -903,6 +1001,7 @@ export default function Projects() {
                   type="button"
                   onClick={() => {
                     setIsInfoOpen(false)
+                    setActiveImageCallout(null)
                     setSelectedAnimation(null)
                     setSelectedPreviewImage(null)
                   }}
@@ -918,7 +1017,7 @@ export default function Projects() {
                     {currentInfoPage.video ? (
                       <div className={styles.infoVideoCard}>
                         <iframe
-                          src={currentInfoPage.video}
+                          src={getEmbedVideoUrl(currentInfoPage.video)}
                           title="Project video"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
@@ -957,6 +1056,19 @@ export default function Projects() {
                           className={styles.imageZoomIcon}
                           aria-hidden="true"
                         />
+                        {activeImageCallout && activeImageIndex === activeImageCallout.imageIndex ? (
+                          <span className={styles.imageCalloutLayer} aria-hidden="true">
+                            <span
+                              className={styles.imageCalloutBox}
+                              style={{
+                                left: `${activeImageCallout.x}%`,
+                                top: `${activeImageCallout.y}%`,
+                                width: `${activeImageCallout.width}%`,
+                                height: `${activeImageCallout.height}%`,
+                              }}
+                            />
+                          </span>
+                        ) : null}
                       </span>
                     </button>
                     )}
@@ -964,7 +1076,10 @@ export default function Projects() {
                       <button
                         className={styles.imageNavArrow}
                         style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
-                        onClick={() => setActiveImageIndex(i => (i - 1 + currentImageSlides.length) % currentImageSlides.length)}
+                        onClick={() => {
+                          setActiveImageIndex(i => (i - 1 + currentImageSlides.length) % currentImageSlides.length)
+                          setActiveImageCallout(null)
+                        }}
                         aria-label="Previous image"
                       >‹</button>
                       <div className={styles.imageDots}>
@@ -972,7 +1087,10 @@ export default function Projects() {
                           <button
                             key={i}
                             className={`${styles.imageDot} ${activeImageIndex === i ? styles.imageDotActive : ''}`}
-                            onClick={() => setActiveImageIndex(i)}
+                            onClick={() => {
+                              setActiveImageIndex(i)
+                              setActiveImageCallout(null)
+                            }}
                             aria-label={`Image ${i + 1}`}
                           />
                         ))}
@@ -980,20 +1098,33 @@ export default function Projects() {
                       <button
                         className={styles.imageNavArrow}
                         style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
-                        onClick={() => setActiveImageIndex(i => (i + 1) % currentImageSlides.length)}
+                        onClick={() => {
+                          setActiveImageIndex(i => (i + 1) % currentImageSlides.length)
+                          setActiveImageCallout(null)
+                        }}
                         aria-label="Next image"
                       >›</button>
                     </div>}
                   </div>
                   <div className={styles.infoText}>
 
-                    <p>
+                    <div>
                       {renderInfoSummary(
                         currentInfoPage.summary ?? selectedProject.description,
                         currentInfoPage.imageLinks,
                         setActiveImageIndex,
+                        setActiveImageCallout,
                       )}
-                    </p>
+                    </div>
+                    {currentInfoPage.download ? (
+                      <a
+                        className={styles.infoDownloadLink}
+                        href={currentInfoPage.download.href}
+                        download
+                      >
+                        {currentInfoPage.download.label}
+                      </a>
+                    ) : null}
                   </div>
                 </div>
 
