@@ -12,6 +12,7 @@ import styles from './Navbar.module.css'
 const SCORE_PER_SECTION = 10
 const SPARKLE_TRAVEL_MS = 850
 const TOTAL_SCORE = 100
+const NAV_SCROLL_EXTRA_OFFSET = 28
 
 export default function Navbar() {
   const scrolled            = useScrolled()
@@ -279,7 +280,16 @@ export default function Navbar() {
 
   const handleNavClick = (e, href) => {
     e.preventDefault()
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    const section = document.querySelector(href)
+    if (!section) return
+
+    const headerHeight = headerRef.current?.offsetHeight || 0
+    const targetTop = section.getBoundingClientRect().top + window.scrollY
+
+    window.scrollTo({
+      top: Math.max(targetTop - headerHeight - NAV_SCROLL_EXTRA_OFFSET, 0),
+      behavior: 'smooth',
+    })
   }
 
   return (

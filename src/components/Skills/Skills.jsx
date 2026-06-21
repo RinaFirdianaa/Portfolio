@@ -52,6 +52,13 @@ const SCATTER_POSITIONS = {
   ],
 }
 
+const SKILL_TITLE_POSITIONS = {
+  code: { left: '2%', top: '36%' },
+  tools: { left: '95%', top: '36%' },
+  design: { left: '2%', top: '76%' },
+  soft: { left: '95%', top: '76%' },
+}
+
 const SKILL_THEMES = {
   code: {
     '--skill-card-bg': 'var(--yellow-10)',
@@ -455,30 +462,20 @@ export default function Skills() {
 
       <article className={styles.universe}>
         <div className={styles.backgroundLabels} aria-hidden="true">
-          {SKILLS.map((skill, index) => {
-            const zone = getSectionZone(skill.id)
-            const isLeftSide = index % 2 === 0
-            const labelYOffset = skill.id === 'tools' || skill.id === 'soft' ? 15 : 0
-            const labelTop = `${zone.y + zone.height / 2 + labelYOffset}%`
+          {SKILLS.map((skill) => {
+            const titlePosition = SKILL_TITLE_POSITIONS[skill.id] || { left: '50%', top: '50%' }
             return (
               <span
                 key={skill.id}
                 className={styles.backgroundTitle}
                 style={{
                   ...SKILL_THEMES[skill.id],
-                  '--label-rotate': isLeftSide ? '-90deg' : '90deg',
-                  '--label-translate': isLeftSide ? '0 -50%' : '-100% -50%',
-                  left: isLeftSide ? '0%' : '100%',
-                  top: labelTop,
+                  '--label-translate': titlePosition.left === '95%' ? '-100% -50%' : '0 -50%',
+                  left: titlePosition.left,
+                  top: titlePosition.top,
                 }}
               >
-                {skill.id === 'soft' ? (
-                  <>
-                    Soft
-                    <br />
-                    Skills
-                  </>
-                ) : skill.label}
+                {skill.label}
                 {!collectedSkillStarIds.has(skill.id) ? (
                   <span
                     className={styles.titleSparkle}
