@@ -120,6 +120,25 @@ export default function Hero() {
           <p className={styles.tagline}>
             Also, I'm a professional button mover in Figma.
           </p>
+          <div className={styles.heroLinks} aria-label="Profile links">
+            <a
+              className={styles.iconLink}
+              href="https://www.linkedin.com/in/rina-firdiana/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn profile"
+            >
+              <img
+                className={styles.linkedinIcon}
+                src="/images/icons/linkedin%20.png"
+                alt=""
+                aria-hidden="true"
+              />
+            </a>
+            <a className={styles.resumeLink} href="/resume.pdf" target="_blank" rel="noreferrer">
+              Resume
+            </a>
+          </div>
           <p className={styles.hint}>
             Earn pts wherever you see <StarIcon size="1rem" glow />
           </p>
