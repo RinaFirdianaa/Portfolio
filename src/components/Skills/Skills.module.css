@@ -107,7 +107,7 @@
 /* --- Skill Bubbles --- */
 .bubbleStage {
   position: relative;
-  height: 500px;
+  height: 580px;
   margin: 0px var(--bubble-side-gutter);
   border-radius: 8px;
   overflow: hidden;
@@ -200,7 +200,7 @@
   z-index: -2;
 }
 
-.bubbleImageGrid {
+.bubbleMediaGrid {
   position: absolute;
   inset: 20%;
   z-index: 1;
@@ -213,7 +213,7 @@
   pointer-events: none;
 }
 
-.bubble[data-image-count='1'] .bubbleImageGrid {
+.bubble[data-entry-count='1'] .bubbleMediaGrid {
   grid-template-columns: 1fr;
   inset: 24%;
 }
@@ -229,6 +229,17 @@
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.bubbleIcon {
+  width: 100%;
+  min-width: 0;
+  color: color-mix(in srgb, var(--skill-accent) 82%, var(--purple-60));
+  font: var(--font-p2);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .bubbleLabelGrid {
@@ -253,7 +264,7 @@
   overflow-wrap: anywhere;
 }
 
-.bubble[data-has-image='true'] .bubbleLabelGrid {
+.bubble[data-has-media='true'] .bubbleLabelGrid {
   display: none;
 }
 
@@ -373,11 +384,11 @@
 @media (max-width: 600px) {
   .universe {
     --bubble-side-gutter: 44px;
-    min-height: 540px;
+    min-height: 620px;
   }
 
   .bubbleStage {
-    height: 440px;
+    height: 520px;
     margin: 50px var(--bubble-side-gutter);
   }
 

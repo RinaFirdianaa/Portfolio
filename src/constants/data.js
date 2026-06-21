@@ -38,9 +38,20 @@ export const EDUCATION = [
 /*
   HOW TO ADD SKILLS
 
-  Each section below has an items list. You can add either:
-  - Text bubble:  { label: 'React' }
-  - Image bubble: { label: 'Figma', image: '/images/placeholder.png' }
+  Add skills by editing the items list inside each section.
+  You can use any of these formats:
+
+  - Text only:
+    { label: 'React' }
+
+  - Icon plus text:
+    { label: 'React', icon: '</>' }
+
+  - Image icon:
+    { label: 'Figma', image: '/images/Tools/figma.png' }
+
+  You can also add a quick text-only skill as a plain string:
+    'React'
 
   A section with 5 bubbles starts each bubble at 100px. Every extra bubble
   makes the starting size 10px smaller, and merged bubbles grow by 30px for
@@ -50,41 +61,46 @@ export const SKILLS = [
   {
     id: 'code',
     icon: '</>',
-    label: 'Code',
+    label: 'Dev & Web',
     items: [
-      { label: 'HTML5 & CSS3' },
-      { label: 'JavaScript' },
-      { label: 'React' },
-      { label: 'Python' },
-      { label: 'C#' },
-    ],
-  },
-  {
-    id: 'design',
-    icon: '✦',
-    label: 'Design',
-    bgColor: 'var(--color-skill-pink-bg)',
-    borderColor: 'var(--color-skill-pink-br)',
-    items: [
-      { label: 'UI/UX' },
-      { label: 'Wireframes' },
-      { label: 'Prototypes' },
-      { label: 'Research' },
-      { label: 'Game UI' },
+      'PHP',
+      'HTML',
+      'CSS',
+      'JavaScript',
+      'SQL',
+      'C',
+      'C++',
+      'C#',
+      'Jetpack Compose',
     ],
   },
   {
     id: 'tools',
-    icon: '🔧',
+    icon: '✦',
     label: 'Tools',
+    bgColor: 'var(--color-skill-pink-bg)',
+    borderColor: 'var(--color-skill-pink-br)',
+    items: [
+      'Git',
+      'VS Code',
+      'Visual Studio',
+      'Unity',
+    ],
+  },
+  {
+    id: 'design',
+    icon: '🔧',
+    label: 'Design',
     bgColor: 'var(--color-skill-yellow-bg)',
     borderColor: 'var(--color-skill-yellow-br)',
     items: [
-      { label: 'Figma', image: '/images/placeholder.png' },
-      { label: 'Adobe XD', image: '/images/placeholder.png' },
-      { label: 'Photoshop', image: '/images/placeholder.png' },
-      { label: 'Illustrator', image: '/images/placeholder.png' },
-      { label: 'Unity', image: '/images/placeholder.png' },
+      'Figma',
+      'Photoshop',
+      'Adobe XD',
+      'Canva',
+      'Maya',
+      'Blender',
+      'Procreate',
     ],
   },
   {
@@ -94,11 +110,10 @@ export const SKILLS = [
     bgColor: 'var(--color-skill-pink-bg)',
     borderColor: 'var(--color-skill-pink-br)',
     items: [
-      { label: 'Communication' },
-      { label: 'Teamwork' },
-      { label: 'Problem Solving' },
-      { label: 'Time Management' },
-      { label: 'Adaptability' },
+      'Adaptable',
+      'Creative',
+      'Team Player',
+      'Flexible',
     ],
   },
 ]
@@ -180,7 +195,8 @@ export const PROJECTS = [
         title: '2D & UI Art',
         summary:
           '2D\nBoba Time uses a soft and colourful 2D art style with warm pastel colours that create a cosy and emotional feeling. The characters have a cute chibi design with expressive faces. Story scenes are shown through simple comic-style panels that help tell the story between levels.' +
-          '\n\nUI\nThe UI was designed to blend seamlessly with the game\'s cosy aesthetic, using rounded shapes, soft pastel colours, and playful typography throughout. Key information such as objectives, timers, upgrades, and progression is displayed in a clear and easy-to-read way, helping players stay focused on gameplay without feeling overwhelmed.',
+          '\n\nUI\nThe UI was designed to match the game\'s playful and cute aesthetic through rounded shapes, soft pastel colours, and bold, friendly typography. These visual choices make the interface feel approachable while keeping important information clear and easy to read.' +
+          '\n\nThe layout is structured to help players easily find the information they need, such as objectives, progress, and settings, without disrupting the flow of gameplay.',
         images: ['/images/Projects/BobaTime/BobaTime8.png', '/images/Projects/BobaTime/BobaTime7.png', '/images/Projects/BobaTime/BobaTime11.png'],
         imageLinks: [
           { label: '2D', imageIndex: 0 },
@@ -221,6 +237,10 @@ export const PROJECTS = [
     type: 'Web Dashboard',
     tools: ['figma', 'react', 'css'],
     date: '2025',
+    links: [
+      { label: 'Web', href: '#' },
+      { label: 'UI/UX', href: '#' },
+    ],
     image: '/images/Projects/Dashboard.png',
     pages: [
       {
@@ -228,7 +248,7 @@ export const PROJECTS = [
         summary:
           'I designed and developed a web-based CloudWatch Alarm Reporting Dashboard to monitor infrastructure alarms more clearly and efficiently. The dashboard presents CloudWatch alarm data in a structured interface, using summary cards, charts, tables, and filters to help users understand system health at a glance.' +
           '\n\n**Problem**\nTo investigate an alarm, users often had to click through multiple pages in AWS, open individual alarm details, check related metrics, and switch between different views. This made the process slower and less efficient, especially when monitoring many alarms across different services.',
-        image: '/images/Projects/Dashboard/Dashboard2.png',
+        image: '/images/Projects/Dashboard/Dashboard1.png',
       },
       {
         title: 'Goals',
@@ -331,6 +351,41 @@ export const PROJECTS = [
           '\n\nSummary cards help users **understand system health at a glance**, while clear alarm states make it easier to **identify critical issues quickly**. Filters allow users to **search and organise alarms without extra navigation** by service, state, name, namespace, and tags.' +
           '\n\nBy using charts, tables, and visual cards, the dashboard allows users to **view alarm data in a more visual and structured way**. Customisable cards also allow users to **adjust the dashboard based on different monitoring needs**.',
         image: '/images/Projects/Dashboard/Dashboard8.png',
+      },
+    ],
+  },
+  {
+    id: 'design-2',
+    title: 'UI Redesign',
+    category: 'Design',
+    summary: 'This project focuses on redesigning a game settings interface to make it clearer, easier to read, and more intuitive to use. The redesign improves how players understand and interact with different setting options through better layout, clearer controls, and more visual feedback.',
+    description: 'A design project placeholder ready to be updated.',
+    type: 'Design',
+    tools: ['figma'],
+    date: '2026',
+    links: [
+      { label: 'Case Study', href: '#' },
+    ],
+    image: '/images/Projects/shorthike.png',
+    pages: [
+      {
+        title: 'Overview',
+        summary:
+          'I redesigned the settings screen from A Short Hike, which is located in the game’s main menu. This screen allows players to adjust different game options, such as resolution, pixel size, and shadow visibility. The goal of this redesign was to improve the clarity and usability of the settings page.' +
+          '\n\n**Problems Identified**' +
+          '\n**Affordance**: Although the options are shown in a different colour, they do not clearly appear clickable or adjustable. This makes it less obvious which parts of the settings screen players can interact with.' +
+          '\n\n**Mapping**:The text and options are not clearly grouped together, making the settings harder to scan at a glance. As a result, players may take longer to understand which option belongs to each setting.',
+        image: '/images/Projects/UI/shorthike1.jpg',
+      },
+      {
+        title: 'Design',
+        summary:
+          'The goal of the redesign was to make the settings screen clearer, easier to scan, and more intuitive to interact with.' +
+          '\n[figma prototype](https://www.figma.com/proto/vm4kZujNBfT6m52s9vv3sa/Untitled?node-id=2131-587&t=sl8JzZMgxjEazzsu-1&scaling=contain&content-scaling=fixed&page-id=2112%3A3473)' +
+          '\n\nTo improve affordance, I redesigned the settings options to look more clearly clickable or adjustable. This helps players understand that each setting can be interacted with.' +
+          '\n\nTo improve mapping, I organised the text and controls into a cleaner layout. Labels and their related options are placed closer together, making the relationship between them easier to understand.' +
+          '\n\nThe redesigned settings screen improves the user experience by making the interface easier to understand and faster to use. Players can now identify which settings are interactable, read the options more clearly, and switch settings with less effort.',
+        image: '/images/Projects/UI/shorthike2.png',
       },
     ],
   },
@@ -442,7 +497,8 @@ export const PROJECTS = [
           'Since the project was mainly assessed on gameplay and programming rather than visuals, the art style was kept simple and focused on supporting the game experience.' +
           '\n\nCharacter Design\nAlice and Alter Alice share the same design, with the only difference being their colours. Alice wears white while Alter Alice wears black, helping to show that they are mirror versions of the same character.' +
           '\n\nEnvironment & Key Props\nThe environment is inspired by Alice\'s Adventures in Wonderland, using a simple and whimsical art style to create a mysterious Wonderland atmosphere. Important props, such as the card-themed boxes, are based on the playing card elements that are strongly associated with the story.' +
-          '\n\nUI Design\nThe pause menu, game over screen, and death screen all feature the Cheshire Cat\'s face in the background. This serves as a subtle hint that he may be connected to the strange events and chaos happening throughout Wonderland.',
+          '\n\nUI Design\nThe pause menu, game over screen, and death screen all feature the Cheshire Cat\'s face in the background, subtly suggesting his connection to the strange events and chaos happening throughout Wonderland.' +
+          '\n\nThe buttons are designed with a card-inspired style, using heart, spade, and diamond symbols to match the Wonderland aesthetic. When selected, the shapes rotate to show that they are selected.',
         images: [
           '/images/Projects/Wonderland/Wonderland4.png',
           '/images/Projects/Wonderland/Wonderland5.png',

@@ -51,13 +51,35 @@ const CATEGORY_THEMES = {
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-const renderBoldText = (text, keyPrefix) => (
+const renderBoldSegments = (text, keyPrefix) => (
   text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={`${keyPrefix}-bold-${index}`}>{part.slice(2, -2)}</strong>
     }
 
     return part
+  })
+)
+
+const renderBoldText = (text, keyPrefix) => (
+  text.split(/(\[[^\]]+\]\([^)]+\))/g).map((part, index) => {
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+
+    if (linkMatch) {
+      return (
+        <a
+          key={`${keyPrefix}-link-${index}`}
+          className={styles.infoInlineLink}
+          href={linkMatch[2]}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {linkMatch[1]}
+        </a>
+      )
+    }
+
+    return renderBoldSegments(part, `${keyPrefix}-text-${index}`)
   })
 )
 

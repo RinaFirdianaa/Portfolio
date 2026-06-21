@@ -3,27 +3,54 @@
  * Interactive skill bubbles pulled from constants/data.js.
  */
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SKILLS } from '@/constants/data'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './Skills.module.css'
 
-const START_POSITIONS = [
-  { x: 4, y: 8 },
-  { x: 34, y: 0 },
-  { x: 72, y: 14 },
-  { x: 12, y: 68 },
-  { x: 62, y: 72 },
+const SECTION_ZONES = [
+  { x: 0, y: 2, width: 50, height: 42 },
+  { x: 50, y: 2, width: 50, height: 42 },
+  { x: 0, y: 54, width: 50, height: 42 },
+  { x: 50, y: 54, width: 50, height: 42 },
 ]
 
-const SECTION_ZONES = [
-  { x: 0, y: 1, width: 42, height: 34 },
-  { x: 62, y: 1, width: 38, height: 34 },
-  { x: 0, y: 50, width: 42, height: 34 },
-  { x: 62, y: 50, width: 38, height: 34 },
-]
+const SCATTER_POSITIONS = {
+  code: [
+    { x: 8, y: 14 }, /*php */
+    { x: 6, y: 60 }, /*html */
+    { x: 30, y: 13 },/*css */
+    { x: 32, y: 60 }, /*javascript */
+    { x: 66, y: 38 }, /*sql */
+    { x: 20, y: 76 }, /*c */
+    { x: 54, y: 83 }, /*c++ */
+    { x: 78, y: 14 }, /*c# */
+    { x: 84, y: 52 }, /*jetpack compose */
+  ],
+  design: [
+    { x: 28, y: 21 },
+    { x: 48, y: 21 },
+    { x: 38, y: 67 },
+    { x: 78, y: 64 },
+    { x: 84, y: 31 },
+    { x: 58, y: 71 },
+    { x: 68, y: 21 },
+  ],
+  tools: [
+    { x: 26, y: 52 },
+    { x: 38, y: 14 },
+    { x: 70, y: 28 },
+    { x: 52, y: 54 },
+  ],
+  soft: [
+    { x: 28, y: 64 },
+    { x: 64, y: 24 },
+    { x: 18, y: 14 },
+    { x: 54, y: 70 },
+  ],
+}
 
 const SKILL_THEMES = {
   code: {
@@ -69,6 +96,13 @@ const BUBBLE_BASE_SIZE = 100
 const BUBBLE_MERGE_INCREMENT = 30
 const BUBBLE_SIZE_STEP_DOWN = 10
 const BUBBLE_EDGE_BUFFER = 12
+const BUBBLE_SIZE_OVERRIDES = {
+  code: { base: 130, min: 104 },
+  design: { base: 116, min: 104 },
+  tools: { base: 108, min: 92 },
+  soft: { base: 126, min: 112 },
+}
+const SAVED_SKILL_POSITIONS_KEY = 'portfolio.skillBubblePositions'
 const SKILL_STAR_SCORE = 5
 const SPARKLE_TRAVEL_MS = 850
 const normalizeSkillItem = (item) => (
@@ -77,6 +111,12 @@ const normalizeSkillItem = (item) => (
     : item
 )
 
+const getSkillEntry = (item) => ({
+  label: item.label,
+  image: item.image,
+  icon: item.icon,
+})
+
 const makeSkillGroups = () => Object.fromEntries(
   SKILLS.map((skill) => [
     skill.id,
@@ -84,21 +124,32 @@ const makeSkillGroups = () => Object.fromEntries(
       const item = normalizeSkillItem(rawItem)
       return {
         id: `${skill.id}-${item.label}-${index}`,
-        labels: [item.label],
-        images: item.image ? [item.image] : [],
+        entries: [getSkillEntry(item)],
         startIndex: index,
       }
     }),
   ])
 )
 
-const getBaseBubbleSize = (sectionCount) => (
-  clamp(BUBBLE_BASE_SIZE - Math.max(sectionCount - 5, 0) * BUBBLE_SIZE_STEP_DOWN, 72, BUBBLE_BASE_SIZE)
+const getBaseBubbleSize = (skillId, sectionCount) => {
+  const override = BUBBLE_SIZE_OVERRIDES[skillId] || {}
+  const baseSize = override.base || BUBBLE_BASE_SIZE
+  const minSize = override.min || 72
+
+  return clamp(baseSize - Math.max(sectionCount - 5, 0) * BUBBLE_SIZE_STEP_DOWN, minSize, baseSize)
+}
+
+const getBubbleSizePx = (skillId, sectionCount, labels) => (
+  getBaseBubbleSize(skillId, sectionCount) + (labels.length - 1) * BUBBLE_MERGE_INCREMENT
 )
-const getBubbleSizePx = (sectionCount, labels) => (
-  getBaseBubbleSize(sectionCount) + (labels.length - 1) * BUBBLE_MERGE_INCREMENT
+const getBubbleSize = (skillId, sectionCount, labels) => `${getBubbleSizePx(skillId, sectionCount, labels)}px`
+const getGroupLabels = (group) => group.entries.map((entry) => entry.label)
+const getSkillsSignature = () => JSON.stringify(
+  SKILLS.map((skill) => ({
+    id: skill.id,
+    items: skill.items.map((rawItem) => normalizeSkillItem(rawItem)),
+  })),
 )
-const getBubbleSize = (sectionCount, labels) => `${getBubbleSizePx(sectionCount, labels)}px`
 const clampBubbleToStage = (value, maxValue) => (
   clamp(value, BUBBLE_EDGE_BUFFER, Math.max(BUBBLE_EDGE_BUFFER, maxValue - BUBBLE_EDGE_BUFFER))
 )
@@ -115,21 +166,74 @@ export default function Skills() {
   const pendingPointerMoveRef = useRef(null)
   const bubblePositionsRef = useRef({})
   const collectedSkillStarIdsRef = useRef(new Set())
+  const savedPositionsLoadedRef = useRef(false)
   const [bubblePositions, setBubblePositions] = useState({})
   const [skillGroups, setSkillGroups] = useState(makeSkillGroups)
   const [mergeTargetId, setMergeTargetId] = useState(null)
   const [collectedSkillStarIds, setCollectedSkillStarIds] = useState(() => new Set())
   const [draggingBubbleId, setDraggingBubbleId] = useState(null)
+  const skillsSignature = getSkillsSignature()
   const isSkillsCompleted = collectedSkillStarIds.size >= SKILLS.length
+
+  useEffect(() => {
+    bubblePositionsRef.current = {}
+    collectedSkillStarIdsRef.current = new Set()
+    savedPositionsLoadedRef.current = false
+    setBubblePositions({})
+    setSkillGroups(makeSkillGroups())
+    setCollectedSkillStarIds(new Set())
+    setMergeTargetId(null)
+    setDraggingBubbleId(null)
+  }, [skillsSignature])
+
+  useEffect(() => {
+    if (savedPositionsLoadedRef.current || typeof window === 'undefined') return
+
+    const stage = stageRef.current
+    if (!stage) return
+
+    try {
+      const savedLayout = JSON.parse(window.localStorage.getItem(SAVED_SKILL_POSITIONS_KEY) || 'null')
+      if (!savedLayout || savedLayout.signature !== skillsSignature) {
+        savedPositionsLoadedRef.current = true
+        return
+      }
+
+      const stageRect = stage.getBoundingClientRect()
+      const nextPositions = {}
+
+      Object.values(skillGroups).flat().forEach((group) => {
+        const savedPosition = savedLayout.positions?.[group.id]
+        const bubbleEl = bubbleRefs.current[group.id]
+        if (!savedPosition || !bubbleEl) return
+
+        nextPositions[group.id] = {
+          x: clampBubbleToStage((savedPosition.x / 100) * stageRect.width, stageRect.width - bubbleEl.offsetWidth),
+          y: clampBubbleToStage((savedPosition.y / 100) * stageRect.height, stageRect.height - bubbleEl.offsetHeight),
+        }
+      })
+
+      bubblePositionsRef.current = nextPositions
+      setBubblePositions(nextPositions)
+      savedPositionsLoadedRef.current = true
+    } catch {
+      savedPositionsLoadedRef.current = true
+    }
+  }, [skillGroups, skillsSignature])
 
   const getSectionZone = (skillId) => SECTION_ZONES[SKILLS.findIndex((skill) => skill.id === skillId)] || SECTION_ZONES[0]
 
   const getStartPosition = (skillId, index) => {
     const zone = getSectionZone(skillId)
-    const position = START_POSITIONS[index % START_POSITIONS.length]
+    const pattern = SCATTER_POSITIONS[skillId] || []
+    const position = pattern[index] || {
+      x: 6 + ((index * 37) % 78),
+      y: 5 + (Math.floor((index * 37) / 78) * 26) % 84,
+    }
+
     return {
-      x: zone.x + (position.x / 100) * zone.width,
-      y: zone.y + (position.y / 100) * zone.height,
+      x: zone.x + (clamp(position.x, 0, 84) / 100) * zone.width,
+      y: zone.y + (clamp(position.y, 0, 84) / 100) * zone.height,
     }
   }
 
@@ -209,7 +313,7 @@ export default function Skills() {
       skill &&
       currentSource &&
       currentTarget &&
-      currentSource.labels.length + currentTarget.labels.length >= skill.items.length
+      currentSource.entries.length + currentTarget.entries.length >= skill.items.length
     )
 
     setSkillGroups((current) => {
@@ -220,11 +324,10 @@ export default function Skills() {
 
       const merged = {
         ...target,
-        labels: [...target.labels, ...source.labels],
-        images: [...target.images, ...source.images],
+        entries: [...target.entries, ...source.entries],
       }
 
-      if (merged.labels.length >= SKILLS.find((skill) => skill.id === skillId)?.items.length) {
+      if (merged.entries.length >= SKILLS.find((skill) => skill.id === skillId)?.items.length) {
         const stage = stageRef.current
         if (stage) {
           const stageRect = stage.getBoundingClientRect()
@@ -236,7 +339,7 @@ export default function Skills() {
             height: (zone.height / 100) * stageRect.height,
           }
           const finalSize = Math.min(
-            getBubbleSizePx(SKILLS.find((skill) => skill.id === skillId)?.items.length || 5, merged.labels),
+            getBubbleSizePx(skillId, SKILLS.find((skill) => skill.id === skillId)?.items.length || 5, getGroupLabels(merged)),
             zoneRect.width - 16,
             zoneRect.height - 16
           )
@@ -408,11 +511,12 @@ export default function Skills() {
             const groups = skillGroups[skill.id] || []
 
             return groups.map((group, index) => {
-              const label = group.labels.join(' + ')
+              const labels = getGroupLabels(group)
+              const label = labels.join(' + ')
               const savedPosition = bubblePositions[group.id]
               const startPosition = getStartPosition(skill.id, group.startIndex)
-              const bubbleSize = getBubbleSize(skill.items.length, group.labels)
-              const isCompleteBubble = group.labels.length >= skill.items.length
+              const bubbleSize = getBubbleSize(skill.id, skill.items.length, labels)
+              const isCompleteBubble = group.entries.length >= skill.items.length
               const style = savedPosition
                 ? {
                     ...SKILL_THEMES[skill.id],
@@ -452,28 +556,33 @@ export default function Skills() {
                   onPointerCancel={handlePointerUp}
                   aria-label={label}
                   data-skill-id={skill.id}
-                  data-has-image={group.images.length > 0 ? 'true' : 'false'}
-                  data-image-count={group.images.length}
-                  data-label-count={group.labels.length}
+                  data-has-media={group.entries.some((entry) => entry.image || entry.icon) ? 'true' : 'false'}
+                  data-entry-count={group.entries.length}
                   data-complete={isCompleteBubble ? 'true' : 'false'}
                   data-merge-target={mergeTargetId === group.id ? 'true' : 'false'}
                   data-dragging={draggingBubbleId === group.id ? 'true' : 'false'}
                 >
-                  {group.images.length > 0 ? (
-                    <span className={styles.bubbleImageGrid} aria-hidden="true">
-                      {group.images.map((image, imageIndex) => (
-                        <img
-                          key={`${image}-${imageIndex}`}
-                          src={image}
-                          alt=""
-                          className={styles.bubbleImage}
-                          draggable="false"
-                        />
+                  {group.entries.some((entry) => entry.image || entry.icon) ? (
+                    <span className={styles.bubbleMediaGrid} aria-hidden="true">
+                      {group.entries.map((entry, entryIndex) => (
+                        entry.image ? (
+                          <img
+                            key={`${entry.label}-${entryIndex}`}
+                            src={entry.image}
+                            alt=""
+                            className={styles.bubbleImage}
+                            draggable="false"
+                          />
+                        ) : (
+                          <span key={`${entry.label}-${entryIndex}`} className={styles.bubbleIcon}>
+                            {entry.icon || entry.label}
+                          </span>
+                        )
                       ))}
                     </span>
                   ) : null}
                   <span className={styles.bubbleLabelGrid} aria-hidden="true">
-                    {group.labels.map((text) => (
+                    {labels.map((text) => (
                       <span key={text} className={styles.bubbleLabelItem}>
                         {text}
                       </span>
