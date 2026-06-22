@@ -31,6 +31,7 @@
 
 :global(html.dark) .bubble[data-skill-id="code"] .bubbleLabelItem    { color: var(--yellow-10); }
 :global(html.dark) .bubble[data-skill-id="design"] .bubbleLabelItem  { color: var(--pink-10); }
+:global(html.dark) .bubble[data-skill-id="tools"] .bubbleLabelItem   { color: var(--purple-10); }
 :global(html.dark) .bubble[data-skill-id="soft"] .bubbleLabelItem    { color: var(--blue-10); }
 
 :global(html.dark) .bubble {

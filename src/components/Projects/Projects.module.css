@@ -512,6 +512,20 @@
   opacity: 1;
 }
 
+:global(html.dark) .infoTab,
+:global(html.dark) .infoTabActive {
+  background: var(--color-bg);
+  border-color: color-mix(in srgb, var(--category-accent) 40%, var(--color-bg));
+}
+
+:global(html.dark) .infoTabActive {
+  border-bottom-color: var(--color-bg);
+}
+
+:global(html.dark) .infoTab:not(.infoTabActive):hover::after {
+  background: var(--color-bg);
+}
+
 .infoClose {
   position: absolute;
   top: 14px;
@@ -597,6 +611,11 @@
   padding: 16px;
   overflow-y: auto;
   min-width: 0;
+}
+
+:global(html.dark) .infoModal {
+  background: var(--color-bg);
+  border-color: color-mix(in srgb, var(--category-accent) 40%, var(--color-bg));
 }
 
 .infoPageTitle {
