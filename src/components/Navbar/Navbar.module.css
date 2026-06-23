@@ -85,6 +85,26 @@
   transform: scale(1.0);
 }
 
+.mobileMenuButton {
+  display: none;
+  width: 26px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobileMenuButton span {
+  width: 18px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--purple-40);
+}
+
 .scoreWrap {
   position: relative;
 }
@@ -266,8 +286,49 @@
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
+  .topBar {
+    grid-template-columns: 1fr auto;
+    padding: 14px 20px;
+  }
+
+  .brand {
+    font: var(--font-mobile-h1);
+  }
+
+  .darkToggle,
+  .scoreWrap {
+    display: none;
+  }
+
+  .mobileMenuButton {
+    display: inline-flex;
+    justify-self: end;
+  }
+
   .navList {
+    justify-content: space-between;
     gap: 16px;
+    padding: 0 20px;
+  }
+
+  .navLink {
+    width: 24px;
+    height: 24px;
+    gap: 0;
+  }
+
+  .navText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .navStar {
+    width: 0.55rem;
+    height: 0.55rem;
   }
 }
 
@@ -299,6 +360,10 @@
 
 :global(html.dark) .scoreLabel { color: var(--purple-40); }
 :global(html.dark) .scoreValue { color: var(--purple-20); }
+
+:global(html.dark) .mobileMenuButton span {
+  background: var(--purple-10);
+}
 
 :global(html.dark) .navLink {
   color: var(--purple-10);

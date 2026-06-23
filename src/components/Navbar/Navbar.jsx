@@ -45,6 +45,16 @@ export default function Navbar() {
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
   useEffect(() => { displayScoreRef.current = displayScore }, [displayScore])
 
+  const updatePopupPosition = useCallback(() => {
+    if (!scoreWrapRef.current) return
+
+    const rect = scoreWrapRef.current.getBoundingClientRect()
+    setPopupPos({
+      top: rect.bottom + 10,
+      right: window.innerWidth - rect.right,
+    })
+  }, [])
+
   useEffect(() => {
     if (!isScorePopupOpen) return undefined
 
@@ -270,8 +280,9 @@ export default function Navbar() {
   useEffect(() => {
     if (hasOpenedCompleteScoreRef.current || score < TOTAL_SCORE) return
     hasOpenedCompleteScoreRef.current = true
+    updatePopupPosition()
     setIsScorePopupOpen(true)
-  }, [score])
+  }, [score, updatePopupPosition])
 
   const total           = NAV_LINKS.length
   const activeIndex     = NAV_LINKS.findIndex((l) => l.href.replace('#', '') === activeSection)
@@ -314,6 +325,16 @@ export default function Navbar() {
         <span className={styles.brand}>Rina Firdiana</span>
 
         <button
+          className={styles.mobileMenuButton}
+          type="button"
+          aria-label="Open menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <button
           className={styles.darkToggle}
           type="button"
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -335,12 +356,8 @@ export default function Navbar() {
             aria-expanded={isScorePopupOpen}
             aria-pressed={isScorePopupOpen}
             onClick={() => {
-              if (!isScorePopupOpen && scoreWrapRef.current) {
-                const rect = scoreWrapRef.current.getBoundingClientRect()
-                setPopupPos({
-                  top: rect.bottom + 10,
-                  right: window.innerWidth - rect.right,
-                })
+              if (!isScorePopupOpen) {
+                updatePopupPosition()
               }
               setIsScorePopupOpen((open) => !open)
             }}
@@ -383,7 +400,7 @@ export default function Navbar() {
                   onClick={(e) => handleNavClick(e, href)}
                   className={`${styles.navLink} ${isActive ? styles.active : ''} ${isGlowing ? styles.glowing : ''}`}
                 >
-                  {label}
+                  <span className={styles.navText}>{label}</span>
                   <StarIcon
                     size="0.75rem"
                     glow={isGlowing || !isVisited}
