@@ -13,6 +13,7 @@ const SCORE_PER_SECTION = 10
 const SPARKLE_TRAVEL_MS = 850
 const TOTAL_SCORE = 100
 const NAV_SCROLL_EXTRA_OFFSET = 28
+const MOBILE_HEADER_HIDE_THRESHOLD = 72
 
 export default function Navbar() {
   const scrolled            = useScrolled()
@@ -25,6 +26,7 @@ export default function Navbar() {
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
+  const [isMobileHeaderHidden, setIsMobileHeaderHidden] = useState(false)
   const [popupPos, setPopupPos] = useState({ top: 0, right: 0 })
   const { isDark, toggle: toggleDark } = useTheme()
   const navListRef     = useRef(null)
@@ -32,6 +34,7 @@ export default function Navbar() {
   const popupPortalRef = useRef(null)
   const headerRef      = useRef(null)
   const scoreRef    = useRef(null)
+  const mobileMenuRef = useRef(null)
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
   const visitedRef  = useRef(new Set())
@@ -39,11 +42,41 @@ export default function Navbar() {
   const hasOpenedCompleteScoreRef = useRef(false)
   const displayScoreRef = useRef(displayScore)
   const scoreGlowTimeoutRef = useRef(null)
+  const lastHeaderScrollYRef = useRef(0)
   const fireSparklesRef = useRef(fireSparkles)
   const addScoreRef     = useRef(addScore)
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
   useEffect(() => { displayScoreRef.current = displayScore }, [displayScore])
+
+  useEffect(() => {
+    let rafScheduled = false
+
+    const handleHeaderVisibility = () => {
+      if (rafScheduled) return
+      rafScheduled = true
+
+      requestAnimationFrame(() => {
+        rafScheduled = false
+        const isMobile = window.matchMedia('(max-width: 600px)').matches
+        const currentY = window.scrollY
+        const previousY = lastHeaderScrollYRef.current
+        const isScrollingDown = currentY > previousY
+
+        setIsMobileHeaderHidden(isMobile && isScrollingDown && currentY > MOBILE_HEADER_HIDE_THRESHOLD)
+        lastHeaderScrollYRef.current = Math.max(currentY, 0)
+      })
+    }
+
+    lastHeaderScrollYRef.current = window.scrollY
+    window.addEventListener('scroll', handleHeaderVisibility, { passive: true })
+    window.addEventListener('resize', handleHeaderVisibility, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleHeaderVisibility)
+      window.removeEventListener('resize', handleHeaderVisibility)
+    }
+  }, [])
 
   const updatePopupPosition = useCallback(() => {
     if (!scoreWrapRef.current) return
@@ -187,10 +220,12 @@ export default function Navbar() {
   }, [applyFill, buildGeoCache, buildSectionOffsets, getFillForScroll])
   const shootSparkles = useCallback((sectionId) => {
     const navEl   = navItemRefs.current[sectionId]
-    const scoreEl = scoreRef.current
-    if (!navEl || !scoreEl) return
+    const targetEl = window.matchMedia('(max-width: 600px)').matches
+      ? mobileMenuRef.current
+      : scoreRef.current
+    if (!navEl || !targetEl) return
     const from = navEl.getBoundingClientRect()
-    const to   = scoreEl.getBoundingClientRect()
+    const to   = targetEl.getBoundingClientRect()
     fireSparklesRef.current(
       from.left + from.width  / 2,
       from.top  + from.height / 2,
@@ -204,7 +239,10 @@ export default function Navbar() {
   useEffect(() => {
     const t = setTimeout(() => {
       if (initialHomeSparkleRef.current || window.scrollY > 8) return
-      if (!navItemRefs.current.home || !scoreRef.current) return
+      const sparkleTarget = window.matchMedia('(max-width: 600px)').matches
+        ? mobileMenuRef.current
+        : scoreRef.current
+      if (!navItemRefs.current.home || !sparkleTarget) return
 
       initialHomeSparkleRef.current = true
       visitedRef.current.add('home')
@@ -319,12 +357,13 @@ export default function Navbar() {
       </div>,
       document.body
     )}
-    <header ref={headerRef} className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+    <header ref={headerRef} className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isMobileHeaderHidden ? styles.headerHidden : ''}`}>
       <div data-header-inner>
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
 
         <button
+          ref={mobileMenuRef}
           className={styles.mobileMenuButton}
           type="button"
           aria-label="Open menu"

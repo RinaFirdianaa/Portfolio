@@ -54,6 +54,10 @@
 
   /* mobile */
   --font-mobile-h1: 800 clamp(20px, 6vw, 16px)/1 var(--font-title);
+  --font-mobile-h2: 800 clamp(24px, 6vw, 20px)/1 var(--font-title);
+  --font-mobile-p1: 400 clamp(16px, 6vw, 12px)/1 var(--font-body);
+  --font-mobile-p2: 400 clamp(14px, 6vw, 12px)/1 var(--font-body);
+
 
   /* Navigation */
   --font-nav: 600 16px/1.2 var(--font-title);

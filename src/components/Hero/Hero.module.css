@@ -160,6 +160,12 @@
   cursor: pointer;
   animation: floatY 6s ease-in-out infinite;
   will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.planetWrapper:focus {
+  outline: none;
 }
 
 /* --- Orbit text SVG ---
@@ -315,17 +321,72 @@
   .inner {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+    padding: var(--space-xl) 20px var(--space-2xl);
+  }
+
+  .illustrationBlock {
+    order: -1;
+    margin-bottom: 0;
+  }
+
+  .heading {
+    font: var(--font-mobile-h2);
+    margin-bottom: 8px;
   }
 
   .body {
+    font: var(--font-mobile-p1);
     max-width: 100%;
+    margin-bottom: 14px;
+  }
+
+  .tagline {
+    font: var(--font-mobile-p2);
+  }
+
+  .heroLinks {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .iconLink {
+    width: 34px;
+    height: 24px;
+  }
+
+  .linkedinIcon {
+    width: 27px;
+    height: 27px;
+  }
+
+  .resumeLink {
+    min-height: 24px;
+    padding: 0 12px;
+    font-size: 16px;
+  }
+
+  .heroImageWrapper {
+    width: clamp(190px, 50vw, 250px);
   }
 
   .heroImage {
-    width: clamp(180px, 55vw, 280px);
+    width: 100%;
   }
 
   .cssRings {
-    width: 400px;
+    width: 128%;
+    top: 61%;
+    border-width: 6px;
+  }
+
+  .cssRings::before {
+    inset: 7px;
+    border-width: 2px;
+  }
+
+  .cssRings::after {
+    inset: 13px;
+    border-width: 2px;
   }
 }

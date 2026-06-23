@@ -32,74 +32,68 @@ export default function Hero() {
     }
   }, [])
 
-  const startSpin = () => {
-    cancelAnimationFrame(unwindRafRef.current)
+  const awardPlanetScore = () => {
+    if (scoredRef.current || !planetWrapperRef.current) return
 
-    setHovered(true)
-    setEverHovered(true)
-
-    if (!scoredRef.current && planetWrapperRef.current) {
-      scoredRef.current = true
-      const from    = planetWrapperRef.current.getBoundingClientRect()
-      const scoreEl = document.querySelector('[aria-label="Score badge"]')
-      if (scoreEl) {
-        const to = scoreEl.getBoundingClientRect()
-        fireSparkles(
-          from.left + from.width  / 2,
-          from.top  + from.height / 2,
-          to.left   + to.width    / 2,
-          to.top    + to.height   / 2,
-          14
-        )
-        setTimeout(() => addScore(PLANET_SCORE), SPARKLE_TRAVEL_MS)
-        setScored(true)
-      } else {
-        scoredRef.current = false
-      }
+    scoredRef.current = true
+    const from = planetWrapperRef.current.getBoundingClientRect()
+    const scoreEl = document.querySelector('[aria-label="Score badge"]')
+    if (scoreEl) {
+      const to = scoreEl.getBoundingClientRect()
+      fireSparkles(
+        from.left + from.width / 2,
+        from.top + from.height / 2,
+        to.left + to.width / 2,
+        to.top + to.height / 2,
+        14
+      )
+      setTimeout(() => addScore(PLANET_SCORE), SPARKLE_TRAVEL_MS)
+      setScored(true)
+    } else {
+      scoredRef.current = false
     }
-
-    if (isSpinningRef.current) {
-      return
-    }
-
-    isSpinningRef.current = true
-
-    const loop = () => {
-      angleRef.current = (angleRef.current + 3) % 360
-      if (imageRef.current) {
-        imageRef.current.style.transform = `rotateY(${angleRef.current}deg)`
-      }
-      if (isSpinningRef.current) {
-        rafRef.current = requestAnimationFrame(loop)
-      }
-    }
-    rafRef.current = requestAnimationFrame(loop)
   }
 
-  const stopSpin = () => {
-    setHovered(false)
-    isSpinningRef.current = false
+  const spinOnce = () => {
+    if (isSpinningRef.current) return
+
     cancelAnimationFrame(rafRef.current)
+    cancelAnimationFrame(unwindRafRef.current)
+    isSpinningRef.current = true
+    setHovered(true)
+    setEverHovered(true)
+    awardPlanetScore()
 
-    const startAngle = angleRef.current % 360
-    const duration   = 600
-    const startTime  = performance.now()
-    const easeOut    = (t) => 1 - Math.pow(1 - t, 3)
+    const duration = 1400
+    const startTime = performance.now()
+    const easeOut = (t) => 1 - Math.pow(1 - t, 3)
 
-    const unwind = (now) => {
-      const t     = Math.min((now - startTime) / duration, 1)
-      const angle = startAngle * (1 - easeOut(t))
+    const spin = (now) => {
+      const t = Math.min((now - startTime) / duration, 1)
+      const angle = easeOut(t) * 360
       angleRef.current = angle
       if (imageRef.current) {
         imageRef.current.style.transform = `rotateY(${angle}deg)`
       }
       if (t < 1) {
-        unwindRafRef.current = requestAnimationFrame(unwind)
-      } else if (imageRef.current) {
-        imageRef.current.style.transform = ''
+        rafRef.current = requestAnimationFrame(spin)
+      } else {
+        isSpinningRef.current = false
+        angleRef.current = 0
+        setHovered(false)
+        if (imageRef.current) {
+          imageRef.current.style.transform = ''
+        }
       }
     }
-    unwindRafRef.current = requestAnimationFrame(unwind)
+    rafRef.current = requestAnimationFrame(spin)
+  }
+
+  const handleSpinKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      spinOnce()
+    }
   }
 
   return (
@@ -144,19 +138,20 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className={styles.illustrationBlock} aria-hidden="true">
+        <div className={styles.illustrationBlock}>
           <div
             ref={planetWrapperRef}
             className={styles.planetWrapper}
-            onMouseEnter={startSpin}
-            onMouseLeave={stopSpin}
+            role="button"
+            tabIndex="0"
+            aria-label="Spin portrait"
+            onClick={spinOnce}
+            onKeyDown={handleSpinKeyDown}
           >
             <svg
               className={styles.orbitText}
               viewBox="0 0 200 200"
               aria-hidden="true"
-              onMouseEnter={startSpin}
-              onMouseLeave={stopSpin}
             >
               <rect className={styles.orbitHitArea} width="200" height="200" />
               <defs>
@@ -170,15 +165,15 @@ export default function Hero() {
                   {hovered ? (
                     <tspan key="weeee">weeee!</tspan>
                   ) : scored ? (
-                    <tspan key="collected">hover me</tspan>
+                    <tspan key="collected">press me</tspan>
                   ) : everHovered ? (
                     <Fragment key="hover-again">
-                      <tspan>hover me </tspan>
+                      <tspan>press me </tspan>
                       <tspan className={styles.orbitStar}>✦</tspan>
                     </Fragment>
                   ) : (
                     <Fragment key="hover-start">
-                      <tspan>hover me </tspan>
+                      <tspan>press me </tspan>
                       <tspan className={styles.orbitStar}>✦</tspan>
                     </Fragment>
                   )}
