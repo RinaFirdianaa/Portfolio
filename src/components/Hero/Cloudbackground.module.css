@@ -54,16 +54,27 @@
 :global(html.dark) .cloud3 { background-image: url('/images/Cloud3-dark.PNG'); mix-blend-mode: normal; }
 :global(html.dark) .cloud4 { background-image: url('/images/Cloud4-dark.PNG'); mix-blend-mode: normal; }
 
-@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+@media (max-width: 768px) {
+  .cloudLayer {
+    width: 300%;
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+  }
+
+  .cloud1 { animation-duration: 28s; }
+  .cloud2 { animation-duration: 40s; }
+
+  .cloud3,
+  .cloud4 {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .cloudLayer {
     animation: none;
     width: 100%;
     background-size: 100% auto;
     background-repeat: no-repeat;
-  }
-
-  .cloud3,
-  .cloud4 {
-    display: none;
   }
 }
