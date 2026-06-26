@@ -58,6 +58,7 @@
   --font-mobile-h3: 800 clamp(16px, 6vw, 12px)/1 var(--font-title);
   --font-mobile-p1: 400 clamp(16px, 6vw, 12px)/1 var(--font-body);
   --font-mobile-p2: 400 clamp(14px, 6vw, 12px)/1 var(--font-body);
+    --font-mobile-p3: 400 clamp(12px, 6vw, 10px)/1 var(--font-body);
   --font-mobile-gamemedium: clamp(10px, 2vw, 8px)/1.4 var(--font-game);
 
 
@@ -270,6 +271,6 @@ ul, ol {
     --section-px: 20px;
     --text-hero:  2rem;
     --text-3xl:   1.6rem;
-    --space-2xl:  40px;
+    --space-2xl:  28px;
   }
 }

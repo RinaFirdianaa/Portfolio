@@ -4,7 +4,7 @@
 
 .about {
   padding: 16px clamp(var(--space-2xl), 6vw, var(--space-4xl));
-  padding-block: 60px !important;
+  padding-block: 28px !important;
 }
 
 .grid {
@@ -268,8 +268,8 @@
   .about {
     padding-right: 20px;
     padding-left: 20px;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding-top: 28px !important;
+    padding-bottom: 28px !important;
   }
 
   .sectionTitle,
@@ -288,6 +288,6 @@
 
   .grid {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
+    gap: 28px;
   }
 }

@@ -1,9 +1,9 @@
-import { useRef, useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { PROJECTS, PROJECT_CATEGORIES, PROJECT_TOOLS } from '@/constants/data'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
+import ProjectInfoModal from './ProjectInfoModal'
 import styles from './Projects.module.css'
 
 const VISIBLE_CARD_COUNT = 7
@@ -49,432 +49,12 @@ const CATEGORY_THEMES = {
   },
 }
 
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
-const renderBoldSegments = (text, keyPrefix) => (
-  text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={`${keyPrefix}-bold-${index}`}>{part.slice(2, -2)}</strong>
-    }
-
-    return part
-  })
-)
-
-const renderBoldText = (text, keyPrefix) => (
-  text.split(/(\[[^\]]+\]\([^)]+\))/g).map((part, index) => {
-    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-
-    if (linkMatch) {
-      return (
-        <a
-          key={`${keyPrefix}-link-${index}`}
-          className={styles.infoInlineLink}
-          href={linkMatch[2]}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {linkMatch[1]}
-        </a>
-      )
-    }
-
-    return renderBoldSegments(part, `${keyPrefix}-text-${index}`)
-  })
-)
-
-const renderInlineSummary = (text, imageLinks, setActiveImageIndex, setActiveImageCallout, keyPrefix) => {
-  if (!text || !imageLinks?.length) {
-    return renderBoldText(text ?? '', keyPrefix)
-  }
-
-  const validLinks = imageLinks
-    .filter((link) => link.label && Number.isInteger(link.imageIndex))
-    .sort((a, b) => b.label.length - a.label.length)
-
-  if (!validLinks.length) {
-    return renderBoldText(text, keyPrefix)
-  }
-
-  const linkByLabel = new Map(
-    validLinks.map((link) => [link.label.toLowerCase(), link]),
-  )
-  const pattern = new RegExp(`(${validLinks.map((link) => escapeRegExp(link.label)).join('|')})`, 'gi')
-
-  return text.split(pattern).map((part, index) => {
-    const link = linkByLabel.get(part.toLowerCase())
-
-    if (!link) {
-      return renderBoldText(part, `${keyPrefix}-text-${index}`)
-    }
-
-    return (
-      <button
-        key={`${keyPrefix}-${part}-${index}`}
-        type="button"
-        className={styles.infoTextLink}
-        onClick={() => {
-          setActiveImageIndex(link.imageIndex)
-          setActiveImageCallout(link.callout ?? null)
-        }}
-      >
-        {part}
-      </button>
-    )
-  })
-}
-
-const renderInfoSummary = (summary, imageLinks, setActiveImageIndex, setActiveImageCallout) => {
-  const lines = (summary ?? '').split('\n')
-  const nodes = []
-  let bulletItems = []
-
-  const flushBullets = () => {
-    if (!bulletItems.length) return
-
-    const listIndex = nodes.length
-    nodes.push(
-      <ul key={`bullet-list-${listIndex}`} className={styles.infoBulletList}>
-        {bulletItems.map((item, index) => (
-          <li key={`bullet-${listIndex}-${index}`}>
-            {renderInlineSummary(item, imageLinks, setActiveImageIndex, setActiveImageCallout, `bullet-${listIndex}-${index}`)}
-          </li>
-        ))}
-      </ul>,
-    )
-    bulletItems = []
-  }
-
-  lines.forEach((line, index) => {
-    if (line.startsWith('- ')) {
-      bulletItems.push(line.slice(2))
-      return
-    }
-
-    flushBullets()
-    nodes.push(
-      <span key={`line-${index}`}>
-        {renderInlineSummary(line, imageLinks, setActiveImageIndex, setActiveImageCallout, `line-${index}`)}
-        {index < lines.length - 1 ? '\n' : null}
-      </span>,
-    )
-  })
-
-  flushBullets()
-  return nodes
-}
-
-const getEmbedVideoUrl = (videoUrl) => {
-  if (!videoUrl) {
-    return ''
-  }
-
-  try {
-    const url = new URL(videoUrl)
-
-    if (url.hostname === 'youtu.be') {
-      const videoId = url.pathname.replace('/', '')
-      return `https://www.youtube.com/embed/${videoId}`
-    }
-
-    if (url.hostname.includes('youtube.com')) {
-      if (url.pathname.startsWith('/embed/')) {
-        return videoUrl
-      }
-
-      const videoId = url.searchParams.get('v')
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`
-      }
-    }
-  } catch {
-    return videoUrl
-  }
-
-  return videoUrl
-}
-
-const syncImageOverlayArea = (image) => {
-  const container = image.parentElement
-
-  if (!container || !image.naturalWidth || !image.naturalHeight) {
-    return
-  }
-
-  const containerWidth = container.clientWidth
-  const containerHeight = container.clientHeight
-  const containerAspect = containerWidth / containerHeight
-  const imageAspect = image.naturalWidth / image.naturalHeight
-  let top = 0
-  let right = 0
-  let bottom = 0
-  let left = 0
-
-  if (imageAspect > containerAspect) {
-    const displayedHeight = containerWidth / imageAspect
-    top = (containerHeight - displayedHeight) / 2
-    bottom = top
-  } else {
-    const displayedWidth = containerHeight * imageAspect
-    left = (containerWidth - displayedWidth) / 2
-    right = left
-  }
-
-  container.style.setProperty('--image-overlay-top', `${top}px`)
-  container.style.setProperty('--image-overlay-right', `${right}px`)
-  container.style.setProperty('--image-overlay-bottom', `${bottom}px`)
-  container.style.setProperty('--image-overlay-left', `${left}px`)
-}
-
 const getProjectTool = (tool) => {
   if (typeof tool !== 'string') {
     return tool
   }
 
   return PROJECT_TOOLS[tool] ?? { name: tool }
-}
-
-function FbxModelViewer({ model }) {
-  const mountRef = useRef(null)
-  const [hasError, setHasError] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    if (!model || !mountRef.current) {
-      return undefined
-    }
-
-    const mount = mountRef.current
-    let scene = null
-    let renderer = null
-    let frameId = null
-    let mixer = null
-    let controls = null
-    let resizeObserver = null
-    let isDisposed = false
-
-    setHasError(false)
-    setIsLoaded(false)
-
-    const startViewer = async () => {
-      const THREE = await import('three')
-      const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js')
-      const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js')
-
-      if (isDisposed) {
-        return
-      }
-
-      scene = new THREE.Scene()
-      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000)
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-      const clock = new THREE.Clock()
-      const loader = new FBXLoader()
-
-      camera.position.set(0, 0.75, 5)
-      camera.lookAt(0, 0.75, 0)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      renderer.outputColorSpace = THREE.SRGBColorSpace
-      mount.appendChild(renderer.domElement)
-
-      controls = new OrbitControls(camera, renderer.domElement)
-      controls.enableDamping = true
-      controls.dampingFactor = 0.08
-      controls.screenSpacePanning = true
-      controls.enablePan = true
-      controls.enableZoom = true
-      controls.enableRotate = true
-      controls.autoRotate = true
-      controls.autoRotateSpeed = 0.8
-      controls.mouseButtons = {
-        LEFT: THREE.MOUSE.ROTATE,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.ROTATE,
-      }
-      controls.touches = {
-        ONE: THREE.TOUCH.ROTATE,
-        TWO: THREE.TOUCH.DOLLY_ROTATE,
-      }
-
-      scene.add(new THREE.HemisphereLight(0xffffff, 0xb8a390, 2.2))
-
-      const keyLight = new THREE.DirectionalLight(0xffffff, 2.3)
-      keyLight.position.set(3, 4, 4)
-      scene.add(keyLight)
-
-      const fillLight = new THREE.DirectionalLight(0xffd8cc, 1)
-      fillLight.position.set(-3, 2, 2)
-      scene.add(fillLight)
-
-      const frameScene = () => {
-        const { width, height } = mount.getBoundingClientRect()
-        const nextWidth = Math.max(1, width)
-        const nextHeight = Math.max(1, height)
-
-        renderer.setSize(nextWidth, nextHeight, false)
-        camera.aspect = nextWidth / nextHeight
-        camera.updateProjectionMatrix()
-      }
-
-      const centerModel = (object) => {
-        const box = new THREE.Box3().setFromObject(object)
-        const center = box.getCenter(new THREE.Vector3())
-        const size = box.getSize(new THREE.Vector3())
-        const maxSize = Math.max(size.x, size.y, size.z) || 1
-
-        object.position.sub(center)
-        object.scale.setScalar(2.45 / maxSize)
-
-        const scaledBox = new THREE.Box3().setFromObject(object)
-        const scaledCenter = scaledBox.getCenter(new THREE.Vector3())
-
-        object.position.x -= scaledCenter.x
-        object.position.z -= scaledCenter.z
-        object.position.y -= scaledBox.min.y
-
-        const framedBox = new THREE.Box3().setFromObject(object)
-        const framedSize = framedBox.getSize(new THREE.Vector3())
-        const framedCenter = framedBox.getCenter(new THREE.Vector3())
-        const distance = Math.max(framedSize.x, framedSize.y, framedSize.z) * 2.1
-
-        camera.position.set(framedCenter.x, framedCenter.y + framedSize.y * 0.08, distance)
-        camera.lookAt(framedCenter.x, framedCenter.y, framedCenter.z)
-        camera.updateProjectionMatrix()
-
-        controls.target.copy(framedCenter)
-        controls.update()
-      }
-
-      const animate = () => {
-        frameId = window.requestAnimationFrame(animate)
-
-        if (mixer) {
-          mixer.update(clock.getDelta())
-        }
-
-        if (controls) {
-          controls.update()
-        }
-
-        renderer.render(scene, camera)
-      }
-
-      resizeObserver = new ResizeObserver(frameScene)
-      resizeObserver.observe(mount)
-      frameScene()
-
-      loader.load(
-        model,
-        (object) => {
-          if (isDisposed) {
-            return
-          }
-
-          centerModel(object)
-          object.traverse((child) => {
-            if (!child.isMesh) {
-              return
-            }
-
-            child.castShadow = false
-            child.receiveShadow = false
-            const materials = Array.isArray(child.material) ? child.material : [child.material]
-            materials.filter(Boolean).forEach((material) => {
-              material.transparent = false
-              material.opacity = 1
-              material.depthWrite = true
-              material.side = THREE.DoubleSide
-              if (material.map) {
-                material.map.colorSpace = THREE.SRGBColorSpace
-                material.map.needsUpdate = true
-              }
-              material.needsUpdate = true
-            })
-          })
-
-          scene.add(object)
-          setIsLoaded(true)
-
-          if (object.animations.length) {
-            mixer = new THREE.AnimationMixer(object)
-            mixer.clipAction(object.animations[0]).play()
-          }
-        },
-        undefined,
-        () => setHasError(true),
-      )
-
-      animate()
-    }
-
-    startViewer().catch(() => setHasError(true))
-
-    return () => {
-      isDisposed = true
-
-      if (resizeObserver) {
-        resizeObserver.disconnect()
-      }
-
-      if (frameId) {
-        window.cancelAnimationFrame(frameId)
-      }
-
-      if (scene) {
-        scene.traverse((object) => {
-          if (!object.isMesh) {
-            return
-          }
-
-          object.geometry?.dispose()
-          const materials = Array.isArray(object.material) ? object.material : [object.material]
-          materials.filter(Boolean).forEach((material) => material.dispose())
-        })
-      }
-
-      if (renderer) {
-        renderer.dispose()
-        renderer.domElement.remove()
-      }
-    }
-  }, [model])
-
-  return (
-    <div className={styles.infoModelCard} ref={mountRef}>
-      <span className={styles.modelControlsHint}>
-        <strong>right click + drag</strong> to rotate
-      </span>
-      {!isLoaded && !hasError ? (
-        <span className={styles.infoModelStatus}>Loading model...</span>
-      ) : null}
-      {hasError ? (
-        <span className={styles.infoModelError}>Model could not load</span>
-      ) : null}
-    </div>
-  )
-}
-
-function AnimationSelector({ animations, onSelect }) {
-  return (
-    <div className={styles.animationSelectorCard}>
-      <h5>Click to view animation</h5>
-      <div className={styles.animationGrid}>
-        {animations.map((animation) => (
-          <button
-            key={animation.model}
-            type="button"
-            className={styles.animationTile}
-            onClick={() => onSelect(animation)}
-          >
-            <span className={styles.animationPreview}>
-              <img src={animation.image ?? PLACEHOLDER_IMAGE} alt="" />
-            </span>
-            <span>{animation.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
 }
 
 export default function Projects() {
@@ -527,14 +107,6 @@ export default function Projects() {
   const clickSpinTimerRef = useRef(null)
   const sparkleRefs = useRef({})
   const collectedStarIdsRef = useRef(new Set())
-  useEffect(() => {
-    document.body.classList.toggle('info-popup-open', isInfoOpen)
-    document.body.style.overflow = isInfoOpen ? 'hidden' : ''
-    return () => {
-      document.body.classList.remove('info-popup-open')
-      document.body.style.overflow = ''
-    }
-  }, [isInfoOpen])
 
   const activeItem = wheelItems[activeItemIndex]
   const activeCategory = activeItem.category
@@ -585,20 +157,6 @@ export default function Projects() {
   const isAnimationSelectorSlide =
     currentInfoPage.animations?.length &&
     activeImageIndex === currentImageSlides.length - 1
-  const previewImageSlides = currentImageSlides.filter((slide) => slide !== 'animation-selector')
-  const selectedPreviewImageIndex = Math.max(0, previewImageSlides.indexOf(selectedPreviewImage))
-  const movePreviewImage = (direction) => {
-    if (!previewImageSlides.length) {
-      return
-    }
-
-    const nextIndex =
-      (selectedPreviewImageIndex + direction + previewImageSlides.length) % previewImageSlides.length
-    const nextImage = previewImageSlides[nextIndex]
-
-    setSelectedPreviewImage(nextImage)
-    setActiveImageIndex(currentImageSlides.indexOf(nextImage))
-  }
 
   const triggerProjectSparkles = (cardId, sparkleEl) => {
     if (collectedStarIdsRef.current.has(cardId)) {
@@ -649,13 +207,26 @@ export default function Projects() {
     setSelectedPreviewImage(null)
   }
 
-  const spinCardToCenter = (cardId, offset) => {
+  const openProjectInfo = () => {
+    setActiveInfoPage(0)
+    setActiveImageIndex(0)
+    setActiveImageCallout(null)
+    setSelectedAnimation(null)
+    setSelectedPreviewImage(null)
+    setIsInfoOpen(true)
+  }
+
+  const spinCardToCenter = (cardId, offset, openAfterCenter = false) => {
     window.clearTimeout(clickSpinTimerRef.current)
 
     if (offset === 0) {
       setSelectedCardId(cardId)
-      setActiveInfoPage(0)
-      setActiveImageCallout(null)
+      if (openAfterCenter) {
+        openProjectInfo()
+      } else {
+        setActiveInfoPage(0)
+        setActiveImageCallout(null)
+      }
       return
     }
 
@@ -678,8 +249,12 @@ export default function Projects() {
 
       clickSpinTimerRef.current = window.setTimeout(() => {
         setSelectedCardId(cardId)
-        setActiveInfoPage(0)
-        setActiveImageCallout(null)
+        if (openAfterCenter) {
+          openProjectInfo()
+        } else {
+          setActiveInfoPage(0)
+          setActiveImageCallout(null)
+        }
       }, CLICK_SPIN_STEP_MS)
     }
 
@@ -848,7 +423,7 @@ export default function Projects() {
                     return
                   }
 
-                  spinCardToCenter(project.virtualId, offset)
+                  spinCardToCenter(project.virtualId, offset, true)
                 }}
                 aria-label={`Select ${project.category}: ${project.title}`}
                 aria-pressed={isActive}
@@ -960,277 +535,35 @@ export default function Projects() {
           <button
             className={styles.moreInfoButton}
             type="button"
-          onClick={() => {
-            setActiveInfoPage(0)
-            setActiveImageIndex(0)
-            setActiveImageCallout(null)
-            setSelectedAnimation(null)
-            setSelectedPreviewImage(null)
-            setIsInfoOpen(true)
-          }}
+            onClick={openProjectInfo}
           >
             More info
           </button>
         </aside>
       </div>
 
-      {isInfoOpen ? createPortal(
-        <div
-          className={styles.infoOverlay}
-          role="presentation"
-          onClick={() => {
-            setIsInfoOpen(false)
-            setActiveImageCallout(null)
-            setSelectedAnimation(null)
-            setSelectedPreviewImage(null)
-          }}
-        >
-          <div
-            className={styles.infoWrapper}
-            style={activeTheme}
-            onClick={(event) => event.stopPropagation()}
-          >
-            {/* Tab bar + close */}
-            <div className={styles.infoTabBar}>
-              {selectedPages.map((page, i) => (
-                <button
-                  key={page.title}
-                  type="button"
-                  className={`${styles.infoTab} ${activeInfoPage === i ? styles.infoTabActive : ''}`}
-                  onClick={() => {
-                    setActiveInfoPage(i)
-                    setActiveImageIndex(0)
-                    setActiveImageCallout(null)
-                    setSelectedAnimation(null)
-                    setSelectedPreviewImage(null)
-                  }}
-                >
-                  {page.title}
-                </button>
-              ))}
-            </div>
-
-            {/* Arrow + card + arrow */}
-            <div className={styles.infoRow}>
-              <div
-                className={styles.infoModal}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="project-info-title"
-              >
-                <button
-                  className={styles.infoClose}
-                  type="button"
-                  onClick={() => {
-                    setIsInfoOpen(false)
-                    setActiveImageCallout(null)
-                    setSelectedAnimation(null)
-                    setSelectedPreviewImage(null)
-                  }}
-                  aria-label="Close project details"
-                >
-                  ×
-                </button>
-                <h4 id="project-info-title" className={styles.infoPageTitle}>
-                  {currentInfoPage.title}
-                </h4>
-                <div className={styles.infoBody}>
-                  <div className={styles.infoImageCarousel}>
-                    {currentInfoPage.video ? (
-                      <div className={styles.infoVideoCard}>
-                        <iframe
-                          src={getEmbedVideoUrl(currentInfoPage.video)}
-                          title="Project video"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-                    ) : currentInfoPage.model ? (
-                      <FbxModelViewer model={currentInfoPage.model} />
-                    ) : isAnimationSelectorSlide ? (
-                      <AnimationSelector
-                        animations={currentInfoPage.animations}
-                        onSelect={setSelectedAnimation}
-                      />
-                    ) : (
-                    <button
-                      className={styles.infoImageCard}
-                      type="button"
-                      onMouseEnter={(event) => {
-                        const image = event.currentTarget.querySelector(`.${styles.infoImage}`)
-                        if (image) {
-                          syncImageOverlayArea(image)
-                        }
-                      }}
-                      onClick={() => setSelectedPreviewImage(currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE)}
-                      aria-label="Open image preview"
-                    >
-                      <span className={styles.infoImageInner}>
-                        <img
-                          src={currentImageSlides[activeImageIndex] ?? PLACEHOLDER_IMAGE}
-                          alt=""
-                          className={styles.infoImage}
-                          onLoad={(event) => syncImageOverlayArea(event.currentTarget)}
-                        />
-                        <img
-                          src="/images/icons/zoomin.png"
-                          alt=""
-                          className={styles.imageZoomIcon}
-                          aria-hidden="true"
-                        />
-                        {activeImageCallout && activeImageIndex === activeImageCallout.imageIndex ? (
-                          <span className={styles.imageCalloutLayer} aria-hidden="true">
-                            <span
-                              className={styles.imageCalloutBox}
-                              style={{
-                                left: `${activeImageCallout.x}%`,
-                                top: `${activeImageCallout.y}%`,
-                                width: `${activeImageCallout.width}%`,
-                                height: `${activeImageCallout.height}%`,
-                              }}
-                            />
-                          </span>
-                        ) : null}
-                      </span>
-                    </button>
-                    )}
-                    {!currentInfoPage.video && !currentInfoPage.model && <div className={styles.imageNav}>
-                      <button
-                        className={styles.imageNavArrow}
-                        style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
-                        onClick={() => {
-                          setActiveImageIndex(i => (i - 1 + currentImageSlides.length) % currentImageSlides.length)
-                          setActiveImageCallout(null)
-                        }}
-                        aria-label="Previous image"
-                      >‹</button>
-                      <div className={styles.imageDots}>
-                        {currentImageSlides.map((_, i) => (
-                          <button
-                            key={i}
-                            className={`${styles.imageDot} ${activeImageIndex === i ? styles.imageDotActive : ''}`}
-                            onClick={() => {
-                              setActiveImageIndex(i)
-                              setActiveImageCallout(null)
-                            }}
-                            aria-label={`Image ${i + 1}`}
-                          />
-                        ))}
-                      </div>
-                      <button
-                        className={styles.imageNavArrow}
-                        style={{ visibility: currentImageSlides.length > 1 ? 'visible' : 'hidden' }}
-                        onClick={() => {
-                          setActiveImageIndex(i => (i + 1) % currentImageSlides.length)
-                          setActiveImageCallout(null)
-                        }}
-                        aria-label="Next image"
-                      >›</button>
-                    </div>}
-                  </div>
-                  <div className={styles.infoText}>
-
-                    <div>
-                      {renderInfoSummary(
-                        currentInfoPage.summary ?? selectedProject.description,
-                        currentInfoPage.imageLinks,
-                        setActiveImageIndex,
-                        setActiveImageCallout,
-                      )}
-                    </div>
-                    {currentInfoPage.download ? (
-                      <a
-                        className={styles.infoDownloadLink}
-                        href={currentInfoPage.download.href}
-                        download
-                      >
-                        {currentInfoPage.download.label}
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-        </div>,
-        document.body
-      ) : null}
-
-      {selectedAnimation ? createPortal(
-        <div
-          className={styles.modelOverlay}
-          role="presentation"
-          onClick={() => setSelectedAnimation(null)}
-        >
-          <div
-            className={styles.modelModal}
-            style={activeTheme}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="animation-viewer-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className={styles.modelClose}
-              type="button"
-              onClick={() => setSelectedAnimation(null)}
-              aria-label="Close animation viewer"
-            >
-              Ã—
-            </button>
-            <h4 id="animation-viewer-title" className={styles.modelTitle}>
-              {selectedAnimation.label}
-            </h4>
-            <FbxModelViewer model={selectedAnimation.model} />
-          </div>
-        </div>,
-        document.body
-      ) : null}
-
-      {selectedPreviewImage ? createPortal(
-        <div
-          className={styles.modelOverlay}
-          role="presentation"
-          onClick={() => setSelectedPreviewImage(null)}
-        >
-          <div
-            className={`${styles.modelModal} ${styles.imagePreviewModal}`}
-            style={activeTheme}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Image preview"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className={styles.modelClose}
-              type="button"
-              onClick={() => setSelectedPreviewImage(null)}
-              aria-label="Close image preview"
-            >
-              Ã—
-            </button>
-            <button
-              className={`${styles.previewArrow} ${styles.previewArrowLeft}`}
-              type="button"
-              onClick={() => movePreviewImage(-1)}
-              aria-label="Previous image"
-              style={{ visibility: previewImageSlides.length > 1 ? 'visible' : 'hidden' }}
-            />
-            <img src={selectedPreviewImage} alt="" className={styles.imagePreviewFull} />
-            <button
-              className={`${styles.previewArrow} ${styles.previewArrowRight}`}
-              type="button"
-              onClick={() => movePreviewImage(1)}
-              aria-label="Next image"
-              style={{ visibility: previewImageSlides.length > 1 ? 'visible' : 'hidden' }}
-            />
-          </div>
-        </div>,
-        document.body
-      ) : null}
+      <ProjectInfoModal
+        isInfoOpen={isInfoOpen}
+        activeTheme={activeTheme}
+        selectedPages={selectedPages}
+        activeInfoPage={activeInfoPage}
+        setActiveInfoPage={setActiveInfoPage}
+        currentInfoPage={currentInfoPage}
+        selectedProject={selectedProject}
+        currentImageSlides={currentImageSlides}
+        activeImageIndex={activeImageIndex}
+        setActiveImageIndex={setActiveImageIndex}
+        activeImageCallout={activeImageCallout}
+        setActiveImageCallout={setActiveImageCallout}
+        isAnimationSelectorSlide={isAnimationSelectorSlide}
+        selectedAnimation={selectedAnimation}
+        setSelectedAnimation={setSelectedAnimation}
+        selectedPreviewImage={selectedPreviewImage}
+        setSelectedPreviewImage={setSelectedPreviewImage}
+        setIsInfoOpen={setIsInfoOpen}
+      />
 
     </section>
   )
 }
+

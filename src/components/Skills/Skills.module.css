@@ -4,7 +4,7 @@
 
 .skills {
   padding: 0px clamp(var(--space-2xl), 6vw, var(--space-4xl));
-  padding-block: 60px !important;
+  padding-block: 28px !important;
 }
 
 .header {
