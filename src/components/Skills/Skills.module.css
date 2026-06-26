@@ -383,6 +383,20 @@
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
+  .skills {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .sectionTitle {
+    font: var(--font-mobile-h2);
+  }
+
+  .subtitle {
+    font: var(--font-mobile-gamemedium);
+    color: var(--purple-40);
+  }
+
   .universe {
     --bubble-side-gutter: 44px;
     min-height: 620px;

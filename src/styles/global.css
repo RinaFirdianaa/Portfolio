@@ -55,8 +55,10 @@
   /* mobile */
   --font-mobile-h1: 800 clamp(20px, 6vw, 16px)/1 var(--font-title);
   --font-mobile-h2: 800 clamp(24px, 6vw, 20px)/1 var(--font-title);
+  --font-mobile-h3: 800 clamp(16px, 6vw, 12px)/1 var(--font-title);
   --font-mobile-p1: 400 clamp(16px, 6vw, 12px)/1 var(--font-body);
   --font-mobile-p2: 400 clamp(14px, 6vw, 12px)/1 var(--font-body);
+  --font-mobile-gamemedium: clamp(10px, 2vw, 8px)/1.4 var(--font-game);
 
 
   /* Navigation */
@@ -162,6 +164,7 @@ html.dark #root {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {

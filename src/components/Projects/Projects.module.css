@@ -1183,52 +1183,152 @@
       translateY(var(--card-y))
       rotate(var(--card-angle));
   }
+
+  .detailMeta .toolList {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    grid-auto-flow: row;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media (max-width: 640px) {
+  .projects {
+    padding-top: var(--space-xl);
+    padding-right: 20px;
+    padding-bottom: var(--space-xl);
+    padding-left: 20px;
+  }
+
+  .sectionTitle {
+    font: var(--font-mobile-h2);
+  }
+
+  .sectionSubtitle {
+    font: var(--font-mobile-gamemedium);
+    color: var(--purple-40);
+  }
+
   .header {
     align-items: center;
+    margin-bottom: 18px;
   }
 
   .categoryPicker {
-    gap: 12px;
+    gap: 34px;
+    margin-bottom: 18px;
   }
 
   .categoryButton {
-    font-size: 20px;
+    min-height: 24px;
+    font: var(--font-mobile-p2);
   }
 
   .cardArc {
-    --card-width: 124px;
+    --card-width: 90px;
+    --card-height: calc(var(--card-width) * 1.335);
+    --card-spread: calc(var(--card-width) * 1.18);
     --wheel-radius: 980px;
+    min-height: 165px;
+    padding-inline: 22px;
   }
 
   .detailIntro {
-    margin-top: 14px;
+    margin-top: 0;
+  }
+
+  .detailCategory {
+    font: var(--font-mobile-p2);
+    margin-bottom: 4px;
+  }
+
+  .detailTitle {
+    font: var(--font-mobile-h1);
+  }
+
+  .detailDescription {
+    font: var(--font-mobile-p2);
+    line-height: 1.5;
   }
 
   .projectDetails {
-    margin-top: 18px;
-    padding: 16px;
+    margin-top: 2px;
+    padding: 8px 0;
   }
 
   .detailMeta {
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .detailMeta span {
+    align-items: center;
+    font: var(--font-mobile-p2);
+    font-weight: 700;
+  }
+
+  .detailMeta span:has(.toolList) {
+    align-items: flex-start;
+  }
+
+  .toolItem {
+    font: var(--font-mobile-p2);
+    font-weight: 700;
+  }
+
+  .detailMeta .toolList {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    grid-auto-flow: row;
+    justify-content: center;
+    align-items: center;
   }
 
   .infoModal {
-    padding: 20px;
+    padding: 12px;
+    height: 70vh;
+  }
+
+  .infoPageTitle {
+    font: var(--font-mobile-h1);
+    min-height: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0 28px;
+    margin-bottom: 12px;
+  }
+
+  .infoClose {
+    top: 12px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .infoClose::before,
+  .infoClose::after {
+    width: 10px;
+    height: 1.5px;
   }
 
   .infoBody {
     grid-template-columns: 1fr;
+    min-height: 0;
   }
 
   .infoImageCarousel,
   .infoImageCard,
   .infoModelCard {
     max-width: 100%;
+  }
+
+  .infoImageCard,
+  .infoVideoCard,
+  .infoModelCard {
+    border: 2px solid #ff3b30;
   }
 
 }

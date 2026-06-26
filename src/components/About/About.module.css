@@ -265,7 +265,29 @@
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
+  .about {
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .sectionTitle,
+  .cardTitle {
+    font: var(--font-mobile-h2);
+  }
+
+  .cardSubtitle {
+    font: var(--font-mobile-gamemedium);
+  }
+
+  .eduSchool {
+    font: var(--font-mobile-p1);
+    font-weight: 700;
+  }
+
   .grid {
     grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
 }
