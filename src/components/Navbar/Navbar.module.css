@@ -16,6 +16,20 @@
   z-index: 600;
 }
 
+.mobileCompletionPortal {
+  display: none;
+}
+
+.popupPortalClosing {
+  pointer-events: none;
+  animation: scorePopupFadeOut 0.4s ease forwards;
+}
+
+@keyframes scorePopupFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -300,6 +314,21 @@
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
+  .desktopPopupPortal {
+    display: none;
+  }
+
+  .mobileCompletionPortal {
+    display: block;
+    position: fixed;
+    z-index: 1200;
+    top: calc(max(14px, env(safe-area-inset-top)) + 40px) !important;
+    right: 20px !important;
+    left: auto !important;
+    transform: none !important;
+    max-width: calc(100vw - 40px);
+  }
+
   .headerHidden {
     transform: translateY(-54px);
   }
@@ -360,6 +389,10 @@
     color: var(--pink-40);
   }
 
+  .mobilePanelBrandF {
+    color: var(--purple-40);
+  }
+
   .mobilePanelTheme {
     width: 22px;
     height: 22px;
@@ -395,10 +428,11 @@
 
   .mobilePanelScore {
     display: grid;
+    align-items: center;
     justify-items: center;
-    margin-top: 0;
+    margin: 8px 0;
     padding: 4px 0;
-    border: 1px solid red;
+    text-align: center;
     color: var(--purple-20);
   }
 
@@ -427,6 +461,9 @@
   }
 
   .mobilePanelScoreHint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     margin-top: 12px;
     font: var(--font-gamesmall);
     color: var(--purple-40);
@@ -441,17 +478,15 @@
   }
 
   .mobilePanelList {
+    display: grid;
+    gap: 8px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .mobilePanelItem {
-    border: 1px solid red;
-  }
-
-  .mobilePanelItem + .mobilePanelItem {
-    border-top: 0;
+    padding: 8px 0;
   }
 
   .mobilePanelLink {
@@ -460,7 +495,8 @@
     justify-content: flex-start;
     gap: 12px;
     min-height: 0;
-    padding: 2px 0;
+    padding: 0 0 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--purple-20) 64%, transparent);
     color: var(--purple-40);
     font: var(--font-mobile-h2);
     text-decoration: none;
@@ -469,6 +505,7 @@
   .mobilePanelStar {
     flex: 0 0 auto;
     color: var(--yellow-40);
+    transition: opacity 0.4s ease, transform 0.4s ease;
   }
 
   .navList {

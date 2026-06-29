@@ -294,17 +294,6 @@
   border-color: rgba(255, 233, 191, 0.38);
 }
 
-.hint{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.18);
-  color: var(--pink-10);
-  border-radius: var(--radius-md);
-  padding: 4px 24px;
-  font: var(--font-p2);                 /* monospace like in screenshot */
-}
-
 @media (prefers-reduced-motion: reduce) {
   .textBlock,
   .body,
@@ -318,6 +307,11 @@
 }
 /* --- Responsive --- */
 @media (max-width: 768px) {
+  .hero {
+    height: auto;
+    min-height: 0;
+  }
+
   .inner {
     flex-direction: column;
     text-align: center;
@@ -348,6 +342,7 @@
   .heroLinks {
     justify-content: center;
     gap: 8px;
+    margin-bottom: 48px;
   }
 
   .iconLink {

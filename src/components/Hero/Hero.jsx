@@ -4,7 +4,6 @@ import { useScore } from '@/components/Score/ScoreContext'
 import { useTheme } from '@/components/Theme/ThemeContext'
 import CloudBackground from './CloudBackground'
 import styles from './Hero.module.css'
-import StarIcon from '@/components/StarIcon/StarIcon'
 
 const SPARKLE_TRAVEL_MS = 850
 const PLANET_SCORE = 5
@@ -133,9 +132,6 @@ export default function Hero() {
               Resume
             </a>
           </div>
-          <p className={styles.hint}>
-            Earn pts wherever you see <StarIcon size="1rem" glow />
-          </p>
         </div>
 
         <div className={styles.illustrationBlock}>

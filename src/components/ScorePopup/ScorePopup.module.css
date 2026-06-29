@@ -134,3 +134,22 @@
 :global(html.dark) .completeScoreNum   { color: var(--purple-20); }
 :global(html.dark) .completeScoreTotal { color: var(--blue-40); }
 :global(html.dark) .completeText       { color: var(--pink-10); }
+
+@media (max-width: 600px) {
+  .completedMobileCompact {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: calc(100vw - 32px);
+    padding: 16px 28px;
+  }
+
+  .completedMobileCompact .completeTitle,
+  .completedMobileCompact .completeText {
+    overflow-wrap: anywhere;
+  }
+
+  .completedMobileCompact .completeStar,
+  .completedMobileCompact .completeScore {
+    display: none;
+  }
+}

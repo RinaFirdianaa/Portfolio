@@ -1,10 +1,10 @@
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './ScorePopup.module.css'
 
-export default function ScorePopup({ score, total, completed = false }) {
+export default function ScorePopup({ score, total, completed = false, mobileCompact = false }) {
   if (completed) {
     return (
-      <div className={`${styles.popup} ${styles.completed}`} role="status">
+      <div className={`${styles.popup} ${styles.completed} ${mobileCompact ? styles.completedMobileCompact : ''}`} role="status">
         <StarIcon className={styles.completeStar} size="28px" glow />
         <span className={styles.completeTitle}>Congratulations!</span>
         <span className={styles.completeScore}>

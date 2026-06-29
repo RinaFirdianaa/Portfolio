@@ -170,6 +170,9 @@ html.dark #root {
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -180,7 +183,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body.info-popup-open main,

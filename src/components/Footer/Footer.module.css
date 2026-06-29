@@ -60,7 +60,15 @@
 
 @media (max-width: 640px) {
   .footer {
-    padding-block: 64px 58px;
+    padding-block: 0;
+  }
+
+  .inner {
+    padding: 16px;
+  }
+
+  .brand {
+    font: var(--font-mobile-h1);
   }
 
   .signoff {

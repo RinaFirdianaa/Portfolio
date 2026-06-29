@@ -62,9 +62,18 @@
   }
 
   .cloud1 { animation-duration: 28s; }
-  .cloud2 { animation-duration: 40s; }
+  .cloud2 {
+    animation-duration: 40s;
+    mix-blend-mode: normal;
+  }
 
-  .cloud3,
+  .cloud3 {
+    display: block;
+    animation-duration: 52s;
+    mix-blend-mode: normal;
+    opacity: 0.72;
+  }
+
   .cloud4 {
     display: none;
   }

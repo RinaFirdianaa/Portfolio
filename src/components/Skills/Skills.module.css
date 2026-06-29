@@ -442,6 +442,7 @@
 @media (max-width: 600px) {
   .skills {
     padding-right: 20px;
+    padding-bottom: 56px !important;
     padding-left: 20px;
   }
 

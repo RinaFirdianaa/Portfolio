@@ -17,8 +17,8 @@ const MOBILE_HEADER_HIDE_THRESHOLD = 72
 const MOBILE_MENU_LINKS = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
   { label: 'Project', href: '#projects' },
+  { label: 'Skills', href: '#skills' },
 ]
 
 export default function Navbar() {
@@ -32,6 +32,9 @@ export default function Navbar() {
   const [displayScore, setDisplayScore]       = useState(0)
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
+  const [isScorePopupClosing, setIsScorePopupClosing] = useState(false)
+  const [isMobileCompletionOpen, setIsMobileCompletionOpen] = useState(false)
+  const [isMobileCompletionClosing, setIsMobileCompletionClosing] = useState(false)
   const [isMobileHeaderHidden, setIsMobileHeaderHidden] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false)
@@ -51,6 +54,8 @@ export default function Navbar() {
   const hasOpenedCompleteScoreRef = useRef(false)
   const displayScoreRef = useRef(displayScore)
   const scoreGlowTimeoutRef = useRef(null)
+  const scorePopupFadeTimerRef = useRef(null)
+  const scorePopupCloseTimerRef = useRef(null)
   const lastHeaderScrollYRef = useRef(0)
   const fireSparklesRef = useRef(fireSparkles)
   const addScoreRef     = useRef(addScore)
@@ -76,6 +81,10 @@ export default function Navbar() {
   }, [isMobileMenuClosing, isMobileMenuOpen])
 
   useEffect(() => () => window.clearTimeout(mobileMenuCloseTimerRef.current), [])
+  useEffect(() => () => {
+    window.clearTimeout(scorePopupFadeTimerRef.current)
+    window.clearTimeout(scorePopupCloseTimerRef.current)
+  }, [])
 
   useEffect(() => {
     let rafScheduled = false
@@ -136,6 +145,7 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!isScorePopupOpen) return undefined
+    if (score >= TOTAL_SCORE && window.matchMedia('(max-width: 600px)').matches) return undefined
 
     const handleOutsidePointerDown = (event) => {
       if (scoreWrapRef.current?.contains(event.target)) return
@@ -145,7 +155,7 @@ export default function Navbar() {
 
     document.addEventListener('pointerdown', handleOutsidePointerDown)
     return () => document.removeEventListener('pointerdown', handleOutsidePointerDown)
-  }, [isScorePopupOpen])
+  }, [isScorePopupOpen, score])
   const geoCacheRef = useRef(null)
 
   const buildGeoCache = useCallback(() => {
@@ -364,7 +374,22 @@ export default function Navbar() {
   useEffect(() => {
     if (hasOpenedCompleteScoreRef.current || score < TOTAL_SCORE) return
     hasOpenedCompleteScoreRef.current = true
+
+    if (window.matchMedia('(max-width: 600px)').matches) {
+      setIsMobileCompletionClosing(false)
+      setIsMobileCompletionOpen(true)
+      scorePopupFadeTimerRef.current = window.setTimeout(() => {
+        setIsMobileCompletionClosing(true)
+        scorePopupCloseTimerRef.current = window.setTimeout(() => {
+          setIsMobileCompletionOpen(false)
+          setIsMobileCompletionClosing(false)
+        }, 400)
+      }, 3000)
+      return
+    }
+
     updatePopupPosition()
+    setIsScorePopupClosing(false)
     setIsScorePopupOpen(true)
   }, [score, updatePopupPosition])
 
@@ -392,13 +417,25 @@ export default function Navbar() {
     {isScorePopupOpen && createPortal(
       <div
         ref={popupPortalRef}
-        className={styles.popupPortal}
+        className={`${styles.popupPortal} ${styles.desktopPopupPortal} ${isScorePopupClosing ? styles.popupPortalClosing : ''}`}
         style={{ top: popupPos.top, right: popupPos.right }}
       >
         <ScorePopup
           score={displayScore}
           total={TOTAL_SCORE}
           completed={score >= TOTAL_SCORE}
+          mobileCompact
+        />
+      </div>,
+      document.body
+    )}
+    {isMobileCompletionOpen && createPortal(
+      <div className={`${styles.mobileCompletionPortal} ${isMobileCompletionClosing ? styles.popupPortalClosing : ''}`}>
+        <ScorePopup
+          score={displayScore}
+          total={TOTAL_SCORE}
+          completed
+          mobileCompact
         />
       </div>,
       document.body
@@ -475,7 +512,7 @@ export default function Navbar() {
           className={`${styles.mobilePanel} ${isMobileMenuClosing ? styles.mobilePanelClosing : styles.mobilePanelOpen}`}
         >
           <div className={styles.mobilePanelTop}>
-            <span className={styles.mobilePanelBrand}>Rf</span>
+            <span className={styles.mobilePanelBrand}>R<span className={styles.mobilePanelBrandF}>f</span></span>
 
             <button
               className={styles.mobilePanelTheme}
@@ -506,32 +543,46 @@ export default function Navbar() {
 
           <div className={styles.mobilePanelScore} aria-label={`Score ${displayScore} out of ${TOTAL_SCORE}`}>
             <span className={styles.mobilePanelScoreRow}>
-              <StarIcon size="2rem" glow={scoreGlowing} />
+              <StarIcon size="1.5rem" glow={scoreGlowing} />
               <span className={styles.mobilePanelScoreText}>
                 <span className={styles.mobilePanelScoreLabel}>Score</span>
                 <span className={styles.mobilePanelScoreValue}>{displayScore}/{TOTAL_SCORE}</span>
               </span>
             </span>
-            <span className={styles.mobilePanelScoreHint}>Collect points <span aria-hidden="true">✦</span> as you go!</span>
+            <span className={styles.mobilePanelScoreHint}>
+              Earn points whenever you see
+              <StarIcon size="0.75rem" glow />
+            </span>
           </div>
 
           <nav className={styles.mobilePanelNav} aria-label="Mobile navigation">
             <ul className={styles.mobilePanelList}>
-              {MOBILE_MENU_LINKS.map(({ label, href }) => (
-                <li key={href} className={styles.mobilePanelItem}>
-                  <a
-                    href={href}
-                    className={styles.mobilePanelLink}
-                    onClick={(event) => {
-                      closeMobileMenu()
-                      handleNavClick(event, href)
-                    }}
-                  >
-                    <span>{label}</span>
-                    <StarIcon size="1.25rem" glow className={styles.mobilePanelStar} />
-                  </a>
-                </li>
-              ))}
+              {MOBILE_MENU_LINKS.map(({ label, href }) => {
+                const sectionId = href.replace('#', '')
+                const isVisited = visitedSections.has(sectionId)
+                const isGlowing = glowingSection === sectionId
+
+                return (
+                  <li key={href} className={styles.mobilePanelItem}>
+                    <a
+                      href={href}
+                      className={styles.mobilePanelLink}
+                      onClick={(event) => {
+                        closeMobileMenu()
+                        handleNavClick(event, href)
+                      }}
+                    >
+                      <span>{label}</span>
+                      <StarIcon
+                        size="1rem"
+                        glow={isGlowing || !isVisited}
+                        className={styles.mobilePanelStar}
+                        style={{ opacity: isVisited && !isGlowing ? 0 : 1 }}
+                      />
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
           </nav>
         </div>
