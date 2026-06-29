@@ -216,6 +216,14 @@ export default function Projects() {
     setIsInfoOpen(true)
   }
 
+  const openProjectInfoFromCard = (project) => {
+    window.clearTimeout(clickSpinTimerRef.current)
+    pendingSelectCardIdRef.current = null
+    setActiveItemIndex(project.itemIndex)
+    setSelectedCardId(project.virtualId)
+    openProjectInfo()
+  }
+
   const spinCardToCenter = (cardId, offset, openAfterCenter = false) => {
     window.clearTimeout(clickSpinTimerRef.current)
 
@@ -337,10 +345,16 @@ export default function Projects() {
     lastDragTimeRef.current = Date.now()
   }
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event) => {
     if (Date.now() - lastDragTimeRef.current >= 180 && pendingSelectCardIdRef.current) {
       const [cardId, offset] = pendingSelectCardIdRef.current.split(':')
-      spinCardToCenter(cardId, Number(offset))
+      const itemIndex = wheelItems.findIndex((item) => item.wheelId === cardId)
+
+      if (event.type === 'pointerup' && itemIndex >= 0 && Number(offset) === 0) {
+        openProjectInfoFromCard({ itemIndex, virtualId: cardId })
+      } else {
+        spinCardToCenter(cardId, Number(offset))
+      }
     }
 
     pendingSelectCardIdRef.current = null
@@ -419,11 +433,15 @@ export default function Projects() {
                 onClick={(event) => {
                   event.stopPropagation()
 
-                  if (Date.now() - lastDragTimeRef.current < 180) {
+                  if (event.detail !== 0 || Date.now() - lastDragTimeRef.current < 180) {
                     return
                   }
 
-                  spinCardToCenter(project.virtualId, offset, true)
+                  if (offset === 0) {
+                    openProjectInfoFromCard(project)
+                  } else {
+                    spinCardToCenter(project.virtualId, offset)
+                  }
                 }}
                 aria-label={`Select ${project.category}: ${project.title}`}
                 aria-pressed={isActive}

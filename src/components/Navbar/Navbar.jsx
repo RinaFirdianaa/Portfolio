@@ -14,6 +14,12 @@ const SPARKLE_TRAVEL_MS = 850
 const TOTAL_SCORE = 100
 const NAV_SCROLL_EXTRA_OFFSET = 28
 const MOBILE_HEADER_HIDE_THRESHOLD = 72
+const MOBILE_MENU_LINKS = [
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Project', href: '#projects' },
+]
 
 export default function Navbar() {
   const scrolled            = useScrolled()
@@ -27,6 +33,8 @@ export default function Navbar() {
   const [scoreGlowing, setScoreGlowing]       = useState(false)
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false)
   const [isMobileHeaderHidden, setIsMobileHeaderHidden] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false)
   const [popupPos, setPopupPos] = useState({ top: 0, right: 0 })
   const { isDark, toggle: toggleDark } = useTheme()
   const navListRef     = useRef(null)
@@ -35,6 +43,7 @@ export default function Navbar() {
   const headerRef      = useRef(null)
   const scoreRef    = useRef(null)
   const mobileMenuRef = useRef(null)
+  const mobileMenuCloseTimerRef = useRef(null)
   const navItemRefs = useRef({})
   const prevSection = useRef('home')
   const visitedRef  = useRef(new Set())
@@ -48,6 +57,25 @@ export default function Navbar() {
   useEffect(() => { fireSparklesRef.current = fireSparkles }, [fireSparkles])
   useEffect(() => { addScoreRef.current     = addScore     }, [addScore])
   useEffect(() => { displayScoreRef.current = displayScore }, [displayScore])
+
+  const openMobileMenu = useCallback(() => {
+    window.clearTimeout(mobileMenuCloseTimerRef.current)
+    setIsMobileMenuClosing(false)
+    setIsMobileMenuOpen(true)
+  }, [])
+
+  const closeMobileMenu = useCallback(() => {
+    if (!isMobileMenuOpen || isMobileMenuClosing) return
+
+    setIsMobileMenuClosing(true)
+    window.clearTimeout(mobileMenuCloseTimerRef.current)
+    mobileMenuCloseTimerRef.current = window.setTimeout(() => {
+      setIsMobileMenuOpen(false)
+      setIsMobileMenuClosing(false)
+    }, 280)
+  }, [isMobileMenuClosing, isMobileMenuOpen])
+
+  useEffect(() => () => window.clearTimeout(mobileMenuCloseTimerRef.current), [])
 
   useEffect(() => {
     let rafScheduled = false
@@ -77,6 +105,24 @@ export default function Navbar() {
       window.removeEventListener('resize', handleHeaderVisibility)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') closeMobileMenu()
+    }
+
+    document.body.style.overflow = 'hidden'
+    setIsMobileHeaderHidden(false)
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [closeMobileMenu, isMobileMenuOpen])
 
   const updatePopupPosition = useCallback(() => {
     if (!scoreWrapRef.current) return
@@ -357,7 +403,7 @@ export default function Navbar() {
       </div>,
       document.body
     )}
-    <header ref={headerRef} className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isMobileHeaderHidden ? styles.headerHidden : ''}`}>
+    <header ref={headerRef} className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isMobileHeaderHidden ? styles.headerHidden : ''} ${isMobileMenuOpen ? styles.menuOpen : ''}`}>
       <div data-header-inner>
       <div className={styles.topBar}>
         <span className={styles.brand}>Rina Firdiana</span>
@@ -367,6 +413,12 @@ export default function Navbar() {
           className={styles.mobileMenuButton}
           type="button"
           aria-label="Open menu"
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-navigation-panel"
+          onClick={() => {
+            setIsScorePopupOpen(false)
+            openMobileMenu()
+          }}
         >
           <span />
           <span />
@@ -416,6 +468,74 @@ export default function Navbar() {
 
         </div>
       </div>
+
+      {isMobileMenuOpen ? (
+        <div
+          id="mobile-navigation-panel"
+          className={`${styles.mobilePanel} ${isMobileMenuClosing ? styles.mobilePanelClosing : styles.mobilePanelOpen}`}
+        >
+          <div className={styles.mobilePanelTop}>
+            <span className={styles.mobilePanelBrand}>Rf</span>
+
+            <button
+              className={styles.mobilePanelTheme}
+              type="button"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={toggleDark}
+            >
+              <img
+                src={isDark ? '/images/icons/moon.png' : '/images/icons/sun.png'}
+                alt=""
+                className={styles.mobilePanelThemeIcon}
+              />
+            </button>
+
+            <button
+              className={`${styles.mobileMenuButton} ${styles.mobileMenuButtonOpen}`}
+              type="button"
+              aria-label="Close menu"
+              aria-expanded="true"
+              aria-controls="mobile-navigation-panel"
+              onClick={closeMobileMenu}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
+
+          <div className={styles.mobilePanelScore} aria-label={`Score ${displayScore} out of ${TOTAL_SCORE}`}>
+            <span className={styles.mobilePanelScoreRow}>
+              <StarIcon size="2rem" glow={scoreGlowing} />
+              <span className={styles.mobilePanelScoreText}>
+                <span className={styles.mobilePanelScoreLabel}>Score</span>
+                <span className={styles.mobilePanelScoreValue}>{displayScore}/{TOTAL_SCORE}</span>
+              </span>
+            </span>
+            <span className={styles.mobilePanelScoreHint}>Collect points <span aria-hidden="true">✦</span> as you go!</span>
+          </div>
+
+          <nav className={styles.mobilePanelNav} aria-label="Mobile navigation">
+            <ul className={styles.mobilePanelList}>
+              {MOBILE_MENU_LINKS.map(({ label, href }) => (
+                <li key={href} className={styles.mobilePanelItem}>
+                  <a
+                    href={href}
+                    className={styles.mobilePanelLink}
+                    onClick={(event) => {
+                      closeMobileMenu()
+                      handleNavClick(event, href)
+                    }}
+                  >
+                    <span>{label}</span>
+                    <StarIcon size="1.25rem" glow className={styles.mobilePanelStar} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      ) : null}
 
       <nav className={styles.nav} aria-label="Main navigation">
         <ul

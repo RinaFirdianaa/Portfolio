@@ -105,6 +105,42 @@
   color: var(--yellow-20);
 }
 
+.backgroundTitleText {
+  text-align: center;
+}
+
+@media (min-width: 601px) {
+  .backgroundTitle[data-title-skill-id='code'] {
+    top: -24px !important;
+    translate: 0 0 !important;
+  }
+
+  .backgroundTitle[data-title-skill-id='tools'] {
+    top: -24px !important;
+    translate: -100% 0 !important;
+  }
+
+  .backgroundTitle[data-title-skill-id='code'],
+  .backgroundTitle[data-title-skill-id='design'] {
+    align-items: flex-start;
+  }
+
+  .backgroundTitle[data-title-skill-id='code'] .backgroundTitleText,
+  .backgroundTitle[data-title-skill-id='design'] .backgroundTitleText {
+    text-align: left;
+  }
+
+  .backgroundTitle[data-title-skill-id='tools'],
+  .backgroundTitle[data-title-skill-id='soft'] {
+    align-items: flex-end;
+  }
+
+  .backgroundTitle[data-title-skill-id='tools'] .backgroundTitleText,
+  .backgroundTitle[data-title-skill-id='soft'] .backgroundTitleText {
+    text-align: right;
+  }
+}
+
 /* --- Skill Bubbles --- */
 .bubbleStage {
   position: relative;
@@ -216,7 +252,7 @@
 
 .bubble[data-entry-count='1'] .bubbleMediaGrid {
   grid-template-columns: 1fr;
-  inset: 24%;
+  inset: 30%;
 }
 
 .bubbleImage {
@@ -256,6 +292,19 @@
   pointer-events: none;
 }
 
+.bubbleCompactLabelGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  gap: 8px;
+}
+
+.bubbleCompactLabelGrid[data-odd='true'] .bubbleLabelItem:last-child {
+  grid-column: 1 / -1;
+}
+
 .bubbleLabelItem {
   max-width: 100%;
   color: color-mix(in srgb, var(--skill-accent) 82%, var(--purple-60));
@@ -263,6 +312,14 @@
   font-weight: 400;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+.bubbleLabelItem[data-label-size='short'] {
+  font-size: 16px;
+}
+
+.bubbleLabelItem[data-label-size='long'] {
+  font-size: 12px;
 }
 
 .bubble[data-has-media='true'] .bubbleLabelGrid {
@@ -399,19 +456,83 @@
 
   .universe {
     --bubble-side-gutter: 44px;
-    min-height: 620px;
+    min-height: 578px;
   }
 
   .bubbleStage {
     height: 520px;
-    margin: 50px var(--bubble-side-gutter);
+    margin: 24px 0 0;
+    touch-action: pan-y;
+  }
+
+  .bubble {
+    touch-action: none;
   }
 
   .backgroundTitle {
-    font: 700 clamp(22px, 3vw, 24px)/1.2 var(--font-body);
+    flex-direction: row;
+    font: var(--font-mobile-p1);
+    font-weight: 700;
+  }
+
+  .desktopTitleBreak {
+    display: none;
   }
 
   .backgroundLabels {
-    inset: 50px 0;
+    inset: 0;
+  }
+
+  .backgroundTitle {
+    translate: -50% 0 !important;
+  }
+
+  .backgroundTitle:nth-child(1) {
+    top: 6px !important;
+    left: 0 !important;
+    translate: 0 0 !important;
+  }
+
+  .backgroundTitle:nth-child(2) {
+    top: 6px !important;
+    right: 0;
+    left: auto !important;
+    translate: 0 0 !important;
+  }
+
+  .backgroundTitle:nth-child(3) {
+    top: auto !important;
+    bottom: 6px;
+    left: 0 !important;
+    translate: 0 0 !important;
+  }
+
+  .backgroundTitle:nth-child(4) {
+    top: auto !important;
+    bottom: 6px;
+    right: 0;
+    left: auto !important;
+    translate: 0 0 !important;
+  }
+
+  .bubbleLabelItem {
+    font-size: 12px;
+  }
+
+  .bubbleLabelItem[data-label-size='short'] {
+    font-size: 13px;
+  }
+
+  .bubbleLabelItem[data-label-size='long'] {
+    font-size: 10px;
+  }
+
+  .bubble[data-skill-id='design'][data-complete='true'] .bubbleMediaGrid {
+    inset: 15%;
+  }
+
+  .bubble[data-skill-id='design'][data-complete='true'] .bubbleImage {
+    width: 30px;
+    height: 30px;
   }
 }

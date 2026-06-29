@@ -141,7 +141,7 @@
 .projectCard {
   position: absolute;
   left: 50%;
-  top: 12px;
+  top: 24px;
   width: var(--card-width);
   min-width: var(--card-width);
   height: var(--card-height);
@@ -403,6 +403,10 @@
   background: color-mix(in srgb, var(--category-accent-soft, var(--pink-10)) 40%, transparent);
 }
 
+:global(html.dark) .detailLinks span {
+  color: #ffffff;
+}
+
 .moreInfoButton {
   margin-top: 12px;
   min-height: 34px;
@@ -494,6 +498,10 @@
     --wheel-radius: 980px;
     min-height: 184px;
     padding-inline: 22px;
+  }
+
+  .projectCard {
+    top: 12px;
   }
 
   .detailIntro {

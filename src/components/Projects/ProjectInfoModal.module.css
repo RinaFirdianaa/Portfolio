@@ -103,6 +103,10 @@
   border-bottom-color: var(--color-bg);
 }
 
+:global(html.dark) .infoTab:not(.infoTabActive) {
+  color: rgb(255 255 255 / 70%);
+}
+
 :global(html.dark) .infoTab:not(.infoTabActive):hover::after {
   background: var(--color-bg);
 }

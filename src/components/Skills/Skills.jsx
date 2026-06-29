@@ -5,6 +5,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { SKILLS } from '@/constants/data'
+import mobileScatterPositions from '@/constants/mobileSkillPositions.json'
+import desktopScatterPositions from '@/constants/desktopSkillPositions.json'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
@@ -53,10 +55,10 @@ const SCATTER_POSITIONS = {
 }
 
 const SKILL_TITLE_POSITIONS = {
-  code: { left: '2%', top: '36%' },
-  tools: { left: '95%', top: '36%' },
-  design: { left: '2%', top: '76%' },
-  soft: { left: '95%', top: '76%' },
+  code: { left: '0%', top: '36%' },
+  tools: { left: '100%', top: '65%' },
+  design: { left: '0%', top: '65%' },
+  soft: { left: '100%', top: '65%' },
 }
 
 const SKILL_THEMES = {
@@ -109,7 +111,6 @@ const BUBBLE_SIZE_OVERRIDES = {
   tools: { base: 108, min: 92 },
   soft: { base: 126, min: 112 },
 }
-const SAVED_SKILL_POSITIONS_KEY = 'portfolio.skillBubblePositions'
 const SKILL_STAR_SCORE = 5
 const SPARKLE_TRAVEL_MS = 850
 const normalizeSkillItem = (item) => (
@@ -146,19 +147,43 @@ const getBaseBubbleSize = (skillId, sectionCount) => {
   return clamp(baseSize - Math.max(sectionCount - 5, 0) * BUBBLE_SIZE_STEP_DOWN, minSize, baseSize)
 }
 
+const getBubbleScale = () => (
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches ? 0.65 : 1
+)
 const getBubbleSizePx = (skillId, sectionCount, labels) => (
-  getBaseBubbleSize(skillId, sectionCount) + (labels.length - 1) * BUBBLE_MERGE_INCREMENT
+  (getBaseBubbleSize(skillId, sectionCount) + (labels.length - 1) * BUBBLE_MERGE_INCREMENT) * getBubbleScale()
 )
 const getBubbleSize = (skillId, sectionCount, labels) => `${getBubbleSizePx(skillId, sectionCount, labels)}px`
 const getGroupLabels = (group) => group.entries.map((entry) => entry.label)
+const isCompactLabel = (text) => text.trim().length <= 3
+const getLabelLengthSize = (text) => {
+  if (/\s/.test(text)) {
+    return 'medium'
+  }
+
+  const length = text.replace(/\s+/g, '').length
+
+  if (length < 6) {
+    return 'short'
+  }
+
+  if (length > 8) {
+    return 'long'
+  }
+
+  return 'medium'
+}
 const getSkillsSignature = () => JSON.stringify(
   SKILLS.map((skill) => ({
     id: skill.id,
     items: skill.items.map((rawItem) => normalizeSkillItem(rawItem)),
   })),
 )
-const clampBubbleToStage = (value, maxValue) => (
-  clamp(value, BUBBLE_EDGE_BUFFER, Math.max(BUBBLE_EDGE_BUFFER, maxValue - BUBBLE_EDGE_BUFFER))
+const getBubbleEdgeBuffer = () => (
+  window.matchMedia('(max-width: 600px)').matches ? 0 : BUBBLE_EDGE_BUFFER
+)
+const clampBubbleToStage = (value, maxValue, edgeBuffer = BUBBLE_EDGE_BUFFER) => (
+  clamp(value, edgeBuffer, Math.max(edgeBuffer, maxValue - edgeBuffer))
 )
 
 export default function Skills() {
@@ -173,7 +198,6 @@ export default function Skills() {
   const pendingPointerMoveRef = useRef(null)
   const bubblePositionsRef = useRef({})
   const collectedSkillStarIdsRef = useRef(new Set())
-  const savedPositionsLoadedRef = useRef(false)
   const [bubblePositions, setBubblePositions] = useState({})
   const [skillGroups, setSkillGroups] = useState(makeSkillGroups)
   const [mergeTargetId, setMergeTargetId] = useState(null)
@@ -185,7 +209,6 @@ export default function Skills() {
   useEffect(() => {
     bubblePositionsRef.current = {}
     collectedSkillStarIdsRef.current = new Set()
-    savedPositionsLoadedRef.current = false
     setBubblePositions({})
     setSkillGroups(makeSkillGroups())
     setCollectedSkillStarIds(new Set())
@@ -193,44 +216,17 @@ export default function Skills() {
     setDraggingBubbleId(null)
   }, [skillsSignature])
 
-  useEffect(() => {
-    if (savedPositionsLoadedRef.current || typeof window === 'undefined') return
-
-    const stage = stageRef.current
-    if (!stage) return
-
-    try {
-      const savedLayout = JSON.parse(window.localStorage.getItem(SAVED_SKILL_POSITIONS_KEY) || 'null')
-      if (!savedLayout || savedLayout.signature !== skillsSignature) {
-        savedPositionsLoadedRef.current = true
-        return
-      }
-
-      const stageRect = stage.getBoundingClientRect()
-      const nextPositions = {}
-
-      Object.values(skillGroups).flat().forEach((group) => {
-        const savedPosition = savedLayout.positions?.[group.id]
-        const bubbleEl = bubbleRefs.current[group.id]
-        if (!savedPosition || !bubbleEl) return
-
-        nextPositions[group.id] = {
-          x: clampBubbleToStage((savedPosition.x / 100) * stageRect.width, stageRect.width - bubbleEl.offsetWidth),
-          y: clampBubbleToStage((savedPosition.y / 100) * stageRect.height, stageRect.height - bubbleEl.offsetHeight),
-        }
-      })
-
-      bubblePositionsRef.current = nextPositions
-      setBubblePositions(nextPositions)
-      savedPositionsLoadedRef.current = true
-    } catch {
-      savedPositionsLoadedRef.current = true
-    }
-  }, [skillGroups, skillsSignature])
-
   const getSectionZone = (skillId) => SECTION_ZONES[SKILLS.findIndex((skill) => skill.id === skillId)] || SECTION_ZONES[0]
 
   const getStartPosition = (skillId, index) => {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches) {
+      const mobilePosition = mobileScatterPositions[skillId]?.[index]
+      if (mobilePosition) return mobilePosition
+    }
+
+    const desktopPosition = desktopScatterPositions[skillId]?.[index]
+    if (desktopPosition) return desktopPosition
+
     const zone = getSectionZone(skillId)
     const pattern = SCATTER_POSITIONS[skillId] || []
     const position = pattern[index] || {
@@ -250,11 +246,13 @@ export default function Skills() {
 
     const x = clampBubbleToStage(
       clientX - metrics.stageRect.left - metrics.bubbleWidth / 2,
-      metrics.stageRect.width - metrics.bubbleWidth
+      metrics.stageRect.width - metrics.bubbleWidth,
+      metrics.edgeBuffer
     )
     const y = clampBubbleToStage(
       clientY - metrics.stageRect.top - metrics.bubbleHeight / 2,
-      metrics.stageRect.height - metrics.bubbleHeight
+      metrics.stageRect.height - metrics.bubbleHeight,
+      metrics.edgeBuffer
     )
 
     bubblePositionsRef.current[bubbleId] = { x, y }
@@ -381,11 +379,13 @@ export default function Skills() {
   }
 
   const handlePointerDown = (skillId, bubbleId, event) => {
+    const bubbleRect = event.currentTarget.getBoundingClientRect()
     activeBubbleRef.current = { skillId, bubbleId }
     dragMetricsRef.current = {
       stageRect: stageRef.current?.getBoundingClientRect(),
-      bubbleWidth: event.currentTarget.offsetWidth,
-      bubbleHeight: event.currentTarget.offsetHeight,
+      bubbleWidth: bubbleRect.width,
+      bubbleHeight: bubbleRect.height,
+      edgeBuffer: getBubbleEdgeBuffer(),
     }
     setDraggingBubbleId(bubbleId)
     setMergeTargetId(null)
@@ -468,14 +468,19 @@ export default function Skills() {
               <span
                 key={skill.id}
                 className={styles.backgroundTitle}
+                data-title-skill-id={skill.id}
                 style={{
                   ...SKILL_THEMES[skill.id],
-                  '--label-translate': titlePosition.left === '95%' ? '-100% -50%' : '0 -50%',
+                  '--label-translate': titlePosition.left === '100%' ? '-100% -50%' : '0 -50%',
                   left: titlePosition.left,
                   top: titlePosition.top,
                 }}
               >
-                {skill.label}
+                <span className={styles.backgroundTitleText}>
+                  {skill.id === 'code' ? (
+                    <>Dev &amp;<br className={styles.desktopTitleBreak} /> Web</>
+                  ) : skill.label}
+                </span>
                 {!collectedSkillStarIds.has(skill.id) ? (
                   <span
                     className={styles.titleSparkle}
@@ -509,6 +514,8 @@ export default function Skills() {
 
             return groups.map((group, index) => {
               const labels = getGroupLabels(group)
+              const regularLabels = labels.filter((text) => !isCompactLabel(text))
+              const compactLabels = labels.filter(isCompactLabel)
               const label = labels.join(' + ')
               const savedPosition = bubblePositions[group.id]
               const startPosition = getStartPosition(skill.id, group.startIndex)
@@ -579,11 +586,31 @@ export default function Skills() {
                     </span>
                   ) : null}
                   <span className={styles.bubbleLabelGrid} aria-hidden="true">
-                    {labels.map((text) => (
-                      <span key={text} className={styles.bubbleLabelItem}>
+                    {regularLabels.map((text) => (
+                      <span
+                        key={text}
+                        className={styles.bubbleLabelItem}
+                        data-label-size={getLabelLengthSize(text)}
+                      >
                         {text}
                       </span>
                     ))}
+                    {compactLabels.length > 0 ? (
+                      <span
+                        className={styles.bubbleCompactLabelGrid}
+                        data-odd={compactLabels.length % 2 === 1 ? 'true' : 'false'}
+                      >
+                        {compactLabels.map((text) => (
+                          <span
+                            key={text}
+                            className={styles.bubbleLabelItem}
+                            data-label-size={getLabelLengthSize(text)}
+                          >
+                            {text}
+                          </span>
+                        ))}
+                      </span>
+                    ) : null}
                   </span>
                 </div>
               )
