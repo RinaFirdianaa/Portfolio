@@ -17,6 +17,7 @@ export default function Hero() {
   const isSpinningRef    = useRef(false)
   const scoredRef        = useRef(false)
   const planetWrapperRef = useRef(null)
+  const resumeMenuRef    = useRef(null)
   const { fireSparkles } = useSparkles()
   const { addScore }     = useScore()
   const { isDark }       = useTheme()
@@ -24,6 +25,7 @@ export default function Hero() {
   const [hovered, setHovered]         = useState(false)
   const [everHovered, setEverHovered] = useState(false)
   const [scored, setScored]           = useState(false)
+  const [isResumeMenuOpen, setIsResumeMenuOpen] = useState(false)
 
   useEffect(() => {
     const spinAnimation = rafRef
@@ -35,6 +37,27 @@ export default function Hero() {
       isSpinningRef.current = false
     }
   }, [])
+
+  useEffect(() => {
+    if (!isResumeMenuOpen) return undefined
+
+    const handlePointerDown = (event) => {
+      if (resumeMenuRef.current?.contains(event.target)) return
+      setIsResumeMenuOpen(false)
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') setIsResumeMenuOpen(false)
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('keydown', handleEscape)
+    }
+  }, [isResumeMenuOpen])
 
   const awardPlanetScore = () => {
     if (scoredRef.current || !planetWrapperRef.current) return
@@ -110,7 +133,7 @@ export default function Hero() {
             <span className={styles.headingName}>Rina</span> is here!
           </h1>
           <p className={styles.body}>
-            I'm a fresh grad UI/UX designer who likes making apps and websites
+            I'm a fresh grad designer who likes making apps and websites
             less confusing so people don't rage-quit after 3 seconds. I enjoy
             turning messy ideas into clean, clickable experiences that actually
             make sense and don't make users suffer.
@@ -133,9 +156,42 @@ export default function Hero() {
                 aria-hidden="true"
               />
             </a>
-            <a className={styles.resumeLink} href={assetUrl('/resume.pdf')} target="_blank" rel="noreferrer">
-              Resume
-            </a>
+            <div ref={resumeMenuRef} className={styles.resumeMenuWrap}>
+              <button
+                type="button"
+                className={styles.resumeButton}
+                aria-haspopup="menu"
+                aria-expanded={isResumeMenuOpen}
+                onClick={() => setIsResumeMenuOpen((open) => !open)}
+              >
+                Resume
+              </button>
+
+              {isResumeMenuOpen ? (
+                <div className={styles.resumeMenu} role="menu" aria-label="Resume options">
+                  <a
+                    className={styles.resumeOption}
+                    href={assetUrl('/Rina firdiana_gamedesigner_resume.pdf')}
+                    target="_blank"
+                    rel="noreferrer"
+                    role="menuitem"
+                    onClick={() => setIsResumeMenuOpen(false)}
+                  >
+                    Game Designer
+                  </a>
+                  <a
+                    className={styles.resumeOption}
+                    href={assetUrl('/Rina firdiana_UIUX_resume.pdf')}
+                    target="_blank"
+                    rel="noreferrer"
+                    role="menuitem"
+                    onClick={() => setIsResumeMenuOpen(false)}
+                  >
+                    UI/UX Designer
+                  </a>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
 

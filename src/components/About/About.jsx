@@ -173,7 +173,7 @@ export default function About() {
           </div>
 
           <p className={styles.bioPara}>
-            Through my studies, I learnt UI/UX design principles, human-computer interaction,
+            Through my studies, I learnt design principles, human-computer interaction,
             prototyping, and user-centred design. I was usually the one handling the UI for game
             projects, designing menus, HUDs, and interfaces that felt smooth and intuitive.
           </p>

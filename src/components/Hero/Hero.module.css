@@ -95,7 +95,7 @@
   animation: fadeUp 0.85s ease 0.32s both;
 }
 
-.resumeLink {
+.resumeButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -108,6 +108,7 @@
   font-size: var(--text-sm);
   font-weight: 700;
   transition: background var(--transition-normal), transform var(--transition-fast);
+  cursor: pointer;
 }
 
 .iconLink {
@@ -120,14 +121,86 @@
   transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
-.resumeLink {
+.resumeButton {
   min-height: 30px;
   padding: 0 16px;
 }
 
-.resumeLink:hover {
+.resumeButton:hover {
   background: #00689f;
   transform: translateY(-1px);
+}
+
+.resumeMenuWrap {
+  position: relative;
+}
+
+.resumeMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 6;
+}
+
+.resumeOption {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 136px;
+  min-height: 30px;
+  padding: 0 4px;
+  white-space: nowrap;
+  border-radius: 4px;
+  color: #48507f;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 30px;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(240, 245, 255, 0.5), rgba(228, 235, 250, 0.5));
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  border: 1px solid rgba(165, 182, 221, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 18px rgba(72, 80, 127, 0.12);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.resumeOption:hover {
+  background:
+    linear-gradient(180deg, rgba(245, 248, 255, 0.58), rgba(234, 239, 252, 0.58));
+  border-color: rgba(178, 193, 229, 0.86);
+  color: #404878;
+  transform: translateY(-1px);
+}
+
+:global(html.dark) .resumeOption {
+  color: #ffffff;
+  background: color-mix(in srgb, var(--color-bg) 50%, transparent 50%);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 18px rgba(10, 12, 28, 0.2);
+}
+
+:global(html.dark) .resumeOption:hover {
+  background: color-mix(in srgb, var(--color-bg) 58%, transparent 42%);
+  color: #ffffff;
 }
 
 .iconLink:hover {
@@ -355,10 +428,25 @@
     height: 27px;
   }
 
-  .resumeLink {
+  .resumeButton {
     min-height: 24px;
     padding: 0 12px;
     font-size: 16px;
+  }
+
+  .resumeMenu {
+    left: 50%;
+    right: auto;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+    align-items: flex-start;
+  }
+
+  .resumeOption {
+    min-height: 24px;
+    padding: 0 4px;
+    font-size: 16px;
+    line-height: 24px;
   }
 
   .heroImageWrapper {

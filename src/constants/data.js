@@ -73,7 +73,6 @@ export const SKILLS = withBaseAssetUrls([
       'C',
       'C++',
       'C#',
-      'Jetpack Compose',
     ],
   },
   {
@@ -87,6 +86,7 @@ export const SKILLS = withBaseAssetUrls([
       'VS Code',
       'Visual Studio',
       'Unity',
+      'AWS',
     ],
   },
   {
@@ -151,16 +151,16 @@ export const PROJECTS = withBaseAssetUrls([
     id: 'boba-time',
     title: 'Boba Time',
     category: 'Game',
-    summary: 'Developed a bubble tea simulation game from scratchwith a team of 9 for a school project. Designed gameplay mechanics, built all 3 levels in Unity (C#), created 3D assets in Maya, and designed the UI/UX in Figma and Procreate.',
+    summary: 'Developed a bubble tea simulation game from scratchwith a team of 9 for a school project. Designed gameplay mechanics, built all 3 levels in Unity (C#), created 3D assets in Maya, and designed the interfaces in Figma and Procreate.',
     description:
-      'Boba Time is a 3D single-player game where you inherit a bubble tea shop and chase your absent father\'s legacy as the best boba maker. The game tasks you with making bubble tea, serving customers, and managing the store across 3 levels — culminating in a head-to-head competition. I designed the gameplay mechanics and built all 3 levels in Unity using C#, and served as the main artist — modeling the shop, equipment, and characters in Maya, and designing all UI/UX with Procreate and Figma.',
+      'Boba Time is a 3D single-player game where you inherit a bubble tea shop and chase your absent father\'s legacy as the best boba maker. The game tasks you with making bubble tea, serving customers, and managing the store across 3 levels — culminating in a head-to-head competition. I designed the gameplay mechanics and built all 3 levels in Unity using C#, and served as the main artist — modeling the shop, equipment, and characters in Maya, and designing all interfaces with Procreate and Figma.',
     type: 'Game Development & 3D Art',
     role: 'Gameplay Designer, Level Designer & Lead Artist',
     tools: ['unity', 'csharp', 'maya', 'procreate', 'figma'],
     date: '2024 - 2025',
     links: [
       { label: '3D', href: '#' },
-      { label: 'UI/UX', href: '#' },
+      { label: 'Designer', href: '#' },
       { label: 'Scripting', href: '#' },
     ],
     // Replace with your actual image path: '/images/projects/boba-time.jpg'
@@ -241,7 +241,7 @@ export const PROJECTS = withBaseAssetUrls([
     date: '2025',
     links: [
       { label: 'Web', href: '#' },
-      { label: 'UI/UX', href: '#' },
+      { label: 'Designer', href: '#' },
     ],
     image: '/images/Projects/Dashboard.png',
     pages: [
@@ -396,16 +396,16 @@ export const PROJECTS = withBaseAssetUrls([
     title: 'Muju',
     detailTitle: 'Muju Card Game',
     category: 'Others',
-    summary: 'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and UI/UX Designer, I was responsible for designing the core gameplay mechanics, and card layouts.',
+    summary: 'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and Designer, I was responsible for designing the core gameplay mechanics and card layouts.',
     description:
-      'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and UI/UX Designer, I was responsible for designing the core gameplay mechanics and card layouts.',
+      'Created Muju, a single-player tabletop dungeon card game, with a team of four, working within a strict limit of 50 cards and 20 tokens. As Lead Gameplay Designer and Designer, I was responsible for designing the core gameplay mechanics and card layouts.',
     type: 'Card Game',
-    role: 'Gameplay Designer and UI/UX Designer',
+    role: 'Gameplay Designer and Designer',
     tools: ['figma', 'procreate'],
     date: '2024',
     links: [
       { label: 'Card Game', href: '#' },
-      { label: 'UI/UX', href: '#' },
+      { label: 'Designer', href: '#' },
     ],
     image: '/images/Projects/Muju.png',
     pages: [
@@ -429,7 +429,7 @@ export const PROJECTS = withBaseAssetUrls([
         image: '/images/Projects/Muju/Muju1.png',
       },
       {
-        title: 'UI/UX Design',
+        title: 'Design',
         summary:
           'To keep the game easy to understand, I used the same icons and colors across all card types. This helps players quickly understand what each card does without needing to read too much.' +
           '\n\nPlayer & Muju Cards\nPlayer and Muju cards show key stats such as health, attack, and starting coins. The heart icon represents health, the sword icon represents attack, and the coin icon shows how many coins the player starts with. This makes the card information easy to read at a glance.' +
