@@ -566,7 +566,9 @@ export default function Navbar() {
                   <li key={href} className={styles.mobilePanelItem}>
                     <a
                       href={href}
-                      className={styles.mobilePanelLink}
+                      className={`${styles.mobilePanelLink} ${
+                        activeSection === sectionId ? styles.mobilePanelLinkActive : ''
+                      }`}
                       onClick={(event) => {
                         closeMobileMenu()
                         handleNavClick(event, href)

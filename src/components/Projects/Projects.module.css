@@ -16,24 +16,28 @@
   /* margin: var(--space-xs); */
   margin-bottom: 4px;
   font: var(--font-h2);
-  color: var(--pink-60);
+  color: var(--pink-70);
 }
 
 .sectionSubtitle {
   font: var(--font-gamemedium);
-  color: var(--purple-40);
+  color: var(--purple-70);
   letter-spacing: 0.5px;
   transition: color 0.4s ease, filter 0.4s ease;
 }
 
 :global(html.dark) .sectionSubtitle {
-  color: var(--purple-20);
+  color: var(--purple-70);
 }
 
 .sectionSubtitleDone {
-  color: var(--yellow-40);
+  color: var(--purple-70);
   filter: drop-shadow(0 0 6px var(--yellow-40));
 }
+
+:global(html.dark) .sectionTitle { color: var(--pink-10); }
+:global(html.dark) .sectionSubtitle { color: var(--purple-10); }
+:global(html.dark) .sectionSubtitleDone { color: var(--yellow-20); }
 
 .ptsBadge {
   font: var(--font-gamebig);
@@ -92,6 +96,10 @@
 
 .categoryButtonActive {
   color: var(--category-accent, var(--pink-60));
+}
+
+:global(html.dark) .categoryButton:not(.categoryButtonActive) {
+  color: var(--white);
 }
 
 .categoryButtonActive::after {
@@ -400,11 +408,11 @@
   border-radius: var(--radius-lg);
   font: 500 13px/1 var(--font-body);
   color: black;
-  background: color-mix(in srgb, var(--category-accent-soft, var(--pink-10)) 40%, transparent);
+  background: var(--category-tag-bg, var(--pink-20));
 }
 
 :global(html.dark) .detailLinks span {
-  color: #ffffff;
+  color: var(--category-tag-text-dark, #ffffff);
 }
 
 .moreInfoButton {
@@ -474,7 +482,7 @@
 
   .sectionSubtitle {
     font: var(--font-mobile-gamemedium);
-    color: var(--purple-40);
+    color: var(--purple-70);
   }
 
   .header {

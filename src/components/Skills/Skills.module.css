@@ -17,22 +17,19 @@
 .sectionTitle {
   margin-bottom: 4px;
   font: var(--font-h2);
-  color: var(--pink-60);
+  color: var(--pink-70);
 }
 
 .subtitle {
   font: var(--font-gamemedium);
-  color: var(--purple-40);
+  color: var(--purple-70);
 }
 
 :global(html.dark) .subtitle {
-  color: var(--purple-20);
+  color: var(--purple-70);
 }
 
-:global(html.dark) .bubble[data-skill-id="code"] .bubbleLabelItem    { color: var(--yellow-10); }
-:global(html.dark) .bubble[data-skill-id="design"] .bubbleLabelItem  { color: var(--pink-10); }
-:global(html.dark) .bubble[data-skill-id="tools"] .bubbleLabelItem   { color: var(--purple-10); }
-:global(html.dark) .bubble[data-skill-id="soft"] .bubbleLabelItem    { color: var(--blue-10); }
+:global(html.dark) .bubble .bubbleLabelItem { color: var(--white); }
 
 :global(html.dark) .bubble {
   border-color: rgba(255, 255, 255, 0.5);
@@ -57,9 +54,18 @@
 
 
 .subtitleDone {
-  color: var(--yellow-40);
+  color: var(--purple-70);
   filter: drop-shadow(0 0 6px var(--yellow-40));
 }
+
+.bubble[data-skill-id="code"] .bubbleLabelItem { color: var(--yellow-100); }
+.bubble[data-skill-id="design"] .bubbleLabelItem { color: var(--pink-70); }
+.bubble[data-skill-id="tools"] .bubbleLabelItem { color: var(--purple-65); }
+.bubble[data-skill-id="soft"] .bubbleLabelItem { color: #2e517b; }
+
+:global(html.dark) .sectionTitle { color: var(--pink-10); }
+:global(html.dark) .subtitle { color: var(--purple-10); }
+:global(html.dark) .subtitleDone { color: var(--yellow-20); }
 
 .ptsBadge {
   font-family: var(--font-body);
@@ -99,6 +105,34 @@
   opacity: 1;
   white-space: nowrap;
   user-select: none;
+}
+
+.backgroundTitle[data-title-skill-id='design'] {
+  color: var(--pink-70);
+}
+
+.backgroundTitle[data-title-skill-id='tools'] {
+  color: var(--purple-65);
+}
+
+.backgroundTitle[data-title-skill-id='soft'] {
+  color: #265894;
+}
+
+:global(html.dark) .backgroundTitle[data-title-skill-id='design'] {
+  color: var(--pink-10);
+}
+
+:global(html.dark) .backgroundTitle[data-title-skill-id='code'] {
+  color: var(--yellow-20);
+}
+
+:global(html.dark) .backgroundTitle[data-title-skill-id='tools'] {
+  color: var(--purple-10);
+}
+
+:global(html.dark) .backgroundTitle[data-title-skill-id='soft'] {
+  color: var(--blue-10);
 }
 
 .titleSparkle {
@@ -452,7 +486,7 @@
 
   .subtitle {
     font: var(--font-mobile-gamemedium);
-    color: var(--purple-40);
+    color: var(--purple-70);
   }
 
   .universe {

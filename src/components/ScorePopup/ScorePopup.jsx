@@ -23,7 +23,10 @@ export default function ScorePopup({ score, total, completed = false, mobileComp
         <span className={styles.currentScore}>{score}</span>
         <span className={styles.totalScore}>/{total}</span>
       </span>
-      <span className={styles.hint}>keep exploring ✦</span>
+      <span className={styles.hint}>
+        Earn points whenever you see
+        <StarIcon className={styles.hintStar} size="10px" />
+      </span>
     </div>
   )
 }

@@ -19,17 +19,20 @@
   --blue-100: #2e517b;
 
   /* Purple */
-  --purple-10: #ecddff;
+  --purple-10: #E1D1FF;
   --purple-20: #d5bcf5;
   --purple-40: #a87fdb;
   --purple-60: #656fbe;
+  --purple-65: #54278B;
+  --purple-70: #6b3fa1;
   --purple-80: #383E63;
 
   /* Pink */
-  --pink-10: #feedf5;
+  --pink-10: #ffdfee;
   --pink-20: #fdc3d9;
   --pink-40: #fca5c5;
   --pink-60: #d77196;
+  --pink-70: #B74C8B;
   --pink-80: #9b4a68;
   --pink-100: #6c364a;
 
@@ -39,6 +42,7 @@
   --yellow-40: #ffca70;
   --yellow-60: #d99a45;
   --yellow-80: #a98039;
+  --yellow-100: #63430C;
 
 
    /* Font families */

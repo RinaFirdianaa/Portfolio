@@ -28,8 +28,8 @@
   margin-bottom: 6px;
   font: 700 9px/1 var(--font-game);
   letter-spacing: 0.5px;
-  color: var(--purple-40);
-  opacity: 0.7;
+  color: var(--purple-60);
+  opacity: 1;
 }
 
 .value {
@@ -37,7 +37,7 @@
   align-items: baseline;
   justify-content: center;
   gap: 1px;
-  margin-bottom: 14px;
+  margin-bottom: 4px;
 }
 
 .currentScore {
@@ -49,16 +49,24 @@
 
 .totalScore {
   font: 600 13px/1 var(--font-game);
-  color: var(--purple-20);
+  color: var(--purple-60);
 }
 
 
 .hint {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font: 400 9px/1 var(--font-game);
-  color: var(--pink-40);
+  color: var(--pink-80);
   opacity: 1;
   letter-spacing: 0.5px;
+}
+
+.hintStar {
+  flex-shrink: 0;
+  color: var(--yellow-40);
 }
 
 /* ── Completed state ─────────────────────────────────────── */
@@ -125,9 +133,9 @@
   background: var(--color-bg);
 }
 
-:global(html.dark) .label        { color: var(--purple-20); }
-:global(html.dark) .currentScore  { color: var(--purple-20); }
-:global(html.dark) .totalScore    { color: var(--blue-40); }
+:global(html.dark) .label         { color: var(--purple-10); }
+:global(html.dark) .currentScore  { color: var(--purple-10); }
+:global(html.dark) .totalScore    { color: var(--purple-10); }
 :global(html.dark) .hint          { color: var(--pink-10); }
 
 :global(html.dark) .completeTitle      { color: var(--yellow-40); }

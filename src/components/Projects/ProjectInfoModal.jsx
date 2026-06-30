@@ -499,6 +499,10 @@ function ProjectInfoModal({
     return Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y)
   }
   const handlePreviewPointerDown = (event) => {
+    if (!window.matchMedia('(max-width: 640px)').matches && previewScale <= 1) {
+      return
+    }
+
     previewPointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
     event.currentTarget.setPointerCapture?.(event.pointerId)
 
@@ -620,7 +624,7 @@ function ProjectInfoModal({
       return
     }
 
-    setImageSlideDirection(direction)
+    setImageSlideDirection(window.matchMedia('(max-width: 640px)').matches ? direction : 0)
     setImageDragOffset(0)
     setActiveImageIndex((i) => (i + direction + currentImageSlides.length) % currentImageSlides.length)
     setActiveImageCallout(null)
@@ -630,7 +634,11 @@ function ProjectInfoModal({
       return
     }
 
-    setImageSlideDirection(nextIndex > activeImageIndex ? 1 : -1)
+    setImageSlideDirection(
+      window.matchMedia('(max-width: 640px)').matches
+        ? (nextIndex > activeImageIndex ? 1 : -1)
+        : 0,
+    )
     setImageDragOffset(0)
     setActiveImageIndex(nextIndex)
     setActiveImageCallout(null)
@@ -702,7 +710,10 @@ function ProjectInfoModal({
                         className={modalStyles.infoImageCard}
                         type="button"
                         onPointerDown={(event) => {
-                          if (currentImageSlides.length <= 1) {
+                          if (
+                            !window.matchMedia('(max-width: 640px)').matches ||
+                            currentImageSlides.length <= 1
+                          ) {
                             return
                           }
 
@@ -712,6 +723,10 @@ function ProjectInfoModal({
                           event.currentTarget.setPointerCapture?.(event.pointerId)
                         }}
                         onPointerMove={(event) => {
+                          if (!window.matchMedia('(max-width: 640px)').matches) {
+                            return
+                          }
+
                           const dragStart = imageDragStartRef.current
 
                           if (dragStart === null || currentImageSlides.length <= 1) {
@@ -722,6 +737,10 @@ function ProjectInfoModal({
                           setImageDragOffset(Math.max(-90, Math.min(90, nextOffset)))
                         }}
                         onPointerUp={(event) => {
+                          if (!window.matchMedia('(max-width: 640px)').matches) {
+                            return
+                          }
+
                           const dragStart = imageDragStartRef.current
                           imageDragStartRef.current = null
 

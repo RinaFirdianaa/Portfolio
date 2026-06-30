@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { PROJECTS, PROJECT_CATEGORIES, PROJECT_TOOLS } from '@/constants/data'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
+import { useTheme } from '@/components/Theme/ThemeContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import ProjectInfoModal from './ProjectInfoModal'
 import styles from './Projects.module.css'
@@ -27,26 +28,38 @@ const CATEGORY_THEMES = {
     '--card-start': 'rgba(182, 211, 250, 0.96)',
     '--card-end': 'rgba(106, 143, 196, 0.98)',
     '--card-shadow': 'rgba(126, 93, 181, 0.22)',
-    '--category-accent': 'var(--blue-60)',
+    '--category-accent': '#265894',
     '--category-accent-dark': 'var(--blue-80)',
     '--category-accent-soft': 'var(--blue-20)',
+    '--category-tag-bg': 'var(--blue-20)',
+    '--category-tag-text-dark': '#2e517b',
   },
   Design: {
     '--card-start': 'rgba(252, 197, 221, 0.96)',
     '--card-end': 'rgba(214, 126, 169, 0.98)',
     '--card-shadow': 'rgba(126, 93, 181, 0.22)',
-    '--category-accent': 'var(--pink-60)',
+    '--category-accent': 'var(--pink-70)',
     '--category-accent-dark': 'var(--pink-80)',
     '--category-accent-soft': 'var(--pink-10)',
+    '--category-tag-bg': 'var(--pink-20)',
+    '--category-tag-text-dark': 'var(--pink-100)',
   },
   Others: {
     '--card-start': 'rgba(215, 198, 255, 0.96)',
     '--card-end': 'rgba(126, 93, 181, 0.98)',
     '--card-shadow': 'rgba(126, 93, 181, 0.22)',
-    '--category-accent': 'var(--purple-40)',
+    '--category-accent': 'var(--purple-65)',
     '--category-accent-dark': 'var(--purple-60)',
     '--category-accent-soft': 'var(--purple-10)',
+    '--category-tag-bg': 'var(--purple-10)',
+    '--category-tag-text-dark': 'var(--purple-70)',
   },
+}
+
+const DARK_CATEGORY_ACCENTS = {
+  Game: 'var(--blue-10)',
+  Design: 'var(--pink-10)',
+  Others: 'var(--purple-10)',
 }
 
 const getProjectTool = (tool) => {
@@ -60,6 +73,15 @@ const getProjectTool = (tool) => {
 export default function Projects() {
   const { fireSparkles } = useSparkles()
   const { addScore } = useScore()
+  const { isDark } = useTheme()
+  const getCategoryTheme = (category) => {
+    const theme = CATEGORY_THEMES[category] ?? CATEGORY_THEMES.Game
+    const darkAccent = DARK_CATEGORY_ACCENTS[category] ?? DARK_CATEGORY_ACCENTS.Game
+
+    return isDark
+      ? { ...theme, '--category-accent': darkAccent, '--category-accent-dark': darkAccent }
+      : theme
+  }
   const baseWheelItems = PROJECT_CATEGORIES.flatMap((category) => {
     const categoryProjects = PROJECTS.filter((project) => project.category === category)
 
@@ -110,7 +132,7 @@ export default function Projects() {
 
   const activeItem = wheelItems[activeItemIndex]
   const activeCategory = activeItem.category
-  const activeTheme = CATEGORY_THEMES[activeCategory] ?? CATEGORY_THEMES.Game
+  const activeTheme = getCategoryTheme(activeCategory)
 
   const getCircularOffset = (itemIndex) => {
     const forward = (itemIndex - activeItemIndex + wheelItems.length) % wheelItems.length
@@ -380,7 +402,7 @@ export default function Projects() {
               className={`${styles.categoryButton} ${
                 activeCategory === category ? styles.categoryButtonActive : ''
               }`}
-              style={CATEGORY_THEMES[category] ?? CATEGORY_THEMES.Game}
+              style={getCategoryTheme(category)}
               type="button"
               onClick={() => jumpToCategory(category)}
               aria-pressed={activeCategory === category}
@@ -424,7 +446,7 @@ export default function Projects() {
                   depth > CENTER_OFFSET ? styles.projectCardFadeSlot : ''
                 } ${isActive ? styles.projectCardActive : ''}`}
                 style={{
-                  ...(CATEGORY_THEMES[project.category] ?? CATEGORY_THEMES.Game),
+                  ...getCategoryTheme(project.category),
                   '--card-offset': offset,
                   '--card-depth': depth,
                   '--card-angle': `${angle}deg`,

@@ -17,7 +17,7 @@
 /* --- Bio --- */
 .sectionTitle {
   font: var(--font-h2);
-  color: var(--pink-60);
+  color: var(--pink-70);
   margin-bottom: 24px;
 }
 
@@ -76,7 +76,7 @@
   position: relative;
   z-index: 1;
   font: var(--font-h2);
-  color: var(--pink-60);
+  color: var(--pink-70);
 }
 
 .cardSubtitle {
@@ -84,19 +84,27 @@
   z-index: 1;
   margin-bottom: var(--space-lg);
   font: var(--font-gamemedium);
-  color: var(--purple-40);
+  color: var(--purple-70);
   letter-spacing: 0.5px;
   transition: color 0.4s ease, filter 0.4s ease;
 }
 
 :global(html.dark) .cardSubtitle {
-  color: var(--purple-20);
+  color: var(--purple-70);
 }
 
 .cardSubtitleDone {
-  color: var(--yellow-40);
+  color: var(--purple-70);
   filter: drop-shadow(0 0 6px var(--yellow-40));
 }
+
+:global(html.dark) .sectionTitle,
+:global(html.dark) .cardTitle {
+  color: var(--pink-10);
+}
+
+:global(html.dark) .cardSubtitle { color: var(--purple-10); }
+:global(html.dark) .cardSubtitleDone { color: var(--yellow-20); }
 
 /* --- Education list --- */
 .eduList {

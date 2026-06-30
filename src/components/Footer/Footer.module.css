@@ -5,16 +5,16 @@
 .footer {
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background-color: var(--purple-20);
+  background-color: #5263b5;
 }
 
 :global(html.dark) .footer {
-  background-color: var(--purple-60);
+  background-color: #5263b5;
 }
 
 :global(html.dark) .tagline,
 :global(html.dark) .signoff {
-  color: var(--purple-20);
+  color: var(--white);
 }
 
 .inner {
@@ -40,7 +40,7 @@
 
 .tagline {
   font: var(--font-p);
-  color: var(--blue-100);
+  color: var(--white);
 }
 
 .signoff {
@@ -49,7 +49,7 @@
   justify-content: center;
   gap: 24px;
   font: var(--font-p);
-  color: var(--blue-100);
+  color: var(--white);
 }
 
 .star {

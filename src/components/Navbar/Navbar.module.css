@@ -204,7 +204,7 @@
 .scoreLabel {
   font: var(--font-gamesmall);
   font-weight: 700;
-  color: var(--purple-20);
+  color: var(--purple-60);
   letter-spacing: 0.8px;
 }
 
@@ -212,7 +212,7 @@
 .scoreValue {
   font: var(--font-gamebig);
   font-weight: 400;
-  color: var(--purple-40);
+  color: var(--purple-60);
   text-shadow: 0 0 0px transparent;
   transition:
     font-size 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -386,11 +386,11 @@
   .mobilePanelBrand {
     justify-self: start;
     font: var(--font-mobile-h1);
-    color: var(--pink-40);
+    color: var(--purple-65);
   }
 
   .mobilePanelBrandF {
-    color: var(--purple-40);
+    color: var(--purple-65);
   }
 
   .mobilePanelTheme {
@@ -414,6 +414,10 @@
     gap: 4px;
   }
 
+  .mobilePanel .mobileMenuButton span {
+    background: var(--purple-60);
+  }
+
   .mobileMenuButtonOpen span:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
   }
@@ -433,7 +437,7 @@
     margin: 8px 0;
     padding: 4px 0;
     text-align: center;
-    color: var(--purple-20);
+    color: var(--purple-65);
   }
 
   .mobilePanelScoreRow {
@@ -452,12 +456,12 @@
   .mobilePanelScoreLabel {
     font: var(--font-gamesmall);
     font-weight: 700;
-    color: var(--purple-20);
+    color: var(--purple-65);
   }
 
   .mobilePanelScoreValue {
     font: var(--font-gamebig);
-    color: var(--purple-20);
+    color: var(--purple-65);
   }
 
   .mobilePanelScoreHint {
@@ -465,8 +469,8 @@
     align-items: center;
     gap: 4px;
     margin-top: 12px;
-    font: var(--font-gamesmall);
-    color: var(--purple-40);
+    font: 12px var(--font-game);
+    color: var(--pink-80);
   }
 
   .mobilePanelScoreHint span {
@@ -497,9 +501,16 @@
     min-height: 0;
     padding: 0 0 8px;
     border-bottom: 1px solid color-mix(in srgb, var(--purple-20) 64%, transparent);
-    color: var(--purple-40);
-    font: var(--font-mobile-h2);
+    color: var(--purple-65);
+    font: var(--font-mobile-h1);
     text-decoration: none;
+    transition: color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .mobilePanelLink:active,
+  .mobilePanelLinkActive {
+    color: var(--purple-60);
+    background: transparent;
   }
 
   .mobilePanelStar {
@@ -580,34 +591,47 @@
   background: linear-gradient(90deg, #D77196 0%, #A87FDB 100%);
 }
 
-:global(html.dark) .scoreLabel { color: var(--purple-40); }
-:global(html.dark) .scoreValue { color: var(--purple-20); }
+:global(html.dark) .scoreLabel { color: var(--purple-10); }
+:global(html.dark) .scoreValue { color: var(--purple-10); }
 
 :global(html.dark) .mobileMenuButton span {
   background: var(--purple-10);
 }
 
 :global(html.dark) .mobilePanel {
-  background: var(--pink-10);
+  background: var(--purple-60);
 }
 
 :global(html.dark) .mobilePanelBrand {
-  color: var(--pink-40);
+  color: var(--pink-10);
+}
+
+:global(html.dark) .mobilePanelBrandF {
+  color: var(--pink-10);
 }
 
 :global(html.dark) .mobilePanelScoreLabel,
 :global(html.dark) .mobilePanelScoreValue,
-:global(html.dark) .mobilePanelScoreHint,
 :global(html.dark) .mobilePanelLink {
-  color: var(--purple-40);
+  color: var(--pink-10);
+}
+
+:global(html.dark) .mobilePanelScoreHint {
+  color: var(--yellow-20);
+}
+
+:global(html.dark) .mobilePanelLink:active,
+:global(html.dark) .mobilePanelLinkActive {
+  color: var(--white);
+  background: transparent;
 }
 
 :global(html.dark) .mobilePanel .mobileMenuButton span {
-  background: var(--purple-40);
+  background: var(--white);
 }
 
 :global(html.dark) .navLink {
-  color: var(--purple-10);
+  color: var(--white);
 }
 
 :global(html.dark) .navLink.filled {

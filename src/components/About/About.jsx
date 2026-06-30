@@ -196,7 +196,7 @@ export default function About() {
 
           <h3 className={styles.cardTitle}>Education</h3>
           <p className={`${styles.cardSubtitle} ${completed ? styles.cardSubtitleDone : ''}`}>
-            {completed ? 'Completed!' : 'Connect the stars'}
+            {completed ? 'Completed!' : 'Click on the stars'}
           </p>
 
           <ul className={styles.eduList}>
