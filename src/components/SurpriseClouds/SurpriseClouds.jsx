@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from './SurpriseClouds.module.css'
-import { assetUrl } from '@/utils/assetUrl'
+import { assetUrl } from '../../utils/assetUrl'
 
 const CLOUD_IMAGES = [
   assetUrl('/images/bg_clouds/bg_cloud1.png'),

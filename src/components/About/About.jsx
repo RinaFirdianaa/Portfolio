@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { EDUCATION } from '@/constants/data'
-import { useSparkles } from '@/components/Sparkle/SparkleContext'
-import { useScore } from '@/components/Score/ScoreContext'
-import StarIcon from '@/components/StarIcon/StarIcon'
+import { EDUCATION } from '../../constants/data'
+import { useSparkles } from '../Sparkle/SparkleContext'
+import { useScore } from '../Score/ScoreContext'
+import StarIcon from '../StarIcon/StarIcon'
 import styles from './About.module.css'
-import { useTheme } from '@/components/Theme/ThemeContext'
-import { assetUrl } from '@/utils/assetUrl'
+import { useTheme } from '../Theme/ThemeContext'
+import { assetUrl } from '../../utils/assetUrl'
 
 const BOTTOM_STARS = [
   { id: 'star-a', size: '1.2rem' },

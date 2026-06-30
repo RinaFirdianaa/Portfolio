@@ -4,12 +4,12 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { SKILLS } from '@/constants/data'
-import mobileScatterPositions from '@/constants/mobileSkillPositions.json'
-import desktopScatterPositions from '@/constants/desktopSkillPositions.json'
-import { useScore } from '@/components/Score/ScoreContext'
-import { useSparkles } from '@/components/Sparkle/SparkleContext'
-import StarIcon from '@/components/StarIcon/StarIcon'
+import { SKILLS } from '../../constants/data'
+import mobileScatterPositions from '../../constants/mobileSkillPositions.json'
+import desktopScatterPositions from '../../constants/desktopSkillPositions.json'
+import { useScore } from '../Score/ScoreContext'
+import { useSparkles } from '../Sparkle/SparkleContext'
+import StarIcon from '../StarIcon/StarIcon'
 import styles from './Skills.module.css'
 
 const SECTION_ZONES = [

@@ -1,8 +1,8 @@
 import { Fragment, useRef, useState, useEffect } from 'react'
-import { useSparkles } from '@/components/Sparkle/SparkleContext'
-import { useScore } from '@/components/Score/ScoreContext'
-import { useTheme } from '@/components/Theme/ThemeContext'
-import { assetUrl } from '@/utils/assetUrl'
+import { useSparkles } from '../Sparkle/SparkleContext'
+import { useScore } from '../Score/ScoreContext'
+import { useTheme } from '../Theme/ThemeContext'
+import { assetUrl } from '../../utils/assetUrl'
 import CloudBackground from './CloudBackground'
 import styles from './Hero.module.css'
 

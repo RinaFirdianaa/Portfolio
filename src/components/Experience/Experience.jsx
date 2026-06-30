@@ -8,7 +8,7 @@
  *   The component will render the image instead of the initials fallback.
  */
 
-import { EXPERIENCES } from '@/constants/data'
+import { EXPERIENCES } from '../../constants/data'
 import styles from './Experience.module.css'
 
 export default function Experience() {

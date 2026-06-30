@@ -9,8 +9,6 @@ const mobilePositionsFile = fileURLToPath(
 const desktopPositionsFile = fileURLToPath(
   new URL('./src/constants/desktopSkillPositions.json', import.meta.url),
 )
-const srcDir = fileURLToPath(new URL('./src', import.meta.url))
-
 const expectedSkillCounts = { code: 9, tools: 4, design: 7, soft: 4 }
 
 const isValidSkillPositions = (positions) => (
@@ -69,9 +67,4 @@ const skillPositionsWriter = () => ({
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [react(), skillPositionsWriter()],
-  resolve: {
-    alias: {
-      '@': srcDir,
-    },
-  },
 })

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { assetUrl } from '@/utils/assetUrl'
+import { assetUrl } from '../../utils/assetUrl'
 import modalStyles from './ProjectInfoModal.module.css'
 
 const PLACEHOLDER_IMAGE = assetUrl('/images/placeholder.png')

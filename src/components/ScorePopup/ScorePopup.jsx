@@ -1,4 +1,4 @@
-import StarIcon from '@/components/StarIcon/StarIcon'
+import StarIcon from '../StarIcon/StarIcon'
 import styles from './ScorePopup.module.css'
 
 export default function ScorePopup({ score, total, completed = false, mobileCompact = false }) {

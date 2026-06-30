@@ -4,7 +4,7 @@
  * Edit this file to update content without touching component logic.
  */
 
-import { withBaseAssetUrls } from '@/utils/assetUrl'
+import { withBaseAssetUrls } from '../utils/assetUrl'
 
 export const NAV_LINKS = [
   { label: 'Home',     href: '#home' },
