@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { assetUrl } from '@/utils/assetUrl'
 import modalStyles from './ProjectInfoModal.module.css'
 
-const PLACEHOLDER_IMAGE = '/images/placeholder.png'
+const PLACEHOLDER_IMAGE = assetUrl('/images/placeholder.png')
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
@@ -817,7 +818,7 @@ function ProjectInfoModal({
                                 />
                                 {isCurrentSlide ? (
                                   <>
-                                    <img src="/images/icons/zoomin.png" alt="" className={modalStyles.imageZoomIcon} aria-hidden="true" />
+                                    <img src={assetUrl('/images/icons/zoomin.png')} alt="" className={modalStyles.imageZoomIcon} aria-hidden="true" />
                                     {activeImageCallout && activeImageIndex === activeImageCallout.imageIndex ? (
                                       <span className={modalStyles.imageCalloutLayer} aria-hidden="true">
                                         <span

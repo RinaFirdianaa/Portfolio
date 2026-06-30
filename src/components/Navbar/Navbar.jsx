@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useScrolled } from '@/hooks/useScrolled'
 import { useTheme } from '@/components/Theme/ThemeContext'
+import { assetUrl } from '@/utils/assetUrl'
 import { NAV_LINKS } from '@/constants/data'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
@@ -469,7 +470,7 @@ export default function Navbar() {
           onClick={toggleDark}
         >
           <img
-            src={isDark ? '/images/icons/moon.png' : '/images/icons/sun.png'}
+            src={assetUrl(isDark ? '/images/icons/moon.png' : '/images/icons/sun.png')}
             alt={isDark ? 'Moon' : 'Sun'}
             className={styles.darkToggleIcon}
           />
@@ -521,7 +522,7 @@ export default function Navbar() {
               onClick={toggleDark}
             >
               <img
-                src={isDark ? '/images/icons/moon.png' : '/images/icons/sun.png'}
+                src={assetUrl(isDark ? '/images/icons/moon.png' : '/images/icons/sun.png')}
                 alt=""
                 className={styles.mobilePanelThemeIcon}
               />

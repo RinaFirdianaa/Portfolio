@@ -4,13 +4,14 @@ import { useScore } from '@/components/Score/ScoreContext'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useTheme } from '@/components/Theme/ThemeContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
+import { assetUrl } from '@/utils/assetUrl'
 import ProjectInfoModal from './ProjectInfoModal'
 import styles from './Projects.module.css'
 
 const VISIBLE_CARD_COUNT = 7
 const CENTER_OFFSET = Math.floor(VISIBLE_CARD_COUNT / 2)
 const RENDER_OFFSET = CENTER_OFFSET + 1
-const PLACEHOLDER_IMAGE = '/images/placeholder.png'
+const PLACEHOLDER_IMAGE = assetUrl('/images/placeholder.png')
 const DRAG_STEP_PX = 48
 const PLACEHOLDER_CARD_COUNT = 3
 const CLICK_SPIN_STEP_MS = 95
@@ -18,9 +19,9 @@ const PROJECT_STAR_SCORE = 5
 const SPARKLE_TRAVEL_MS = 850
 const CARD_SETTLE_MS = 520
 const CARD_FRAMES = {
-  Game: '/images/card_game.png',
-  Design: '/images/card_design.png',
-  Others: '/images/card_others.png',
+  Game: assetUrl('/images/card_game.png'),
+  Design: assetUrl('/images/card_design.png'),
+  Others: assetUrl('/images/card_others.png'),
 }
 
 const CATEGORY_THEMES = {

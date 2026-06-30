@@ -2,6 +2,7 @@ import { Fragment, useRef, useState, useEffect } from 'react'
 import { useSparkles } from '@/components/Sparkle/SparkleContext'
 import { useScore } from '@/components/Score/ScoreContext'
 import { useTheme } from '@/components/Theme/ThemeContext'
+import { assetUrl } from '@/utils/assetUrl'
 import CloudBackground from './CloudBackground'
 import styles from './Hero.module.css'
 
@@ -127,12 +128,12 @@ export default function Hero() {
             >
               <img
                 className={styles.linkedinIcon}
-                src="/images/icons/linkedin%20.png"
+                src={assetUrl('/images/icons/linkedin%20.png')}
                 alt=""
                 aria-hidden="true"
               />
             </a>
-            <a className={styles.resumeLink} href="/resume.pdf" target="_blank" rel="noreferrer">
+            <a className={styles.resumeLink} href={assetUrl('/resume.pdf')} target="_blank" rel="noreferrer">
               Resume
             </a>
           </div>
@@ -184,12 +185,12 @@ export default function Hero() {
             <span className={`${styles.cssRings} ${styles.ringBack}`} aria-hidden="true" />
             <div ref={imageRef} className={styles.heroImageWrapper}>
               <img
-                src="/images/hero.png"
+                src={assetUrl('/images/hero.png')}
                 alt="Rina"
                 className={`${styles.heroImage} ${isDark ? styles.heroImageHidden : ''}`}
               />
               <img
-                src="/images/hero-dark.png"
+                src={assetUrl('/images/hero-dark.png')}
                 alt=""
                 aria-hidden="true"
                 className={`${styles.heroImage} ${styles.heroImageDark} ${isDark ? '' : styles.heroImageHidden}`}

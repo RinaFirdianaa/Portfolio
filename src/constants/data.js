@@ -4,6 +4,8 @@
  * Edit this file to update content without touching component logic.
  */
 
+import { withBaseAssetUrls } from '@/utils/assetUrl'
+
 export const NAV_LINKS = [
   { label: 'Home',     href: '#home' },
   { label: 'About',    href: '#about' },
@@ -57,7 +59,7 @@ export const EDUCATION = [
   makes the starting size 10px smaller, and merged bubbles grow by 30px for
   every extra skill inside them.
 */
-export const SKILLS = [
+export const SKILLS = withBaseAssetUrls([
   {
     id: 'code',
     icon: '</>',
@@ -116,7 +118,7 @@ export const SKILLS = [
       'Flexible',
     ],
   },
-]
+])
 
 /*
   HOW TO ADD A PROJECT
@@ -144,7 +146,7 @@ export const SKILLS = [
     },
   ]
 */
-export const PROJECTS = [
+export const PROJECTS = withBaseAssetUrls([
   {
     id: 'boba-time',
     title: 'Boba Time',
@@ -514,11 +516,11 @@ export const PROJECTS = [
       },
     ],
   },
-]
+])
 
 export const PROJECT_CATEGORIES = ['Design', 'Game', 'Others']
 
-export const PROJECT_TOOLS = {
+export const PROJECT_TOOLS = withBaseAssetUrls({
   unity: { name: 'Unity', image: '/images/Tools/Unity.png' },
   csharp: { name: 'C#', image: '/images/Tools/csharp.png' },
   'c++': { name: 'C++', image: '/images/Tools/c++.png' },
@@ -528,7 +530,7 @@ export const PROJECT_TOOLS = {
   react: { name: 'React' },
   css: { name: 'CSS' },
   photoshop: { name: 'Photoshop' },
-}
+})
 
 export const EXPERIENCES = [
   {

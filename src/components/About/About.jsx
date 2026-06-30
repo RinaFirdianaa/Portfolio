@@ -5,6 +5,7 @@ import { useScore } from '@/components/Score/ScoreContext'
 import StarIcon from '@/components/StarIcon/StarIcon'
 import styles from './About.module.css'
 import { useTheme } from '@/components/Theme/ThemeContext'
+import { assetUrl } from '@/utils/assetUrl'
 
 const BOTTOM_STARS = [
   { id: 'star-a', size: '1.2rem' },
@@ -161,7 +162,11 @@ export default function About() {
           <h2 className={styles.sectionTitle}>Something to know about me</h2>
 
           <div className={styles.avatarRow}>
-            <img src={isDark ? '/images/chibi-dark.png' : '/images/chibi.png'} alt="Rina" className={styles.avatar} />
+            <img
+              src={assetUrl(isDark ? '/images/chibi-dark.png' : '/images/chibi.png')}
+              alt="Rina"
+              className={styles.avatar}
+            />
             <p className={styles.bioIntro}>
               "I'm just a CS grad from SIT (DigiPen) who ended up loving design more than coding."
             </p>

@@ -27,14 +27,22 @@ This lints the source and creates an optimized build in `dist/`. To inspect that
 npm run preview
 ```
 
-## Deploy
+## Deploy to GitHub Pages
 
-The project can be deployed without extra configuration on either platform:
+Deployment runs automatically through `.github/workflows/deploy.yml` whenever a commit is pushed to `main`.
 
-- **Vercel:** import this repository, select the Vite framework preset, and deploy.
-- **Netlify:** import this repository, use `npm run build` as the build command, and `dist` as the publish directory.
+One-time repository setup:
 
-Both services install dependencies from `package-lock.json`. Do not upload `node_modules` or `dist`; the host generates them during deployment.
+1. Open the repository on GitHub.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Push the `main` branch.
+
+The published site is available at:
+
+`https://rinafirdianaa.github.io/Portfolio/`
+
+The workflow supplies `/Portfolio/` as the production base path. Local builds and other hosts continue to use `/` by default.
 
 ## Content and assets
 
@@ -43,7 +51,7 @@ Both services install dependencies from `package-lock.json`. Do not upload `node
 - Global styles: `src/styles/global.css`
 - Images, resume, and downloadable files: `public/`
 
-Public assets use root-relative paths such as `/images/hero.png`. This works directly with a custom domain, Vercel, or Netlify. A GitHub Pages project URL needs an additional Vite `base` setting and asset-path changes.
+Public assets use the base-aware helper in `src/utils/assetUrl.js`, allowing them to work locally and under the GitHub Pages project path.
 
 ## Scripts
 

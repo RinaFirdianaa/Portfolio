@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import styles from './SurpriseClouds.module.css'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CLOUD_IMAGES = [
-  '/images/bg_clouds/bg_cloud1.png',
-  '/images/bg_clouds/bg_cloud2.png',
-  '/images/bg_clouds/bg_cloud3.png',
-  '/images/bg_clouds/bg_cloud4.png',
-  '/images/bg_clouds/bg_cloud5.png',
+  assetUrl('/images/bg_clouds/bg_cloud1.png'),
+  assetUrl('/images/bg_clouds/bg_cloud2.png'),
+  assetUrl('/images/bg_clouds/bg_cloud3.png'),
+  assetUrl('/images/bg_clouds/bg_cloud4.png'),
+  assetUrl('/images/bg_clouds/bg_cloud5.png'),
 ]
 
 const CLOUD_COUNT = 10
