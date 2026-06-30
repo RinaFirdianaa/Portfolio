@@ -1,6 +1,6 @@
 # Rina Firdiana — Portfolio
 
-A responsive, interactive portfolio for UI/UX designer and developer Rina Firdiana. Built with React, Vite, CSS Modules, and Three.js.
+A responsive, interactive portfolio for designer and developer Rina Firdiana. Built with React, Vite, CSS Modules, and Three.js.
 
 ## Local development
 
