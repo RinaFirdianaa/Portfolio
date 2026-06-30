@@ -1,2 +1,25 @@
-dist/
+# Dependencies
 node_modules/
+
+# Production output
+dist/
+
+# Local tooling and test output
+.vite/
+coverage/
+*.log
+
+# Environment files (keep secrets out of Git)
+.env
+.env.*
+!.env.example
+
+# Hosting-provider state
+.netlify/
+.vercel/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

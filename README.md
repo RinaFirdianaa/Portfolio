@@ -1,148 +1,56 @@
 # Rina Firdiana — Portfolio
 
-Personal portfolio website built with **React + Vite**. Features a gamified UI with a score/points system, smooth animations, and a fully component-based architecture.
+A responsive, interactive portfolio for UI/UX designer and developer Rina Firdiana. Built with React, Vite, CSS Modules, and Three.js.
 
----
+## Local development
 
-## Getting Started
-
-### Prerequisites
-- Node.js **v18+**
-- npm **v9+**
-
-### Installation
+Requirements: Node.js 18 or newer and npm.
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Start development server
 npm run dev
-
-# 3. Open in browser
-# http://localhost:5173
 ```
 
-### Build for Production
+Vite prints the local URL, usually `http://localhost:5173`.
+
+## Production checks
+
+Run the complete pre-deployment check:
 
 ```bash
-npm run build
-# Output goes to /dist
+npm run check
 ```
 
----
+This lints the source and creates an optimized build in `dist/`. To inspect that build locally:
 
-## Project Structure
-
-```
-rina-portfolio/
-├── index.html                    # HTML entry point
-├── vite.config.js                # Vite configuration
-├── package.json
-│
-└── src/
-    ├── main.jsx                  # React root render
-    ├── App.jsx                   # Root component (composes all sections)
-    │
-    ├── styles/
-    │   └── global.css            # CSS custom properties + global resets
-    │
-    ├── constants/
-    │   └── data.js               # ★ All site content lives here
-    │
-    ├── hooks/
-    │   └── useScrolled.js        # Scroll position hook (for navbar shadow)
-    │
-    └── components/
-        ├── Navbar/
-        │   ├── Navbar.jsx
-        │   └── Navbar.module.css
-        ├── Hero/
-        │   ├── Hero.jsx
-        │   ├── PlanetPlaceholder.jsx   # Replace with your hero image
-        │   └── Hero.module.css
-        ├── About/
-        │   ├── About.jsx
-        │   └── About.module.css
-        ├── Skills/
-        │   ├── Skills.jsx
-        │   └── Skills.module.css
-        ├── Projects/
-        │   ├── Projects.jsx
-        │   └── Projects.module.css
-        ├── Experience/
-        │   ├── Experience.jsx
-        │   └── Experience.module.css
-        └── Footer/
-            ├── Footer.jsx
-            └── Footer.module.css
+```bash
+npm run preview
 ```
 
----
+## Deploy
 
-## Replacing Placeholder Images
+The project can be deployed without extra configuration on either platform:
 
-All images are managed in `src/constants/data.js`. Change the `null` values to your asset paths.
+- **Vercel:** import this repository, select the Vite framework preset, and deploy.
+- **Netlify:** import this repository, use `npm run build` as the build command, and `dist` as the publish directory.
 
-### 1. Hero Image / Planet Illustration
-In `src/components/Hero/Hero.jsx`, replace `<PlanetPlaceholder />` with:
-```jsx
-<img
-  src="/images/hero-planet.png"
-  alt="Rina's hero illustration"
-  className={styles.heroImage}
-/>
-```
+Both services install dependencies from `package-lock.json`. Do not upload `node_modules` or `dist`; the host generates them during deployment.
 
-### 2. Avatar (About section)
-In `src/components/About/About.jsx`, replace `<div className={styles.avatarPlaceholder}>` with:
-```jsx
-<img src="/images/avatar.png" alt="Rina Firdiana" className={styles.avatar} />
-```
+## Content and assets
 
-### 3. Project Images
-In `src/constants/data.js`, update the `image` and `thumbnails` fields:
-```js
-image: '/images/projects/boba-time.jpg',
-thumbnails: [
-  '/images/projects/boba-time-thumb-1.jpg',
-  '/images/projects/boba-time-thumb-2.jpg',
-],
-```
+- Portfolio text and project data: `src/constants/data.js`
+- Components: `src/components/`
+- Global styles: `src/styles/global.css`
+- Images, resume, and downloadable files: `public/`
 
-### 4. Company Logos (Experience section)
-In `src/constants/data.js`, update the `logo` field for each experience:
-```js
-logo: '/images/logos/mas.png',
-```
+Public assets use root-relative paths such as `/images/hero.png`. This works directly with a custom domain, Vercel, or Netlify. A GitHub Pages project URL needs an additional Vite `base` setting and asset-path changes.
 
-> **Tip:** Place all image assets inside `public/images/` so they are served at the root path.
+## Scripts
 
----
-
-## Updating Content
-
-All text content (education, skills, projects, experiences, nav links) is in one place:
-
-```
-src/constants/data.js
-```
-
-Edit that file — no need to touch any component files.
-
----
-
-## Tech Stack
-
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 18 | UI framework |
-| Vite | 5 | Build tool & dev server |
-| CSS Modules | — | Scoped component styles |
-| Google Fonts | — | Playfair Display + DM Sans |
-
----
-
-## License
-
-This project is personal and not licensed for redistribution.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run lint` | Check JavaScript and JSX |
+| `npm run build` | Create the production build |
+| `npm run preview` | Serve the production build locally |
+| `npm run check` | Run lint and build together |

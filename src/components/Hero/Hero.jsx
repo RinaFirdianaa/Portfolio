@@ -23,10 +23,14 @@ export default function Hero() {
   const [hovered, setHovered]         = useState(false)
   const [everHovered, setEverHovered] = useState(false)
   const [scored, setScored]           = useState(false)
+
   useEffect(() => {
+    const spinAnimation = rafRef
+    const unwindAnimation = unwindRafRef
+
     return () => {
-      cancelAnimationFrame(rafRef.current)
-      cancelAnimationFrame(unwindRafRef.current)
+      cancelAnimationFrame(spinAnimation.current)
+      cancelAnimationFrame(unwindAnimation.current)
       isSpinningRef.current = false
     }
   }, [])
