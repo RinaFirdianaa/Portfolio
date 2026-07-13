@@ -822,6 +822,10 @@
   transform: translateY(-1px);
 }
 
+:global(html.dark) .infoDownloadLink {
+  color: var(--color-bg);
+}
+
 .infoFacts {
   display: grid;
   grid-template-columns: auto 1fr;

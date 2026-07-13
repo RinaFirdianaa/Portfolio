@@ -182,6 +182,23 @@ export default function About() {
             Photoshop, HTML, CSS, and JavaScript to create mobile app prototypes and interactive
             web experiences
           </p>
+
+          <div className={styles.certifications}>
+            <p className={styles.certificationsTitle}>Certification</p>
+            <ul className={styles.certificationsList}>
+              <li>
+                <span>Foundations of User Experience (UX) Design (Coursera, Jul 2026)</span>
+                <a
+                  className={styles.credentialsLink}
+                  href="https://coursera.org/share/005a6504e92ddaa940b8188387178620"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Credentials
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* ---- Right: Education ---- */}
