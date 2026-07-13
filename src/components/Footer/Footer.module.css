@@ -40,6 +40,7 @@
 
 .tagline {
   font: var(--font-p);
+  font-size: 13px;
   color: var(--white);
 }
 
@@ -49,6 +50,7 @@
   justify-content: center;
   gap: 24px;
   font: var(--font-p);
+  font-size: 13px;
   color: var(--white);
 }
 

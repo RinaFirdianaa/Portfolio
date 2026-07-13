@@ -10,6 +10,7 @@ const SPARKLE_TRAVEL_MS = 850
 const PLANET_SCORE = 5
 
 export default function Hero() {
+  const emailAddress     = 'rina.firdianaa@gmail.com'
   const imageRef         = useRef(null)
   const rafRef           = useRef(null)
   const unwindRafRef     = useRef(null)
@@ -26,6 +27,7 @@ export default function Hero() {
   const [everHovered, setEverHovered] = useState(false)
   const [scored, setScored]           = useState(false)
   const [isResumeMenuOpen, setIsResumeMenuOpen] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(false)
 
   useEffect(() => {
     const spinAnimation = rafRef
@@ -58,6 +60,13 @@ export default function Hero() {
       window.removeEventListener('keydown', handleEscape)
     }
   }, [isResumeMenuOpen])
+
+  useEffect(() => {
+    if (!copiedEmail) return undefined
+
+    const timeoutId = window.setTimeout(() => setCopiedEmail(false), 1800)
+    return () => window.clearTimeout(timeoutId)
+  }, [copiedEmail])
 
   const awardPlanetScore = () => {
     if (scoredRef.current || !planetWrapperRef.current) return
@@ -123,6 +132,24 @@ export default function Hero() {
     }
   }
 
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(emailAddress)
+      setCopiedEmail(true)
+    } catch {
+      const textArea = document.createElement('textarea')
+      textArea.value = emailAddress
+      textArea.setAttribute('readonly', '')
+      textArea.style.position = 'absolute'
+      textArea.style.left = '-9999px'
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      setCopiedEmail(true)
+    }
+  }
+
   return (
     <section id="home" className={styles.hero} aria-label="Hero section">
       <CloudBackground />
@@ -156,6 +183,39 @@ export default function Hero() {
                 aria-hidden="true"
               />
             </a>
+            <button
+              type="button"
+              className={styles.iconButton}
+              aria-label={copiedEmail ? 'Email copied to clipboard' : 'Copy email address'}
+              title={copiedEmail ? 'Copied!' : emailAddress}
+              onClick={handleCopyEmail}
+            >
+              <svg
+                className={styles.emailIcon}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4.5 7.5h15a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 15V9a1.5 1.5 0 0 1 1.5-1.5Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="m5 8 7 5 7-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className={styles.copyBadge} aria-hidden="true">
+                {copiedEmail ? 'Copied!' : ''}
+              </span>
+            </button>
             <div ref={resumeMenuRef} className={styles.resumeMenuWrap}>
               <button
                 type="button"

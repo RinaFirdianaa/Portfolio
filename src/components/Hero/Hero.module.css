@@ -121,6 +121,25 @@
   transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
+.iconButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: #0077B5;
+  border: 1px solid #0077B5;
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-normal);
+}
+
 .resumeButton {
   min-height: 30px;
   padding: 0 16px;
@@ -208,10 +227,45 @@
   transform: translateY(-1px);
 }
 
+.iconButton:hover {
+  opacity: 0.92;
+  background: #00689f;
+  transform: translateY(-1px);
+}
+
 .linkedinIcon {
   width: 28px;
   height: 28px;
   object-fit: contain;
+}
+
+.emailIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.copyBadge {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 54px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(18, 27, 68, 0.82);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.iconButton[title='Copied!'] .copyBadge,
+.iconButton[aria-label='Email copied to clipboard'] .copyBadge {
+  opacity: 1;
 }
 
 /* --- Illustration block --- */
@@ -423,9 +477,19 @@
     height: 24px;
   }
 
+  .iconButton {
+    width: 30px;
+    height: 24px;
+  }
+
   .linkedinIcon {
     width: 27px;
     height: 27px;
+  }
+
+  .emailIcon {
+    width: 16px;
+    height: 16px;
   }
 
   .resumeButton {
