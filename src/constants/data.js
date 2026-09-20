@@ -180,16 +180,19 @@ export const PROJECTS = withBaseAssetUrls([
       {
         title: 'Gameplay',
         summary:
-          'Boba Time is a fast-paced casual game about making and serving bubble tea orders before time runs out. Players choose the correct tea base and toppings, then seal each cup accurately while dealing with a growing queue of customers that gets more chaotic over time.' +
-          '\n\nThe game has three levels, each adding new mechanics to the main gameplay loop. Level 1 consist of the tutorial and letting player to get used to the main gameplay loop. It also introduces special customer types that disrupt your workflow. Level 2 increases the challenge by introducing a shop upgrade system, including a fryer and more troublesome customers that adds an extra preparation step and makes time management more important. Level 3 is the final stage, a timed competition where a combo system rewards consecutive correct orders, and your final score leads to different endings.' +
-          '\n\nThe difficulty is designed to grow step by step, so players can learn the basics first before things get more complex. Throughout the game, the focus stays on the fun fantasy of running a busy bubble tea shop.',
+          'The core gameplay loop revolves around preparing and serving bubble tea orders before time runs out. Players must select the correct tea base and toppings, complete each drink accurately, and manage an increasingly demanding queue of customers.' +
+          '\n\nEach level builds upon the previous one to gradually increase complexity.' +
+          '\n\n**Level 1 — Learning the Core Loop**\nIntroduces the drink-making process through the tutorial before gradually introducing special customer types that disrupt the player\'s normal workflow.' +
+          '\n\n**Level 2 — Managing Complexity**\nIntroduces shop upgrades, including a fryer that adds an additional preparation step. More demanding customer types are introduced, increasing the importance of prioritisation and time management.' +
+          '\n\n**Level 3 — Mastery & Competition**\nTransforms the core gameplay into a timed competition. A combo system rewards consecutive correct orders, encouraging players to balance speed and accuracy. The player\'s final score determines the ending they receive.' +
+          '\n\nThe difficulty was structured so players could first understand the core mechanics before being introduced to additional systems, creating a gradual progression from learning to mastery.',
         images: ['/images/Projects/BobaTime/BobaTime1.jpg', '/images/Projects/BobaTime/BobaTime2.jpg', '/images/Projects/BobaTime/BobaTime3.jpg', '/images/Projects/BobaTime/BobaTime4.jpg', '/images/Projects/BobaTime/BobaTime5.jpg' ,'/images/Projects/BobaTime/BobaTime6.jpg'],
         imageLinks: [
           { label: 'tea base', imageIndex: 0 },
           { label: 'toppings', imageIndex: 1 },
           { label: 'special customer types', imageIndex: 2 },
-          { label: 'shop upgrade system', imageIndex: 4 },
-          { label: 'troublesome customers', imageIndex: 3 },
+          { label: 'shop upgrades', imageIndex: 4 },
+          { label: 'More demanding customer types', imageIndex: 3 },
           { label: 'final score', imageIndex: 5 },
         ],
       },
@@ -365,9 +368,7 @@ export const PROJECTS = withBaseAssetUrls([
     type: 'Design',
     tools: ['figma'],
     date: '2026',
-    links: [
-      { label: 'Case Study', href: '#' },
-    ],
+    links: [],
     image: '/images/Projects/shorthike.png',
     pages: [
       {
@@ -469,8 +470,9 @@ export const PROJECTS = withBaseAssetUrls([
       {
         title: 'Overview',
         summary:
-          'Wonderland is a 2D cooperative puzzle platformer where two players work together as Alice and Alter Alice to escape the strange world of Wonderland. The game is built around the idea that each player experiences the same level differently. While Alice sees the world normally, Alter Alice sees everything upside down, creating different paths, obstacles, and solutions for each player.' +
-          '\n\nThe game focuses on teamwork, communication, and puzzle-solving. Players must use their different perspectives and abilities to help each other progress through each level and overcome the challenges found throughout Wonderland.',
+          'Wonderland is a 2D cooperative puzzle platformer where two players control Alice and Alter Alice as they attempt to escape Wonderland.' +
+          '\n\nThe central mechanic is that both players experience the same level from opposite perspectives. Alice sees the world normally, while Alter Alice experiences it upside down. This creates different paths, obstacles, and interactions for each player.' +
+          '\n\nThe game is designed around communication and cooperation, requiring both players to understand how their individual actions affect the other player\'s environment.',
         video: 'https://youtu.be/garvaJ6r98w',
         download: {
           label: 'Download Wonderland',
@@ -480,9 +482,13 @@ export const PROJECTS = withBaseAssetUrls([
       {
         title: 'Gameplay',
         summary:
-          'Players control Alice and Alter Alice, who explore the same environment from opposite perspectives. Because one player sees the world upside down, platforms and obstacles may appear completely different to each character. This requires players to communicate and work together to find a way forward.' +
-          '\n\nAnother key mechanic is character size. Throughout the game, one Alice may become smaller while the other becomes larger. Smaller characters can fit through narrow spaces and reach areas that would otherwise be inaccessible, while larger characters can move obstacles or jump higher.' +
-          '\n\nMany puzzles combine these mechanics. For example, Alter Alice may be able to move a box that Alice cannot interact with. By pushing the box off an edge, it falls into Alice\'s side of the level and becomes a platform that the smaller Alice can use to reach higher areas.',
+          'The core gameplay revolves around solving environmental puzzles using each character\'s different perspective and abilities.' +
+          '\n\n**Opposite Perspectives**\nAlice and Alter Alice explore the same environment from opposite orientations. Platforms and obstacles that are accessible to one player may be inaccessible to the other, encouraging players to communicate and coordinate their actions.' +
+          '\n\n**Character Size**\nAnother major mechanic allows one Alice to become smaller while the other becomes larger.' +
+          '\n\nSmaller characters can travel through narrow spaces and access restricted areas, while larger characters can interact with heavier objects and reach areas that smaller characters cannot.' +
+          '\n\n**Cooperative Puzzle Interaction**\nMany puzzles combine perspective, character size, and environmental interaction.' +
+          '\n\nFor example, Alter Alice may be able to move a box that Alice cannot reach. Alter Alice can push the box from her side of the environment, causing it to fall into Alice\'s side and become a platform that Alice can use to progress.' +
+          '\n\nThese interactions were designed so that neither player could complete the level independently, making communication and cooperation part of the core puzzle-solving experience.',
         images: [
           '/images/Projects/Wonderland/Wonderland1.jpg',
           '/images/Projects/Wonderland/Wonderland2.jpg',
@@ -490,7 +496,7 @@ export const PROJECTS = withBaseAssetUrls([
         ],
         imageLinks: [
           { label: 'box', imageIndex: 0 },
-          { label: 'character size', imageIndex: 2 },
+          { label: 'Smaller characters', imageIndex: 2 },
         ],
       },
       {
