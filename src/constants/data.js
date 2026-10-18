@@ -180,20 +180,27 @@ export const PROJECTS = withBaseAssetUrls([
       {
         title: 'Gameplay',
         summary:
-          'The core gameplay loop revolves around preparing and serving bubble tea orders before time runs out. Players must select the correct tea base and toppings, complete each drink accurately, and manage an increasingly demanding queue of customers.' +
-          '\n\nEach level builds upon the previous one to gradually increase complexity.' +
+          'The core gameplay loop focuses on receiving, preparing, and serving bubble tea orders within a time limit.' +
+          '\n\nPlayers must identify customer requests, select the correct ingredients, prepare drinks, and complete orders while managing an increasingly demanding queue.' +
+          '\n\nThe gameplay is designed around three key elements:' +
+          '\n\n- **Accuracy:** Players must correctly prepare orders using the required tea bases and toppings.' +
+          '\n- **Time Management:** Players balance preparation time against incoming customer demands.' +
+          '\n- **Prioritisation:** Different customer behaviours and preparation requirements encourage players to decide which orders to complete first.' +
+          '\n\nAs players progress, additional mechanics increase the complexity of decision-making while building upon previously learned systems.' +
           '\n\n**Level 1 — Learning the Core Loop**\nIntroduces the drink-making process through the tutorial before gradually introducing special customer types that disrupt the player\'s normal workflow.' +
           '\n\n**Level 2 — Managing Complexity**\nIntroduces shop upgrades, including a fryer that adds an additional preparation step. More demanding customer types are introduced, increasing the importance of prioritisation and time management.' +
           '\n\n**Level 3 — Mastery & Competition**\nTransforms the core gameplay into a timed competition. A combo system rewards consecutive correct orders, encouraging players to balance speed and accuracy. The player\'s final score determines the ending they receive.' +
-          '\n\nThe difficulty was structured so players could first understand the core mechanics before being introduced to additional systems, creating a gradual progression from learning to mastery.',
-        images: ['/images/Projects/BobaTime/BobaTime1.jpg', '/images/Projects/BobaTime/BobaTime2.jpg', '/images/Projects/BobaTime/BobaTime3.jpg', '/images/Projects/BobaTime/BobaTime4.jpg', '/images/Projects/BobaTime/BobaTime5.jpg' ,'/images/Projects/BobaTime/BobaTime6.jpg'],
+          '\n\nThe difficulty was structured so players could first understand the core mechanics before being introduced to additional systems, creating a gradual progression from learning to mastery.\n\nChallenges\n\nDuring development, the initial gameplay loop of preparing and serving bubble tea became repetitive, with limited variety in player interactions. To address this, we introduced ingredient-specific preparation mechanics and a table-cleaning system to encourage multitasking, quick decision-making, and task prioritisation.\n\nAs players progressed, new levels felt too similar despite introducing additional ingredients. To create a more noticeable difficulty curve, we introduced unique customer behaviours, a furniture upgrade system, and food preparation mechanics to provide new challenges and increase gameplay complexity.\n\nHowever, player feedback indicated that Level 2 became too difficult due to the additional mechanics. To balance the difficulty, we introduced a purchasable upgrade that increases customer patience, allowing players to manage their tasks more comfortably without removing the challenge.\n\nFor the final level, we introduced a combo system that rewards consecutive correctly completed orders. This encourages players to maintain accuracy and consistency while providing a stronger incentive to perform well during the final competition.',
+        images: ['/images/Projects/BobaTime/gameplay-loop.png', '/images/Projects/BobaTime/BobaTime1.jpg', '/images/Projects/BobaTime/BobaTime2.jpg', '/images/Projects/BobaTime/BobaTime3.jpg', '/images/Projects/BobaTime/BobaTime4.jpg', '/images/Projects/BobaTime/BobaTime5.jpg' ,'/images/Projects/BobaTime/BobaTime6.jpg', '/images/Projects/BobaTime/design-decisions.png'],
         imageLinks: [
-          { label: 'tea base', imageIndex: 0 },
-          { label: 'toppings', imageIndex: 1 },
-          { label: 'special customer types', imageIndex: 2 },
-          { label: 'shop upgrades', imageIndex: 4 },
-          { label: 'More demanding customer types', imageIndex: 3 },
-          { label: 'final score', imageIndex: 5 },
+          { label: 'Challenges', imageIndex: 7 },
+          { label: 'core gameplay loop', imageIndex: 0 },
+          { label: 'tea base', imageIndex: 1 },
+          { label: 'toppings', imageIndex: 2 },
+          { label: 'special customer types', imageIndex: 3 },
+          { label: 'shop upgrades', imageIndex: 5 },
+          { label: 'More demanding customer types', imageIndex: 4 },
+          { label: 'final score', imageIndex: 6 },
         ],
       },
       {
