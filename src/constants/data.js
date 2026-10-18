@@ -187,9 +187,9 @@ export const PROJECTS = withBaseAssetUrls([
           '\n- **Time Management:** Players balance preparation time against incoming customer demands.' +
           '\n- **Prioritisation:** Different customer behaviours and preparation requirements encourage players to decide which orders to complete first.' +
           '\n\nAs players progress, additional mechanics increase the complexity of decision-making while building upon previously learned systems.' +
-          '\n\n**Level 1 — Learning the Core Loop**\nIntroduces the drink-making process through the tutorial before gradually introducing special customer types that disrupt the player\'s normal workflow.' +
-          '\n\n**Level 2 — Managing Complexity**\nIntroduces shop upgrades, including a fryer that adds an additional preparation step. More demanding customer types are introduced, increasing the importance of prioritisation and time management.' +
-          '\n\n**Level 3 — Mastery & Competition**\nTransforms the core gameplay into a timed competition. A combo system rewards consecutive correct orders, encouraging players to balance speed and accuracy. The player\'s final score determines the ending they receive.' +
+          '\n\n**Level 1 — Learning the Core Loop**\n\n**Design Goal:** Familiarise players with the core mechanics before introducing more complex challenges.\n\nIntroduces the drink-making process through a tutorial, allowing players to learn how to prepare and serve orders. Special customer types are gradually introduced to encourage players to adapt their workflow.' +
+          '\n\n**Level 2 — Managing Complexity**\n\n**Design Goal:** Increase gameplay complexity by encouraging multitasking and task prioritisation.\n\nIntroduces shop upgrades, food preparation mechanics, and more demanding customer types. Players must manage additional preparation steps while balancing customer patience and incoming orders.' +
+          '\n\n**Level 3 — Mastery & Competition**\n\n**Design Goal:** Challenge players to apply previously learned mechanics while balancing speed and accuracy.\n\nTransforms the gameplay into a timed competition. A combo system rewards consecutive correctly completed orders, encouraging consistent performance. The player\'s final score determines the narrative ending.' +
           '\n\nThe difficulty was structured so players could first understand the core mechanics before being introduced to additional systems, creating a gradual progression from learning to mastery.\n\nChallenges\n\nDuring development, the initial gameplay loop of preparing and serving bubble tea became repetitive, with limited variety in player interactions. To address this, we introduced ingredient-specific preparation mechanics and a table-cleaning system to encourage multitasking, quick decision-making, and task prioritisation.\n\nAs players progressed, new levels felt too similar despite introducing additional ingredients. To create a more noticeable difficulty curve, we introduced unique customer behaviours, a furniture upgrade system, and food preparation mechanics to provide new challenges and increase gameplay complexity.\n\nHowever, player feedback indicated that Level 2 became too difficult due to the additional mechanics. To balance the difficulty, we introduced a purchasable upgrade that increases customer patience, allowing players to manage their tasks more comfortably without removing the challenge.\n\nFor the final level, we introduced a combo system that rewards consecutive correctly completed orders. This encourages players to maintain accuracy and consistency while providing a stronger incentive to perform well during the final competition.',
         images: ['/images/Projects/BobaTime/gameplay-loop.png', '/images/Projects/BobaTime/BobaTime1.jpg', '/images/Projects/BobaTime/BobaTime2.jpg', '/images/Projects/BobaTime/BobaTime3.jpg', '/images/Projects/BobaTime/BobaTime4.jpg', '/images/Projects/BobaTime/BobaTime5.jpg' ,'/images/Projects/BobaTime/BobaTime6.jpg', '/images/Projects/BobaTime/design-decisions.png'],
         imageLinks: [
@@ -367,39 +367,6 @@ export const PROJECTS = withBaseAssetUrls([
     ],
   },
   {
-    id: 'design-2',
-    title: 'UI Redesign',
-    category: 'Design',
-    summary: 'This project focuses on redesigning a game settings interface to make it clearer, easier to read, and more intuitive to use. The redesign improves how players understand and interact with different setting options through better layout, clearer controls, and more visual feedback.',
-    description: 'A design project placeholder ready to be updated.',
-    type: 'Design',
-    tools: ['figma'],
-    date: '2026',
-    links: [],
-    image: '/images/Projects/shorthike.png',
-    pages: [
-      {
-        title: 'Overview',
-        summary:
-          'I redesigned the settings screen from A Short Hike, which is located in the game’s main menu. This screen allows players to adjust different game options, such as resolution, pixel size, and shadow visibility. The goal of this redesign was to improve the clarity and usability of the settings page.' +
-          '\n\n**Problems Identified**' +
-          '\n**Affordance**: Although the options are shown in a different colour, they do not clearly appear clickable or adjustable. This makes it less obvious which parts of the settings screen players can interact with.' +
-          '\n\n**Mapping**:The text and options are not clearly grouped together, making the settings harder to scan at a glance. As a result, players may take longer to understand which option belongs to each setting.',
-        image: '/images/Projects/UI/shorthike1.jpg',
-      },
-      {
-        title: 'Design',
-        summary:
-          'The goal of the redesign was to make the settings screen clearer, easier to scan, and more intuitive to interact with.' +
-          '\n[figma prototype](https://www.figma.com/proto/vm4kZujNBfT6m52s9vv3sa/Untitled?node-id=2131-587&t=sl8JzZMgxjEazzsu-1&scaling=contain&content-scaling=fixed&page-id=2112%3A3473)' +
-          '\n\nTo improve affordance, I redesigned the settings options to look more clearly clickable or adjustable. This helps players understand that each setting can be interacted with.' +
-          '\n\nTo improve mapping, I organised the text and controls into a cleaner layout. Labels and their related options are placed closer together, making the relationship between them easier to understand.' +
-          '\n\nThe redesigned settings screen improves the user experience by making the interface easier to understand and faster to use. Players can now identify which settings are interactable, read the options more clearly, and switch settings with less effort.',
-        image: '/images/Projects/UI/shorthike2.png',
-      },
-    ],
-  },
-  {
     id: 'muju',
     title: 'Muju',
     detailTitle: 'Muju Card Game',
@@ -420,24 +387,17 @@ export const PROJECTS = withBaseAssetUrls([
       {
         title: 'Overview',
         summary:
-          'Muju is a single-player tabletop dungeon card game that blends exploration, turn-based combat, and resource management into a strategic survival experience. Players progress through a dungeon deck filled with monsters, random scenarios, and item opportunities, requiring careful decision-making to manage health, coins, and limited inventory space.' +
-          '\n\nThroughout the journey, players must adapt to unpredictable encounters while optimizing their loadout through a constrained item system. Every four rounds introduces a Muju encounter, a powerful entity with unique abilities and special conditions that challenge the player\'s strategy and preparation. Defeating a Muju rewards its card, marking progression toward the final objective.',
+          'Muju is a single-player dungeon crawler that combines turn-based combat, exploration, and resource management into a strategic tabletop experience.\n\nPlayers navigate a dungeon deck containing monsters, random events, and opportunities to acquire resources. With limited health, coins, and inventory space, each decision requires players to consider the risks of continuing their exploration versus preparing for future encounters.\n\nEvery four rounds, players encounter a Muju, a powerful enemy with unique abilities and special combat conditions. Defeating three Mujus completes the game.\n\nThe game was designed around a strict component limit of 50 cards and 20 tokens, encouraging the use of multipurpose cards and streamlined mechanics.',
         image: '/images/Projects/Muju/Muju2.png',
       },
       {
         title: 'Gameplay',
         summary:
-          'In Muju, gameplay is based on choosing between two actions each round: going to the store or entering the dungeon.' +
-          '\n\nAt the start of the game, the player chooses a role card: Mage, Warrior, or Archer. Each role gives different starting strengths and influences how the player approaches combat throughout the game.' +
-          '\n\nIn the store, the player draws three item cards, chooses one to buy, and puts the other two back into the deck. The player can only hold up to two items, so they must discard one if they want to buy a new one. Items help in combat and are returned to the item deck after being used or broken.' +
-          '\n\nWhen entering the dungeon, the player draws a card from the Dungeon deck. This can be a monster or a scenario. In combat, the player rolls a 6-sided die and adds it to their attack value. The enemy rolls a 4-sided die and adds it to their attack. The player can also use items to increase their attack. Damage is calculated by comparing total attack values, and the fight continues until either the player or the enemy is defeated.' +
-          '\n\nIf the player wins, they earn coins from the monster card. They can then choose to go back to the store, use items, or continue exploring the dungeon.' +
-          '\n\nScenario cards create random events that can help or hurt the player, such as gaining items or losing health. Some scenarios also involve fighting two enemies at once, where the player can only attack one at a time while both enemies can attack the player.' +
-          '\n\nEvery four rounds, the player faces a Muju instead of a normal dungeon card. Mujus are powerful enemies with special rules or requirements. Defeating a Muju gives the player its card. The game ends when the player defeats three Mujus.',
+          '**Core Gameplay**\n\nThe core gameplay revolves around choosing between **preparing at the store or exploring the dungeon**, while managing resources to survive increasingly challenging encounters.\n\nPlayers begin by selecting one of three roles: Mage, Warrior, or Archer. Each role provides different starting attributes that influence combat strategies.\n\nEach round, players choose between two actions:\n\n- **Visit the Store:** Draw three item cards and purchase one, managing a limited inventory of two items.\n- **Explore the Dungeon:** Draw a dungeon card that triggers combat or a random scenario, offering potential rewards or consequences.\n\nThe gameplay focuses on three key systems:\n\n- **Risk vs. Reward:** Decide whether to continue exploring for rewards or visit the store to prepare for upcoming encounters.\n- **Resource Management:** Manage health, coins, item durability, and limited inventory space.\n- **Turn-Based Combat:** Use character attributes, dice rolls, and equipment bonuses to overcome enemies.\n\nEvery four rounds, players face a Muju encounter that tests their preparation and resource management. Defeating three Mujus completes the game.\n\n**Turn-Based Combat**\n\n**Design Goal:** Create a combat system that combines strategic preparation with unpredictable outcomes.\n\nCombat uses dice rolls and character attack values to determine the outcome of each exchange.\n\nPlayers roll a six-sided die (D6) and add their attack value, while enemies roll a four-sided die (D4) and add their attack value.\n\nPlayers can use equipment to increase their attack power, creating decisions around when to spend limited item durability.\n\nThe difference between attack totals determines the damage dealt, and combat continues until one side is defeated.\n\n**Inventory & Resource Management**\n\n**Design Goal:** Encourage meaningful decisions through limited inventory capacity and consumable equipment.\n\nPlayers can hold a maximum of two items, requiring them to carefully consider which equipment to keep or replace.\n\nAt the store, players draw three items and may purchase one using their available coins. Items provide combat bonuses but have limited durability, eventually breaking or returning to the item deck.\n\nThis creates a trade-off between saving resources, upgrading equipment, and preparing for stronger encounters.\n\n**Dungeon Exploration & Encounters**\n\n**Design Goal:** Introduce uncertainty and encourage players to adapt their strategies.\n\nExploring the dungeon reveals either a monster or a scenario card.\n\nMonster encounters reward players with coins upon victory, providing resources for future equipment purchases.\n\nScenario cards introduce unpredictable events, ranging from beneficial rewards to penalties such as losing health or facing multiple enemies simultaneously.\n\nThese encounters encourage players to adapt their decisions based on their current resources and the risks of continuing their exploration.\n\n**Muju Encounters & Progression**\n\n**Design Goal:** Establish recurring milestones that test the player\'s preparation and strategic planning.\n\nEvery four rounds, players encounter a Muju, a powerful enemy with unique abilities and combat conditions.\n\nUnlike regular monsters, Mujus introduce additional challenges that require players to reconsider their equipment choices and combat approach.\n\nDefeating a Muju rewards players with its card, serving as a progression marker toward the final objective of defeating three Mujus.\n\nThis structure creates a recurring cycle of exploration, preparation, and major encounters.',
         image: '/images/Projects/Muju/Muju1.png',
       },
       {
-        title: 'Design',
+        title: 'Visual Design',
         summary:
           'To keep the game easy to understand, I used the same icons and colors across all card types. This helps players quickly understand what each card does without needing to read too much.' +
           '\n\nPlayer & Muju Cards\nPlayer and Muju cards show key stats such as health, attack, and starting coins. The heart icon represents health, the sword icon represents attack, and the coin icon shows how many coins the player starts with. This makes the card information easy to read at a glance.' +
@@ -490,12 +450,7 @@ export const PROJECTS = withBaseAssetUrls([
         title: 'Gameplay',
         summary:
           'The core gameplay revolves around solving environmental puzzles using each character\'s different perspective and abilities.' +
-          '\n\n**Opposite Perspectives**\nAlice and Alter Alice explore the same environment from opposite orientations. Platforms and obstacles that are accessible to one player may be inaccessible to the other, encouraging players to communicate and coordinate their actions.' +
-          '\n\n**Character Size**\nAnother major mechanic allows one Alice to become smaller while the other becomes larger.' +
-          '\n\nSmaller characters can travel through narrow spaces and access restricted areas, while larger characters can interact with heavier objects and reach areas that smaller characters cannot.' +
-          '\n\n**Cooperative Puzzle Interaction**\nMany puzzles combine perspective, character size, and environmental interaction.' +
-          '\n\nFor example, Alter Alice may be able to move a box that Alice cannot reach. Alter Alice can push the box from her side of the environment, causing it to fall into Alice\'s side and become a platform that Alice can use to progress.' +
-          '\n\nThese interactions were designed so that neither player could complete the level independently, making communication and cooperation part of the core puzzle-solving experience.',
+          '\n\n**Opposite Perspectives**\n\n**Design Goal:** Create asymmetric gameplay where each player experiences different challenges within the same environment.\n\nAlice and Alter Alice navigate the same level from opposite orientations. Platforms and obstacles accessible to one character may be inaccessible to the other.\n\nThis encourages players to communicate about their surroundings and coordinate their movements to overcome obstacles.\n\n**Character Size Manipulation**\n\n**Design Goal:** Introduce complementary abilities that encourage players to approach obstacles differently.\n\nPlayers can manipulate their character sizes, causing one Alice to become smaller while the other becomes larger.\n\n- **Smaller Character:** Can travel through narrow spaces and access restricted areas.\n- **Larger Character:** Can interact with heavier objects and reach otherwise inaccessible areas.\n\nThis creates opportunities for puzzles where players must determine which character should perform a particular action.\n\n**Cooperative Puzzle Interaction**\n\n**Design Goal:** Design puzzles that require both players to contribute towards a shared solution.\n\nEnvironmental objects can be manipulated by one player to create new opportunities for the other.\n\nFor example, Alter Alice can push a box from her side of the environment, causing it to fall into Alice\'s side and become a platform that allows her to reach a previously inaccessible area.\n\nBy combining perspective, character size, and shared environmental interactions, the puzzles encourage players to think beyond their individual surroundings and consider how their actions affect their partner.',
         images: [
           '/images/Projects/Wonderland/Wonderland1.jpg',
           '/images/Projects/Wonderland/Wonderland2.jpg',
@@ -503,7 +458,7 @@ export const PROJECTS = withBaseAssetUrls([
         ],
         imageLinks: [
           { label: 'box', imageIndex: 0 },
-          { label: 'Smaller characters', imageIndex: 2 },
+          { label: 'narrow spaces', imageIndex: 2 },
         ],
       },
       {
